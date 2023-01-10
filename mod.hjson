@@ -1,12 +1,12 @@
-displayName: "Methane Quarries"
+displayName: "Serilia"
 
 name: "serilia"
 
-author: "b"
+author: "FrooMeeth"
 
 main: "serilia.SeriliaMain"
 
-description: "Serilia but on steroids"
+description: "Serilia but on steroids (Java)"
 
 version: 1.0
 
