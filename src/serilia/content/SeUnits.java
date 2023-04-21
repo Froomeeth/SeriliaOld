@@ -1,15 +1,12 @@
 package serilia.content;
 
-import arc.graphics.Color;
 import mindustry.ai.types.BuilderAI;
-import mindustry.content.Fx;
-import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.bullet.MissileBulletType;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
 import mindustry.type.*;
-import serilia.types.SerilianUnitType;
+import serilia.types.SeriliaUnitType;
 
 public class SeUnits {
     public static UnitType
@@ -19,7 +16,7 @@ public class SeUnits {
     youth;
 
     public static void load(){
-        scion = new SerilianUnitType("scion"){{
+        scion = new SeriliaUnitType("scion"){{
 
             aiController = BuilderAI::new;
             isEnemy = false;
