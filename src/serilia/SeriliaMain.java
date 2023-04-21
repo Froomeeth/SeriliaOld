@@ -1,4 +1,3 @@
-
 package serilia;
 
 import arc.struct.Seq;
@@ -14,10 +13,9 @@ public class SeriliaMain extends Mod{
 
     @Override
     public void loadContent(){
-
         SeResources.load();
         SeUnits.load();
-        SeCores.load();
+        SeBlocks.load();
         SeriliaTechTree.load();
     }
 
