@@ -4,16 +4,16 @@ import arc.graphics.*;
 import mindustry.type.*;
 public class SeResources {
     public static Item
-            iridium, vanadinite, fragisteel, tarnide, leticen, azulite, arsenicDust, paragonite, uranium, tanzanite, graphene;
+            iridium, vanadinite, tarnide, leticen, azulite, paragonite, graphene;
     public static Liquid
-            methane, chlorine;
+            methane, chlorine, smoke;
 
     public static void load(){
         iridium = new Item("iridium", Color.valueOf("656e83")){{
 
             alwaysUnlocked = true;
 
-            hardness = 4;
+            hardness = 1;
             cost = 2f;
 
             explosiveness = 0f;
@@ -25,7 +25,7 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 10;
+            hardness = 3;
             cost = 1f;
 
             explosiveness = 0f;
@@ -33,23 +33,11 @@ public class SeResources {
             radioactivity = 0f;
             charge = 0f;
         }};
-        fragisteel = new Item("fragisteel", Color.valueOf("bee8fe")){{
-
-            alwaysUnlocked = true;
-
-            hardness = 10;
-            cost = 2f;
-
-            explosiveness = 0f;
-            flammability = 0f;
-            radioactivity = 0f;
-            charge = 1f/10;
-        }};
         tarnide = new Item("tarnide", Color.valueOf("6a5d4d")){{
 
             alwaysUnlocked = true;
 
-            hardness = 10;
+            hardness = 5;
             cost = 1.5f;
 
             explosiveness = 0f;
@@ -61,7 +49,7 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 10;
+            hardness = 5;
             cost = 1.3f;
 
             explosiveness = 0f;
@@ -73,21 +61,8 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 10;
+            hardness = 6;
             cost = 1.7f;
-
-            explosiveness = 0f;
-            flammability = 0f;
-            radioactivity = 0f;
-            charge = 0f;
-        }};
-        arsenicDust = new Item("arsenic-dust", Color.valueOf("7a8593")){{
-
-            alwaysUnlocked = true;
-
-            hardness = 11;
-            lowPriority = true;
-            buildable = false;
 
             explosiveness = 0f;
             flammability = 0f;
@@ -98,7 +73,7 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 10;
+            hardness = 7;
             cost = 2f;
 
             explosiveness = 0f;
@@ -106,16 +81,16 @@ public class SeResources {
             radioactivity = 0f;
             charge = 0f;
         }};
-        uranium = new Item("uranium", Color.valueOf("a9e0b5")){{
+        graphene = new Item("graphene", Color.valueOf("6e7080")){{
 
             alwaysUnlocked = true;
 
-            hardness = 11;
-            cost = 1f;
+            hardness = 10;
+            cost = 2f;
 
             explosiveness = 0f;
             flammability = 0f;
-            radioactivity = 1.75f;
+            radioactivity = 0f;
             charge = 0f;
         }};
 
@@ -142,6 +117,17 @@ public class SeResources {
             heatCapacity = 0.85f;
             viscosity = 0.68f;
             temperature = 0.34f;
+        }};
+        smoke = new Liquid("smoke", Color.valueOf("717171")){{
+
+            alwaysUnlocked = true;
+
+            gas = true;
+            explosiveness = 0f;
+            flammability = 0f;
+            heatCapacity = 0f;
+            viscosity = 0f;
+            temperature = 0.5f;
         }};
     }
 }
