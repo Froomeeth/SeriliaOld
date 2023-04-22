@@ -15,26 +15,37 @@ import static mindustry.content.Blocks.*;
 public class SeriliaSystem {
     public static Planet serilia, ahkar; //TODO asteroids
 
+    /**Due to skybox issues, keep orbit radii below 150, or some of the system may disappear when not focussed.*/
     public static void load(){
-        serilia = new Planet("serilia", Planets.sun, 64f*8f, 3){{
+        serilia = new Planet("serilia", Planets.sun, 33f, 3){{
             bloom = true;
-            accessible = false;
+            //accessible = false;
             drawOrbit = false;
+            orbitRadius = 1000f;
+            lightColor = Color.valueOf("ff5738");
 
             meshLoader = () -> new SunMesh(
-                    this, 7,
+                    this, 8,
                     5, 0.3, 1.7, 1.2, 1,
                     1.1f,
+                    Color.valueOf("ff5738"),
+                    Color.valueOf("ff8d4c"),
+                    Color.valueOf("ff3b38"),
+                    Color.valueOf("ff3b38"),
+                    Color.valueOf("ff5738"),
+                    Color.valueOf("ff3b38"),
                     Color.valueOf("ff3b38"),
                     Color.valueOf("ff5738"),
                     Color.valueOf("ff5738"),
                     Color.valueOf("ff8d4c"),
                     Color.valueOf("ffe371"),
+                    Color.valueOf("ffb671"),
                     Color.valueOf("ffb671")
             );
         }};
 
         ahkar = new Planet("ahkar", serilia, 0.6f, 2){{
+            orbitRadius = 50f;
             generator = new AhkarPlanetGenerator();
             meshLoader = () -> new HexMesh(this, 5);
             alwaysUnlocked = true;
@@ -45,10 +56,10 @@ public class SeriliaSystem {
             atmosphereRadIn = 0f;
             atmosphereRadOut = 0f;
             tidalLock = false;
-            orbitSpacing = 2f;
             totalRadius = 0.65f;
             lightSrcTo = 0.5f;
             lightDstFrom = 0.2f;
+            solarSystem = serilia;
             clearSectorOnLose = true;
             defaultCore = coreAcropolis;
             iconColor = beryllicStone.mapColor;
