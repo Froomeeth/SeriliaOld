@@ -151,3 +151,9 @@ gradle-app.setting
 .DS_Store
 Thumbs.db
 android/libs/
+*.lock
+*.lock
+.idea/uiDesigner.xml
+.idea/gradle.xml
+*.class
+build/tmp/compileJava/previous-compilation-data.bin
