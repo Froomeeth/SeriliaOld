@@ -157,3 +157,5 @@ android/libs/
 .idea/gradle.xml
 *.class
 build/tmp/compileJava/previous-compilation-data.bin
+*.class
+*.class

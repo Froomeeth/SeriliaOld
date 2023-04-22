@@ -11,8 +11,29 @@ import static mindustry.type.ItemStack.*;
 public class SeBlocks{
     public static Block
 
+        //turret
+
+        //drill
+        bulkDrill, sealedBore,
+
+        //distribution (payload too)
+        transporter, splitter, transporterBridge,
+
+        //liquid
+
+        //power
+
+        //defense
+
+        //production
+
+        //unit
+
         //effect
         coreSprout, coreBurgeon, coreGreenhouse,
+
+        //payloads
+        vanadiniteRock,
 
         //misc
         drawTest, bitTiler;
@@ -24,7 +45,7 @@ public class SeBlocks{
             requirements(Category.effect, with(SeResources.iridium, 2500, SeResources.vanadinite, 2000, SeResources.tarnide, 1500));
             alwaysUnlocked = true;
 
-            health = 3500;
+            scaledHealth = 220;
             armor = 1f;
             size = 4;
             itemCapacity = 3000;
@@ -39,8 +60,8 @@ public class SeBlocks{
             requirements(Category.effect, with(SeResources.iridium, 4000, SeResources.tarnide, 2000, SeResources.azulite, 1500, SeResources.paragonite, 1500));
             alwaysUnlocked = false;
 
-            health = 4000;
-            armor = 2f;
+            scaledHealth = 300;
+            armor = 4f;
             size = 5;
             itemCapacity = 6000;
 
@@ -49,6 +70,11 @@ public class SeBlocks{
             thrusterLength = 34/4f;
 
             unitCapModifier = 10;
+        }};
+
+        //payloads
+        vanadiniteRock = new Block("vanadinite-rock"){{
+            requirements(Category.effect, BuildVisibility.debugOnly, with());
         }};
 
         //misc

@@ -7,6 +7,7 @@ public class SeResources {
             iridium, vanadinite, tarnide, leticen, azulite, paragonite, graphene;
     public static Liquid
             methane, chlorine, smoke;
+    //public static PayloadItem
 
     public static void load(){
         iridium = new Item("iridium", Color.valueOf("656e83")){{

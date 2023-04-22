@@ -15,9 +15,12 @@ import static mindustry.type.ItemStack.with;
 
 @SuppressWarnings("unused")
 public class PayloadItem extends Block{
+    /**Size as a payload.*/
     public float paySize;
+    /**The internal use item attached to this one.*/
     public Item item = Items.copper;
-    public float partValue = 8000f;
+    /**The amount this part is worth/its durability.*/
+    public float partValue = -1f;
 
     public DrawBlock drawer = new DrawDefault();
     public boolean updateProgress = false, overrideWarmup = false;
@@ -50,7 +53,7 @@ public class PayloadItem extends Block{
         super.load();
         String localized = localizedName;
 
-        item = Vars.content.item("hearth-" + name);
+        item = Vars.content.item("serilia-" + name);
         if(item == null) return;
 
         item.hidden = true;
@@ -82,7 +85,7 @@ public class PayloadItem extends Block{
         }
 
         public Item item(){
-            return Vars.content.item("hearth-" + name);
+            return Vars.content.item("serilia-" + name);
         }
 
         public float fractionValue(){
