@@ -4,7 +4,7 @@ import arc.graphics.*;
 import mindustry.type.*;
 public class SeResources {
     public static Item
-            iridium, vanadinite, tarnide, leticen, azulite, paragonite, graphene;
+            iridium, vanadium, tarnide, leticen, azulite, paragonite, graphene;
     public static Liquid
             methane, chlorine, smoke;
     //public static PayloadItem
@@ -22,7 +22,7 @@ public class SeResources {
             radioactivity = 0f;
             charge = 0f;
         }};
-        vanadinite = new Item("vanadinite", Color.valueOf("c95568")){{
+        vanadium = new Item("vanadium", Color.valueOf("c95568")){{
 
             alwaysUnlocked = true;
 
@@ -97,7 +97,7 @@ public class SeResources {
 
         //liquids
 
-        methane = new Liquid("methane", Color.valueOf("80b061")){{
+        methane = new Liquid("methane", Color.valueOf("bc5452")){{
 
             alwaysUnlocked = true;
 
@@ -106,9 +106,9 @@ public class SeResources {
             flammability = 0.53f;
             heatCapacity = 0.8f;
             viscosity = 0.13f;
-            temperature = 1.6f;
+            temperature = 0.5f;
         }};
-        chlorine = new Liquid("chlorine", Color.valueOf("bc5452")){{
+        chlorine = new Liquid("chlorine", Color.valueOf("80b061")){{
 
             alwaysUnlocked = true;
 
@@ -117,7 +117,7 @@ public class SeResources {
             flammability = 0f;
             heatCapacity = 0.85f;
             viscosity = 0.68f;
-            temperature = 0.34f;
+            temperature = 0.5f;
         }};
         smoke = new Liquid("smoke", Color.valueOf("717171")){{
 

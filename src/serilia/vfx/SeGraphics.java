@@ -7,6 +7,7 @@ import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.TextureRegion;
 import arc.graphics.gl.FrameBuffer;
 import arc.graphics.gl.Shader;
+import arc.math.Mathf;
 import arc.math.geom.Vec2;
 import arc.scene.ui.layout.Scl;
 import arc.struct.Seq;
@@ -15,11 +16,19 @@ import mindustry.Vars;
 import mindustry.gen.PayloadUnit;
 import mindustry.graphics.Shaders;
 
+/**Miscellaneous drawing, shader definitions.*/
 public class SeGraphics {
-    public FrameBuffer buffer = Vars.renderer.effectBuffer;
-    public static Color[] spectrum = {Color.red, Color.coral, Color.yellow, Color.lime, Color.green, Color.teal, Color.blue, Color.purple, Color.magenta};
 
     //draw
+    public static void drawHalfSpin(TextureRegion region, float x, float y, float r){
+        float a = Draw.getColor().a;
+        r = Mathf.mod(r, 180f);
+        Draw.rect(region, x, y, r);
+        Draw.alpha(r / 180f*a);
+        Draw.rect(region, x, y, r - 180f);
+        Draw.alpha(a);
+    }
+
     public static void quadHelper(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4){
         Fill.quad(x1, y1, x2, y2, x3, y3, x4, y4);
         debugDots(new float[]{x1, y1, x2, y2, x3, y3, x4, y4});
@@ -35,6 +44,7 @@ public class SeGraphics {
         quadHelper(v1.x, v1.y, v2.x, v2.y, v3.x, v3.y, v4.x, v4.y);
     }
 
+    public static Color[] spectrum = {Color.red, Color.coral, Color.yellow, Color.lime, Color.green, Color.teal, Color.blue, Color.purple, Color.magenta};
     public static void debugDots(Vec2[] points){
         for(int i = 0; i < points.length; i++) {
             Draw.color(spectrum[i], 0.5f);
@@ -51,6 +61,8 @@ public class SeGraphics {
     }
 
     //shaders
+    public FrameBuffer buffer = Vars.renderer.effectBuffer;
+
     public static class ChromaticAberrationShader extends SeLoadShader {
         public ChromaticAberrationShader(){
             super("aberration", "screenspace");

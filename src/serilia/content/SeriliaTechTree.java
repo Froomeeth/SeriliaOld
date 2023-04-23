@@ -17,7 +17,7 @@ public class SeriliaTechTree extends TechTree{
 
                 });
 
-                node(vanadinite, () -> {
+                node(vanadium, () -> {
                     nodeProduce(Items.titanium, () -> {
                         nodeProduce(Liquids.cryofluid, () -> {
 

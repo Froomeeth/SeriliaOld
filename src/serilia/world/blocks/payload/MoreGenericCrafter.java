@@ -3,6 +3,7 @@ package serilia.world.blocks.payload;
 import arc.graphics.Color;
 import arc.graphics.g2d.*;
 import arc.math.Mathf;
+import arc.math.geom.Geometry;
 import arc.struct.*;
 import arc.util.*;
 import serilia.types.ItemPayload;
@@ -19,6 +20,8 @@ import mindustry.world.blocks.payloads.*;
 import mindustry.world.draw.*;
 import mindustry.world.meta.*;
 
+import static mindustry.Vars.tilesize;
+
 public class MoreGenericCrafter extends PayloadBlock{
     public @Nullable ItemStack[] outputItems;
     public @Nullable LiquidStack[] outputLiquids;
@@ -27,6 +30,7 @@ public class MoreGenericCrafter extends PayloadBlock{
 
     public boolean dumpExtraLiquid = false;
     public boolean ignoreLiquidFullness = false;
+    public int[] liquidOutputDirections = {-1};
 
     public float craftTime = 60f;
     public Effect craftEffect = Fx.none;
@@ -121,6 +125,24 @@ public class MoreGenericCrafter extends PayloadBlock{
     }
 
     @Override
+    public void drawOverlay(float x, float y, int rotation){
+        if(outputLiquids != null){
+            for(int i = 0; i < outputLiquids.length; i++){
+                int dir = liquidOutputDirections.length > i ? liquidOutputDirections[i] : -1;
+
+                if(dir != -1){
+                    Draw.rect(
+                            outputLiquids[i].liquid.fullIcon,
+                            x + Geometry.d4x(dir + rotation) * (size * tilesize / 2f + 4),
+                            y + Geometry.d4y(dir + rotation) * (size * tilesize / 2f + 4),
+                            8f, 8f
+                    );
+                }
+            }
+        }
+    }
+
+    @Override
     public TextureRegion[] icons(){
         return drawer.finalIcons(this);
     }
@@ -147,7 +169,8 @@ public class MoreGenericCrafter extends PayloadBlock{
 
         @Override
         public boolean acceptPayload(Building source,  Payload payload){
-            return this.payload == null && inputPayload != null && ((BuildPayload)payload).block() == inputPayload && shouldConsume();
+            Log.info(((BuildPayload)payload).block() + " " + (this.payload == null && inputPayload != null && ((BuildPayload)payload).block() == inputPayload && shouldConsume()));
+            return this.payload == null; //&& inputPayload != null && ((BuildPayload)payload).block() == inputPayload && shouldConsume();
         }
 
         @Override
@@ -235,7 +258,7 @@ public class MoreGenericCrafter extends PayloadBlock{
                 payload = (outputPayload instanceof PayloadItem ?
                         new ItemPayload(outputPayload, team) :
                         new BuildPayload(outputPayload, team));
-            }
+            } else payload = null;
 
             if(wasVisible){
                 craftEffect.at(x, y);
@@ -247,6 +270,14 @@ public class MoreGenericCrafter extends PayloadBlock{
             if(outputItems != null && timer(timerDump, dumpTime / timeScale)){
                 for(ItemStack output : outputItems){
                     dump(output.item);
+                }
+            }
+
+            if(outputLiquids != null){
+                for(int i = 0; i < outputLiquids.length; i++){
+                    int dir = liquidOutputDirections.length > i ? liquidOutputDirections[i] : -1;
+
+                    dumpLiquid(outputLiquids[i].liquid, 2f, dir);
                 }
             }
         }

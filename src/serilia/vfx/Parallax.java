@@ -1,8 +1,6 @@
 package serilia.vfx;
 
 import arc.Core;
-import arc.graphics.Color;
-import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.geom.Vec2;
@@ -12,6 +10,7 @@ import static arc.graphics.g2d.Fill.*;
 import static arc.util.Tmp.*;
 import static serilia.vfx.SeGraphics.quadHelper;
 
+/**Closs containing everything needed to make an illusion of height.*/
 public class Parallax{
     public void drawSkyLines(float x, float y, int lineCount, float radius, float height, float rot){
         for(int i = 0; i < lineCount; i++){

@@ -1,14 +1,13 @@
 package serilia.types;
 
-import mindustry.content.UnitTypes;
 import mindustry.type.UnitType;
-import serilia.content.SePalette;
+import serilia.vfx.SeVFX;
 import mindustry.graphics.*;
 
 public class SeriliaUnitType extends UnitType {
     public SeriliaUnitType(String name) {
         super(name);
-        outlineColor = SePalette.seOutline;
+        outlineColor = SeVFX.seOutline;
         groundLayer = Layer.flyingUnit;
     }
 }
