@@ -16,7 +16,6 @@ import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.production.DrawerDrill;
 import serilia.world.draw.DrawHalfSpinner;
 import serilia.world.draw.DrawSealedDust;
-import serilia.world.draw.DrawZSet;
 
 import static mindustry.content.Items.*;
 import static mindustry.type.Category.*;
@@ -71,8 +70,7 @@ public class SeBlocks{
                     new DrawDefault(),
                     new DrawSealedDust(),
                     new DrawHalfSpinner("-rotator", 2f),
-                    new DrawZSet(Layer.blockOver),
-                    new DrawRegion("-top")
+                    new DrawRegion("-top"){{layer = Layer.blockOver;}}
             );
         }};
 
