@@ -1,16 +1,23 @@
 package serilia;
 
+import arc.Events;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.gl.FrameBuffer;
 import arc.struct.Seq;
-import mindustry.graphics.Layer;
-import serilia.content.*;
+import arc.util.Log;
+import arc.util.Reflect;
 import mindustry.Vars;
-import mindustry.mod.*;
-import rhino.*;
+import mindustry.game.EventType;
+import mindustry.graphics.Layer;
+import mindustry.mod.Mod;
+import mindustry.ui.fragments.MenuFragment;
+import rhino.ImporterTopLevel;
+import rhino.NativeJavaPackage;
+import serilia.content.*;
 import serilia.vfx.Parallax;
 import serilia.vfx.SeGraphics;
+import serilia.vfx.SeMenuRenderer;
 
 public class SeriliaMain extends Mod{
     public static Parallax parallax = new Parallax();
@@ -26,12 +33,21 @@ public class SeriliaMain extends Mod{
         SeriliaSystem.load();
         SeriliaTechTree.load();
 
-        Vars.renderer.addEnvRenderer(1024 * 2, () ->
-                Draw.drawRange(Layer.legUnit, 1f, () -> buffer.begin(Color.clear), () -> {
-                    buffer.end();
-                    buffer.blit(new SeGraphics.ChromaticAberrationShader());
-                })
-        );
+        Events.on(EventType.ClientLoadEvent.class, (e) -> {
+            Vars.renderer.addEnvRenderer(1024 * 2, () ->
+                    Draw.drawRange(Layer.legUnit, 1f, () -> buffer.begin(Color.clear), () -> {
+                        buffer.end();
+                        buffer.blit(new SeGraphics.ChromaticAberrationShader());
+                    })
+            );
+
+            //stolen from project oblivion
+            try {
+                Reflect.set(MenuFragment.class, Vars.ui.menufrag, "renderer", new SeMenuRenderer());
+            } catch (Exception exep) {
+                Log.err("Failed to replace renderer", exep);
+            }
+        });
     }
 
     public static NativeJavaPackage p = null;

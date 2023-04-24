@@ -17,15 +17,15 @@ public class SeriliaSystem {
 
     /**Due to skybox issues, keep orbit radii below 150, or some of the system may disappear when not focussed.*/
     public static void load(){
-        serilia = new Planet("serilia", null, 33f, 3){{
+        serilia = new Planet("serilia", Planets.sun, 33f, 3){{
             bloom = true;
             //accessible = false;
-            //drawOrbit = false;
-            //orbitRadius = 1000f;
+            drawOrbit = false;
+            orbitRadius = 1000f;
             lightColor = Color.valueOf("ff5738");
 
             meshLoader = () -> new SunMesh(
-                    this, 8,
+                    this, 7,
                     5, 0.3, 1.7, 1.2, 1,
                     1.1f,
                     Color.valueOf("ff5738"),
