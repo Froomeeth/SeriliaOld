@@ -2,11 +2,12 @@ package serilia.world.blocks.payload;
 
 import arc.Core;
 import arc.graphics.g2d.Draw;
+import mindustry.Vars;
 import mindustry.gen.Building;
-import mindustry.world.blocks.payloads.*;
+import mindustry.world.blocks.payloads.BuildPayload;
+import mindustry.world.blocks.payloads.Payload;
+import mindustry.world.blocks.payloads.PayloadBlock;
 import mindustry.world.blocks.storage.CoreBlock;
-import serilia.types.ItemPayload;
-import serilia.types.PayloadItem;
 
 @SuppressWarnings("unused")
 public class ComponentReceiver extends PayloadBlock{
@@ -24,12 +25,12 @@ public class ComponentReceiver extends PayloadBlock{
 
         @Override
         public boolean acceptPayload(Building source, Payload payload){ //todo lock input to backside
-            return super.acceptPayload(source, payload) && linkedCore != null &&
-                payload.fits(maxSize) &&
-                (
-                    (payload instanceof ItemPayload && ((ItemPayload)payload).item() != null) && linkedCore.acceptItem(source, ((ItemPayload)payload).item()) ||
-                    (payload instanceof BuildPayload && ((PayloadItem)((BuildPayload)payload).build.block).item != null  && linkedCore.acceptItem(source, ((PayloadItem)((BuildPayload)payload).build.block).item))
-                );
+            return super.acceptPayload(source, payload) &&
+                    linkedCore != null &&
+                    payload.fits(maxSize) &&
+                    payload instanceof BuildPayload &&
+                    ((BuildPayload)payload).build.block != null  &&
+                    linkedCore.acceptItem(source, Vars.content.item(((BuildPayload)payload).build.block.name));
         }
 
         @Override

@@ -6,7 +6,7 @@ import mindustry.content.Planets;
 import mindustry.content.TechTree;
 
 import static serilia.content.SeResources.*;
-import static serilia.content.SeBlocks.*;
+import static serilia.content.CaliBlocks.*;
 
 public class SeriliaTechTree extends TechTree{
     public static void load(){
