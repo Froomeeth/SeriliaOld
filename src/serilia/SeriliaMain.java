@@ -29,6 +29,7 @@ public class SeriliaMain extends Mod{
     public void loadContent(){
         SeResources.load();
         SeUnits.load();
+        AhkarBlocks.load();
         CaliBlocks.load();
         SeriliaSystem.load();
         SeriliaTechTree.load();

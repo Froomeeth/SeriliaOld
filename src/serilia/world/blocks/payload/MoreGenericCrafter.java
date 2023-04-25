@@ -33,8 +33,7 @@ import mindustry.world.meta.*;
 import static mindustry.Vars.tilesize;
 
 public class MoreGenericCrafter extends PayloadBlock{
-    public @Nullable
-    ItemStack[] outputItems;
+    public @Nullable ItemStack[] outputItems;
     public @Nullable LiquidStack[] outputLiquids;
     public @Nullable Block outputPayload;
     public @Nullable Block inputPayload;

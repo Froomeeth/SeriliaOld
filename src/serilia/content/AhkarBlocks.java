@@ -1,30 +1,23 @@
 package serilia.content;
 
-import mindustry.content.Fx;
+import arc.graphics.Color;
 import mindustry.graphics.Layer;
-import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.DirectionalForceProjector;
-import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.draw.DrawMulti;
 import mindustry.world.draw.DrawRegion;
-import serilia.world.blocks.misc.BitmaskTiler;
-import serilia.world.blocks.misc.DrawTest;
-import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayloadDuct;
+import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
-import serilia.world.draw.DrawHalfSpinner;
-import serilia.world.draw.DrawMineItem;
-import serilia.world.draw.DrawSealedDust;
-import serilia.world.draw.DrawZSet;
+import serilia.world.draw.*;
 
-import static mindustry.content.Items.*;
+import static mindustry.content.Items.silicon;
+import static mindustry.content.Items.surgeAlloy;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.sandboxOnly;
 import static mindustry.world.meta.BuildVisibility.shown;
-import static serilia.content.SeResources.*;
 
 public class AhkarBlocks {
     public static Block
@@ -40,6 +33,7 @@ public class AhkarBlocks {
         //liquid
 
         //power
+        solarCollector,
 
         //defense
         barrierProjector;
@@ -79,6 +73,22 @@ public class AhkarBlocks {
             size = 2;
         }};
 
+        //liquid
+
+        //power
+        solarCollector = new SolarCollector("solar-collector"){{
+            requirements(power, sandboxOnly, with());
+            size = 6;
+
+            drawer = new DrawMulti(
+                    new DrawDefault(),
+                    new DrawProgressFrames(7){{
+                        region = "cracks-6-";
+                        color = Color.brown;
+                    }}
+            );
+        }};
+
         //defense
         barrierProjector = new DirectionalForceProjector("barrier-projector"){{
             requirements(effect, with(surgeAlloy, 100, silicon, 125));
@@ -95,36 +105,6 @@ public class AhkarBlocks {
         //crafting
 
         //effect
-        coreSprout = new CoreBlock("core-sprout"){{
-            requirements(effect, with(iridium, 2500, vanadium, 2000, tarnide, 1500));
-            alwaysUnlocked = true;
-
-            scaledHealth = 220;
-            armor = 1f;
-            size = 4;
-            itemCapacity = 3000;
-
-            isFirstTier = true;
-            unitType = SeUnits.scion;
-            thrusterLength = 34/4f;
-
-            unitCapModifier = 5;
-        }};
-        coreBurgeon = new CoreBlock("core-burgeon"){{
-            requirements(effect, with(iridium, 4000, tarnide, 2000, azulite, 1500, paragonite, 1500));
-            alwaysUnlocked = false;
-
-            scaledHealth = 300;
-            armor = 4f;
-            size = 5;
-            itemCapacity = 6000;
-
-            isFirstTier = false;
-            unitType = SeUnits.scion;
-            thrusterLength = 34/4f;
-
-            unitCapModifier = 10;
-        }};
 
         //payloads
 
