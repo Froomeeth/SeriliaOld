@@ -1,15 +1,11 @@
 package serilia.content;
 
-import mindustry.content.Fx;
-import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.storage.CoreBlock;
 import serilia.world.blocks.misc.BitmaskTiler;
 import serilia.world.blocks.misc.DrawTest;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 
-import static mindustry.content.Items.metaglass;
-import static mindustry.content.Items.sand;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.sandboxOnly;
@@ -58,7 +54,7 @@ public class CaliBlocks {
             requirements(crafting, sandboxOnly, with());
             size = 4;
 
-            consumeLiquid(methane, 2);
+            /*consumeLiquid(methane, 2);
             recipes.add(
                 new CraftRecipe(){{
                     inputPayload = vanadiniteRock;
@@ -68,7 +64,7 @@ public class CaliBlocks {
                     craftTime = 120f;
                     craftEffect = Fx.breakProp;
                 }}
-            );
+            );*/
         }};
 
         //effect

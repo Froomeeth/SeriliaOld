@@ -1,29 +1,40 @@
 package serilia.world.blocks.payload;
 
 import arc.graphics.Color;
-import arc.graphics.g2d.*;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
-import arc.struct.*;
-import arc.util.*;
-import serilia.types.ItemPayload;
-import serilia.types.PayloadItem;
+import arc.struct.EnumSet;
+import arc.struct.Seq;
+import arc.util.Eachable;
+import arc.util.Log;
+import arc.util.Nullable;
+import arc.util.Time;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
-import mindustry.gen.*;
+import mindustry.gen.Building;
+import mindustry.gen.Sounds;
 import mindustry.graphics.Pal;
-import mindustry.type.*;
-import mindustry.ui.*;
+import mindustry.type.ItemStack;
+import mindustry.type.LiquidStack;
+import mindustry.ui.Bar;
+import mindustry.ui.ItemImage;
+import mindustry.ui.Styles;
 import mindustry.world.Block;
-import mindustry.world.blocks.payloads.*;
-import mindustry.world.draw.*;
+import mindustry.world.blocks.payloads.BuildPayload;
+import mindustry.world.blocks.payloads.Payload;
+import mindustry.world.blocks.payloads.PayloadBlock;
+import mindustry.world.draw.DrawBlock;
+import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.*;
 
 import static mindustry.Vars.tilesize;
 
 public class MoreGenericCrafter extends PayloadBlock{
-    public @Nullable ItemStack[] outputItems;
+    public @Nullable
+    ItemStack[] outputItems;
     public @Nullable LiquidStack[] outputLiquids;
     public @Nullable Block outputPayload;
     public @Nullable Block inputPayload;
@@ -254,11 +265,8 @@ public class MoreGenericCrafter extends PayloadBlock{
                 }
             }
 
-            if(outputPayload != null){
-                payload = (outputPayload instanceof PayloadItem ?
-                        new ItemPayload(outputPayload, team) :
-                        new BuildPayload(outputPayload, team));
-            } else payload = null;
+            if(outputPayload != null) payload = new BuildPayload(outputPayload, team);
+            else payload = null;
 
             if(wasVisible){
                 craftEffect.at(x, y);
