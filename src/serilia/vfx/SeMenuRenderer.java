@@ -6,7 +6,7 @@ import arc.graphics.gl.FrameBuffer;
 import arc.math.geom.Vec3;
 import mindustry.graphics.MenuRenderer;
 import mindustry.graphics.g3d.PlanetParams;
-import serilia.content.SeriliaSystem;
+import serilia.content.SeSystem;
 
 import static arc.Core.graphics;
 import static mindustry.Vars.renderer;
@@ -26,7 +26,7 @@ public class SeMenuRenderer extends MenuRenderer{
 
         params.alwaysDrawAtmosphere = true;
         params.drawUi = false;
-        params.planet = SeriliaSystem.serilia;
+        params.planet = SeSystem.serilia;
         params.zoom = 0.3f;
 
         params.camPos.rotate(Vec3.Y, 0.03f);

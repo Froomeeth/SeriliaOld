@@ -6,7 +6,7 @@ public class SeResources {
     public static Item
             iridium, vanadium, tarnide, leticen, azulite, paragonite, graphene;
     public static Liquid
-            methane, chlorine, smoke;
+            methane, chlorine, smoke, acid, acidicSolution;
     //public static PayloadItem
 
     public static void load(){
@@ -129,6 +129,18 @@ public class SeResources {
             heatCapacity = 0f;
             viscosity = 0f;
             temperature = 0.5f;
+        }};
+
+        acid = new Liquid("acid"){{
+            explosiveness = 0f;
+            flammability = 0f;
+            heatCapacity = 0f;
+        }};
+
+        acidicSolution = new Liquid("acidic-solution"){{
+            explosiveness = 0f;
+            flammability = 0f;
+            heatCapacity = 0f;
         }};
     }
 }

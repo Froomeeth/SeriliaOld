@@ -6,14 +6,15 @@ import mindustry.game.Team;
 import mindustry.graphics.Pal;
 import mindustry.graphics.g3d.HexMesh;
 import mindustry.graphics.g3d.SunMesh;
+import mindustry.maps.planet.SerpuloPlanetGenerator;
 import mindustry.type.Planet;
 import mindustry.world.meta.Env;
 import serilia.AhkarPlanetGenerator;
 
 import static mindustry.content.Blocks.*;
 
-public class SeriliaSystem {
-    public static Planet serilia, ahkar; //TODO asteroids
+public class SeSystem {
+    public static Planet serilia, caliterra, ahkar; //TODO asteroids
 
     /**Due to skybox issues, keep orbit radii below 150, or some of the system may disappear when not focussed.*/
     public static void load(){
@@ -44,8 +45,16 @@ public class SeriliaSystem {
             );
         }};
 
-        ahkar = new Planet("ahkar", serilia, 0.6f, 2){{
-            orbitRadius = 50f;
+        caliterra = new Planet("caliterra", serilia, 2.1f, 2){{
+            generator = new SerpuloPlanetGenerator();
+            meshLoader = () -> new HexMesh(this, 5);
+            alwaysUnlocked = true;
+            solarSystem = serilia;
+            orbitRadius = /*You have been in relaxation for:*/ 99.9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999f;
+        }};
+
+        ahkar = new Planet("ahkar", serilia, 0.6f, 1){{
+            orbitRadius = 56f;
             generator = new AhkarPlanetGenerator();
             meshLoader = () -> new HexMesh(this, 5);
             alwaysUnlocked = true;
@@ -76,6 +85,7 @@ public class SeriliaSystem {
                 r.coreDestroyClear = true;
                 r.onlyDepositCore = true;
                 r.infiniteResources = true;
+                r.unitAmmo = true;
             };
 
             unlockedOnLand.add(coreBastion);

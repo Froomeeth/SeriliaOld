@@ -4,7 +4,8 @@ import arc.graphics.Color;
 
 public class SeVFX {
     public static Color
-        seOutline = Color.valueOf("3b4745");
+            caliOutline = Color.valueOf("3b4745"),
+            ahkarOutline = Color.valueOf("363136");
 
 //    public static Effect
 

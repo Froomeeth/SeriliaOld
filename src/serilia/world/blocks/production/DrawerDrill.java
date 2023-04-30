@@ -269,8 +269,6 @@ public class DrawerDrill extends Block{
                 return;
             }
 
-            Log.info(progress);
-
             totalProgress += warmup * delta();
 
             float delay = getDrillTime(dominantItem);

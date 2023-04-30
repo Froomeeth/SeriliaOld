@@ -5,15 +5,20 @@ import mindustry.entities.bullet.MissileBulletType;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
-import mindustry.type.*;
+import mindustry.type.UnitType;
+import mindustry.type.Weapon;
 import serilia.types.SeriliaUnitType;
+
+import static mindustry.Vars.tilesize;
 
 public class SeUnits {
     public static UnitType
 
     scion,
     converge,
-    youth;
+    youth,
+
+    glow;
 
     public static void load(){
         scion = new SeriliaUnitType("scion"){{
@@ -69,6 +74,46 @@ public class SeUnits {
                     homingRange = 60;
                 }};
             }});
+        }};
+
+        glow = new SeriliaUnitType("glow"){{
+            homeWorld = 1;
+            constructor = UnitEntity::create;
+            flying = true;
+
+            health = 700f;
+            armor = 3f;
+            hitSize = 64f/4f;
+            buildSpeed = 1.5f;
+            drag = 0.08f;
+            speed = 7.5f;
+            rotateSpeed = 8f;
+            accel = 0.08f;
+
+            mineWalls = true;
+            mineFloor = false;
+            mineHardnessScaling = false;
+            mineSpeed = 9f;
+            mineTier = 3;
+            itemCapacity = 110;
+
+            coreUnitDock = true;
+            controller = u -> new BuilderAI(true, 500f);
+
+            payloadCapacity = 2f * 2f * tilesize * tilesize;
+            pickupUnits = false;
+
+            vulnerableWithPayloads = true;
+            fogRadius = 0f;
+            targetable = false;
+            hittable = false;
+            isEnemy = false;
+            targetPriority = -2;
+
+            buildBeamOffset = 6f;
+            trailLength = 5;
+            engineOffset = 6f;
+            engineSize = 1.8f;
         }};
     }
 }

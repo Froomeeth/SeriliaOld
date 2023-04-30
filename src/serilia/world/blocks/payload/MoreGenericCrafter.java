@@ -8,7 +8,6 @@ import arc.math.geom.Geometry;
 import arc.struct.EnumSet;
 import arc.struct.Seq;
 import arc.util.Eachable;
-import arc.util.Log;
 import arc.util.Nullable;
 import arc.util.Time;
 import mindustry.content.Fx;
@@ -179,7 +178,6 @@ public class MoreGenericCrafter extends PayloadBlock{
 
         @Override
         public boolean acceptPayload(Building source,  Payload payload){
-            Log.info(((BuildPayload)payload).block() + " " + (this.payload == null && inputPayload != null && ((BuildPayload)payload).block() == inputPayload && shouldConsume()));
             return this.payload == null; //&& inputPayload != null && ((BuildPayload)payload).block() == inputPayload && shouldConsume();
         }
 

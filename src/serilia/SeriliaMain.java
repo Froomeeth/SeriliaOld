@@ -31,8 +31,8 @@ public class SeriliaMain extends Mod{
         SeUnits.load();
         AhkarBlocks.load();
         CaliBlocks.load();
-        SeriliaSystem.load();
-        SeriliaTechTree.load();
+        SeSystem.load();
+        CaliterraTechTree.load();
 
         Events.on(EventType.ClientLoadEvent.class, (e) -> {
             Vars.renderer.addEnvRenderer(1024 * 2, () ->

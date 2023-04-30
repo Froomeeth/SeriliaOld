@@ -13,7 +13,7 @@ import mindustry.world.draw.DrawBlock;
 //DrawDirty lives on
 public class DrawProgressFrames extends DrawBlock {
     public TextureRegion[] regions;
-    public int frames;
+    public int frames = 3;
     public String suffix = "", region;
     public Color color = Color.white;
 
@@ -24,8 +24,8 @@ public class DrawProgressFrames extends DrawBlock {
     @Override
     public void draw(Building build) {
         Draw.color(color);
-        Draw.rect(regions[(int)Math.floor(build.progress() * frames)], build.x, build.y);
-        Log.info((int)Math.floor(build.progress() * frames));
+        Draw.rect(regions[(int)(frames * build.progress())], build.x, build.y);
+        Log.info(build.progress());
         Draw.color();
     }
 
