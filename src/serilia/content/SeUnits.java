@@ -43,8 +43,8 @@ public class SeUnits {
             mineTier = 1;
             mineSpeed = 2;
 
-            engineSize = 3;
-            engineOffset = 7;
+            engineSize = 0;
+            engineOffset = 0;
 
             weapons.add(new Weapon(){{
                 x = 3f;
@@ -76,7 +76,7 @@ public class SeUnits {
             }});
 
             setEnginesMirror(
-                    new UnitEngine(10 / 4f, -12 / 4f, 1.8f, 270f)
+                    new UnitEngine(10 / 4f, -16 / 4f, 1.8f, 270f)
             );
         }};
 
