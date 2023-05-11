@@ -84,7 +84,7 @@ public class CaliBlocks {
             unitCapModifier = 5;
         }};
         coreBurgeon = new CoreBlock("core-burgeon"){{
-            requirements(effect, with(iridium, 4000, tarnide, 2000, azulite, 1500, paragonite, 1500));
+            requirements(effect, with(iridium, 4000, tarnide, 2000, chirokyn, 1500, paragonite, 1500));
             alwaysUnlocked = false;
 
             scaledHealth = 300;

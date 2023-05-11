@@ -30,18 +30,18 @@ public class SeUnits {
 
             health = 270f;
             armor = 3f;
-            hitSize = 15f;
+            hitSize = 13f;
 
             flying = true;
-            speed = 3.2f;
-            rotateSpeed = 9f;
+            speed = 4.3f;
+            rotateSpeed = 10f;
             drag = 0.09f;
-            accel = 0.15f;
+            accel = 0.14f;
 
-            itemCapacity = 60;
+            itemCapacity = 30;
             buildSpeed = 3;
-            mineTier = 10;
-            mineSpeed = 10;
+            mineTier = 1;
+            mineSpeed = 2;
 
             engineSize = 3;
             engineOffset = 7;
@@ -74,6 +74,10 @@ public class SeUnits {
                     homingRange = 60;
                 }};
             }});
+
+            setEnginesMirror(
+                    new UnitEngine(10 / 4f, -12 / 4f, 1.8f, 270f)
+            );
         }};
 
         glow = new SeriliaUnitType("glow"){{

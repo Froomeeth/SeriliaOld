@@ -4,9 +4,9 @@ import arc.graphics.*;
 import mindustry.type.*;
 public class SeResources {
     public static Item
-            iridium, vanadium, tarnide, leticen, azulite, paragonite, graphene;
+            iridium, vanadium, tarnide, galvanium, chirokyn, paragonite, graphene;
     public static Liquid
-            methane, chlorine, smoke, acid, acidicSolution;
+            methane, chlorine, acid, acidicSolution;
     //public static PayloadItem
 
     public static void load(){
@@ -26,7 +26,7 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 3;
+            hardness = 1;
             cost = 1f;
 
             explosiveness = 0f;
@@ -38,7 +38,7 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 5;
+            hardness = 2;
             cost = 1.5f;
 
             explosiveness = 0f;
@@ -46,11 +46,11 @@ public class SeResources {
             radioactivity = 0f;
             charge = 0f;
         }};
-        leticen = new Item("leticen", Color.valueOf("87ceeb")){{
+        galvanium = new Item("galvanium", Color.valueOf("87ceeb")){{
 
             alwaysUnlocked = true;
 
-            hardness = 5;
+            hardness = 2;
             cost = 1.3f;
 
             explosiveness = 0f;
@@ -58,11 +58,11 @@ public class SeResources {
             radioactivity = 0f;
             charge = 1f;
         }};
-        azulite = new Item("azulite", Color.valueOf("6974c4")){{
+        chirokyn = new Item("chirokyn", Color.valueOf("6974c4")){{
 
             alwaysUnlocked = true;
 
-            hardness = 6;
+            hardness = 3;
             cost = 1.7f;
 
             explosiveness = 0f;
@@ -74,7 +74,7 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 7;
+            hardness = 3;
             cost = 2f;
 
             explosiveness = 0f;
@@ -86,7 +86,7 @@ public class SeResources {
 
             alwaysUnlocked = true;
 
-            hardness = 10;
+            hardness = 3;
             cost = 2f;
 
             explosiveness = 0f;
@@ -117,17 +117,6 @@ public class SeResources {
             flammability = 0f;
             heatCapacity = 0.85f;
             viscosity = 0.68f;
-            temperature = 0.5f;
-        }};
-        smoke = new Liquid("smoke", Color.valueOf("717171")){{
-
-            alwaysUnlocked = true;
-
-            gas = true;
-            explosiveness = 0f;
-            flammability = 0f;
-            heatCapacity = 0f;
-            viscosity = 0f;
             temperature = 0.5f;
         }};
 
