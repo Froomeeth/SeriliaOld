@@ -10,12 +10,13 @@ import mindustry.type.Sector;
 import mindustry.world.Block;
 import mindustry.world.blocks.ControlBlock;
 import serilia.content.AhkarBlocks;
+import serilia.content.SeSystem;
 
-public class Accelerator extends Block {
-    public Sector sector;
+public class SeAccelerator extends Block {
+    public Sector sector =  SeSystem.ahkar.sectors.get(0);
     public Block core = AhkarBlocks.ahkarDropPod; //use -folded region
 
-    public Accelerator(String name) {
+    public SeAccelerator(String name) {
         super(name);
     }
     public class AcceleratorBuild extends Building implements ControlBlock{

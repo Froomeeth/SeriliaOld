@@ -5,7 +5,9 @@
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.GlennFolker.EntityAnno/downgrader/v143.1/c97f7133196acbef35ea9551c1bafe2b62f19c1e/downgrader-v143.1.jar" />
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.Anuken/jabel/93fde537c7/f04617218b023d54c8361bcf52098ea494c63d3a/jabel-93fde537c7.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.Anuken.Arc/arc-core/v143.1/fda8d3017b1f9dcc87b932c2af8e2d37e1b1a772/arc-core-v143.1.jar" />
         </processorPath>
         <module name="JavaSerilia.main" />
       </profile>

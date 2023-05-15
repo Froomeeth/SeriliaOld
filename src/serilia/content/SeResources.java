@@ -4,7 +4,7 @@ import arc.graphics.*;
 import mindustry.type.*;
 public class SeResources {
     public static Item
-            nickel, iridium, vanadium, tarnide, galvanium, chirokyn, paragonite, graphene;
+            nickel, iridium, ferrite, vanadium, tarnide, galvanium, chirokyn, paragonite, graphene;
     public static Liquid
             methane, chlorine, acid, acidicSolution;
     //public static PayloadItem
@@ -22,6 +22,13 @@ public class SeResources {
             cost = 2f;
 
             explosiveness = flammability = radioactivity = charge = 0f;
+        }};
+
+        ferrite = new Item("ferrite", Color.valueOf("876a67")){{
+            hardness = 1;
+
+            explosiveness = flammability = radioactivity = 0f;
+            charge = 0.2f;
         }};
 
         vanadium = new Item("vanadium", Color.valueOf("c95568")){{

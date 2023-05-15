@@ -1,16 +1,18 @@
 package serilia.content;
 
 import arc.graphics.Color;
-import mindustry.entities.part.RegionPart;
 import mindustry.graphics.Layer;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.DirectionalForceProjector;
+import mindustry.world.blocks.production.Pump;
 import mindustry.world.blocks.production.Separator;
-import mindustry.world.draw.*;
+import mindustry.world.draw.DrawDefault;
+import mindustry.world.draw.DrawGlowRegion;
+import mindustry.world.draw.DrawMulti;
+import mindustry.world.draw.DrawRegion;
 import serilia.vfx.SeVFX;
-import serilia.world.blocks.campaign.Accelerator;
 import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
@@ -22,7 +24,8 @@ import static mindustry.content.Liquids.nitrogen;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.*;
-import static serilia.content.SeResources.*;
+import static serilia.content.SeResources.acidicSolution;
+import static serilia.content.SeResources.tarnide;
 
 public class AhkarBlocks {
     public static Block
@@ -36,6 +39,7 @@ public class AhkarBlocks {
         transporter, splitter, transporterBridge,
 
         //liquid
+        pistonPump,
 
         //power
         solarCollector,
@@ -49,13 +53,12 @@ public class AhkarBlocks {
         //unit
 
         //effect
-        ahkarAccelerator, ahkarDropPod, coreFramework;
+        caliAccelerator, ahkarDropPod, coreFramework;
         //payloads
 
         //misc
 
     public static void load() {
-
         //drill
         sealedBore = new DrawerDrill("sealed-bore"){{
             requirements(production, shown, with());
@@ -73,18 +76,25 @@ public class AhkarBlocks {
             );
         }};
 
+
         //distribution
         transporter = new PayloadDuct("transporter"){{
             requirements(distribution, sandboxOnly, with());
             size = 2;
         }};
 
+
         //liquid
+        pistonPump = new Pump("piston-pump"){{
+
+        }};
+
 
         //power
         solarCollector = new SolarCollector("solar-collector"){{
             requirements(power, sandboxOnly, with());
             size = 6;
+            powerProduction = 2f;
 
             drawer = new DrawMulti(
                     new DrawDefault(),
@@ -94,6 +104,7 @@ public class AhkarBlocks {
                     }}
             );
         }};
+
 
         //defense
         barrierProjector = new DirectionalForceProjector("barrier-projector"){{
@@ -108,6 +119,7 @@ public class AhkarBlocks {
             consumePower(4f);
         }};
 
+
         //crafting
         centrifuge = new Separator("centrifuge"){{
             requirements(production, with(surgeAlloy, 100, silicon, 125));
@@ -121,10 +133,13 @@ public class AhkarBlocks {
 
         }};
 
-        //effect
-        ahkarAccelerator = new Accelerator("hardened-accelerator"){{
 
-        }};
+        /*//effect
+        caliAccelerator = new SeAccelerator("hardened-accelerator"){{
+            requirements(effect, sandboxOnly, with());
+            size = 5;
+        }};*/
+
 
         ahkarDropPod = new DrawerCore("drop-pod"){{
             requirements(effect, debugOnly, with());
@@ -133,43 +148,29 @@ public class AhkarBlocks {
 
             drawer = new DrawMulti(
                 new DrawDefault(),
-                new DrawTurret(""){{ //todo hell's gates stand open in wait
-                    parts.add(new RegionPart(""){{
-                            name = "serilia-drop-pod-power-1";
-                            turretShading = true;
-                            mirror = true;
-                            heatColor = SeVFX.coreReactor;
-                            moveX = 10f;
-                            heatProgress = progress = PartProgress.warmup;
-                        }}, new RegionPart(""){{
-                            name = "serilia-drop-pod-power-2";
-                            turretShading = true;
-                            mirror = true;
-                            heatColor = SeVFX.coreReactor;
-                            moveX = -10f;
-                            heatProgress = progress = PartProgress.warmup;
-                    }});
-                }},
                 new DrawRegion("-top"),
                 new DrawTeam()
             );
         }};
+
 
         coreFramework = new DrawerCore("coreFramework"){{
             requirements(effect, shown, with(SeResources.nickel, 300, tarnide, 200));
             size = 3;
             scaledHealth = 160f;
-            unitType = SeUnits.glow;
+            //unitType = SeUnits.glow;
 
             drawer = new DrawMulti(
                 new DrawDefault(),
-                new DrawGlowRegion(){{color = SeVFX.coreReactor}},
+                new DrawGlowRegion(){{color = SeVFX.coreReactor;}},
                 new DrawRegion("-top"),
                 new DrawTeam()
             );
         }};
 
+
         //payloads
+
 
         //misc
 

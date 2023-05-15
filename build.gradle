@@ -1,3 +1,9 @@
+
+plugins{
+    // Apply the entity generation plugin.
+    id 'com.github.GlennFolker.EntityAnno' version "$entVersion"
+}
+
 apply plugin: "java"
 
 version '1.0'
@@ -27,10 +33,32 @@ allprojects{
 }
 
 dependencies{
+    // Downgrade Java 9+ syntax into being available in Java 8.
+    annotationProcessor "com.github.GlennFolker.EntityAnno:downgrader:$entVersion"
+
+    // Use the entity generation annotation processor.
+    compileOnly "com.github.GlennFolker.EntityAnno:entity:$entVersion"
+    kapt "com.github.GlennFolker.EntityAnno:entity:$entVersion"
+
     compileOnly "com.github.Anuken.Arc:arc-core:$mindustryVersion"
     compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
 
     annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
+}
+
+entityAnno{
+    // Mod internal name, corresponds to the "name" field in `mod.json`.
+    modName = 'serilia'
+    // [Optional] Mindustry version entity component source version override. Defaults to what EntityAnno uses as classpath.
+    mindustryVersion = project['mindustryVersion']
+    // Directory to store entity IO revisions.
+    revisionDir = file("$rootDir/revisions/")
+    // Package name for fetched vanilla entity components.
+    fetchPackage = 'serilia.entities.comp.vanilla'
+    // Modded entity component source files package; these will be excluded from the JAR.
+    genSrcPackage = 'serilia.entities.comp'
+    // Root generated entity classes package.
+    rootPackage = 'serilia.gen'
 }
 
 //force arc version

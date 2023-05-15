@@ -6,7 +6,7 @@ import mindustry.gen.Building;
 import mindustry.world.draw.DrawBlock;
 
 public class DrawTeam extends DrawBlock {
-    public TextureRegion[] teamRegions;
+    public TextureRegion[] teamRegions; //todo
     public TextureRegion teamRegion;
     public String suffix = "-team";
 

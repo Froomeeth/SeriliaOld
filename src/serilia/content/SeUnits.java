@@ -9,16 +9,13 @@ import mindustry.type.UnitType;
 import mindustry.type.Weapon;
 import serilia.types.SeriliaUnitType;
 
-import static mindustry.Vars.tilesize;
-
 public class SeUnits {
-    public static UnitType
+    //public static @EntityDef({Unitc.class, ElevationMovec.class/*, TractorBeamc.class*/}) UnitType glow;
 
+    public static UnitType
     scion,
     converge,
-    youth,
-
-    glow;
+    youth;
 
     public static void load(){
         scion = new SeriliaUnitType("scion"){{
@@ -80,9 +77,8 @@ public class SeUnits {
             );
         }};
 
-        glow = new SeriliaUnitType("glow"){{
+        /*glow = new SeriliaUnitType("glow"){{
             homeWorld = 1;
-            constructor = UnitEntity::create;
             flying = true;
 
             health = 700f;
@@ -104,7 +100,7 @@ public class SeUnits {
             coreUnitDock = true;
             controller = u -> new BuilderAI(true, 500f);
 
-            payloadCapacity = 2f * 2f * tilesize * tilesize;
+            payloadCapacity = 4f * 4f * tilesize * tilesize;
             pickupUnits = false;
 
             vulnerableWithPayloads = true;
@@ -118,6 +114,6 @@ public class SeUnits {
             trailLength = 5;
             engineOffset = 6f;
             engineSize = 1.8f;
-        }};
+        }};*/
     }
 }
