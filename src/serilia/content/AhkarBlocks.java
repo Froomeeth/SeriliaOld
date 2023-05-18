@@ -68,10 +68,10 @@ public class AhkarBlocks {
 
             squareSprite = false;
             drawer = new DrawMulti(
-                    new DrawDefault(),
+                    new DrawRegion("-bottom"),
                     new DrawSealedDust(),
                     new DrawHalfSpinner("-rotator", 2f),        new DrawZSet(Layer.blockOver),
-                    new DrawRegion("-top"),
+                    new DrawDefault(),
                     new DrawMineItem()
             );
         }};
