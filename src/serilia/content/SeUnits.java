@@ -7,12 +7,14 @@ import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
+import serilia.types.DoubleLegMech;
 import serilia.types.SeriliaUnitType;
 
 public class SeUnits {
     //public static @EntityDef({Unitc.class, ElevationMovec.class/*, TractorBeamc.class*/}) UnitType glow;
 
     public static UnitType
+            merun,
     scion,
     converge,
     youth;
@@ -115,5 +117,10 @@ public class SeUnits {
             engineOffset = 6f;
             engineSize = 1.8f;
         }};*/
+
+        merun = new DoubleLegMech("merun"){{
+
+        }};
+
     }
 }
