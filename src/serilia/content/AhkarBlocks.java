@@ -6,13 +6,14 @@ import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.DirectionalForceProjector;
-import mindustry.world.blocks.production.Pump;
+import mindustry.world.blocks.liquid.Conduit;
 import mindustry.world.blocks.production.Separator;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.draw.DrawGlowRegion;
 import mindustry.world.draw.DrawMulti;
 import mindustry.world.draw.DrawRegion;
 import serilia.vfx.SeVFX;
+import serilia.world.blocks.misc.BitmaskTiler;
 import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
@@ -24,8 +25,7 @@ import static mindustry.content.Liquids.nitrogen;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.*;
-import static serilia.content.SeResources.acidicSolution;
-import static serilia.content.SeResources.tarnide;
+import static serilia.content.SeResources.*;
 
 public class AhkarBlocks {
     public static Block
@@ -39,7 +39,7 @@ public class AhkarBlocks {
         transporter, splitter, transporterBridge,
 
         //liquid
-        pistonPump,
+        channel, valve, pistonPump,
 
         //power
         solarCollector,
@@ -85,8 +85,12 @@ public class AhkarBlocks {
 
 
         //liquid
-        pistonPump = new Pump("piston-pump"){{
+        channel = new BitmaskTiler("channel"){{
+            requirements(liquid, with(nickel, 2, metaglass, 1));
+        }};
 
+        valve = new Conduit("valve"){{ //todo make togglable
+            requirements(liquid, sandboxOnly, with());
         }};
 
 
@@ -155,7 +159,7 @@ public class AhkarBlocks {
 
 
         coreFramework = new DrawerCore("coreFramework"){{
-            requirements(effect, shown, with(SeResources.nickel, 300, tarnide, 200));
+            requirements(effect, shown, with(nickel, 300, tarnide, 200));
             size = 3;
             scaledHealth = 160f;
             //unitType = SeUnits.glow;

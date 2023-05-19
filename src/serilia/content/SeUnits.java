@@ -7,7 +7,6 @@ import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
-import serilia.types.DoubleLegMech;
 import serilia.types.SeriliaUnitType;
 
 public class SeUnits {
@@ -79,8 +78,8 @@ public class SeUnits {
             );
         }};
 
-        /*glow = new SeriliaUnitType("glow"){{
-            homeWorld = 1;
+        /*glow = new UnitType("glow"){{
+            //homeWorld = 1;
             flying = true;
 
             health = 700f;
@@ -102,7 +101,7 @@ public class SeUnits {
             coreUnitDock = true;
             controller = u -> new BuilderAI(true, 500f);
 
-            payloadCapacity = 4f * 4f * tilesize * tilesize;
+            payloadCapacity = 4f * 4f * 8 * 8;
             pickupUnits = false;
 
             vulnerableWithPayloads = true;
@@ -117,10 +116,5 @@ public class SeUnits {
             engineOffset = 6f;
             engineSize = 1.8f;
         }};*/
-
-        merun = new DoubleLegMech("merun"){{
-
-        }};
-
     }
 }
