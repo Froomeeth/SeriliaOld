@@ -128,7 +128,7 @@ public class LiquidChannel extends Block{
             }
         }
 
-        protected void removeGraphs(){
+/*        protected void removeGraphs(){
             //graph is getting recalculated, no longer valid
             if(graph != null){
                 graph.checkRemove();
@@ -137,7 +137,7 @@ public class LiquidChannel extends Block{
             }
 
             getConnections(other -> new LiquidGraph().reflow(this, other));
-        }
+        }*/
 
         @Override
         public void control(LAccess type, double p1, double p2, double p3, double p4){
@@ -165,12 +165,12 @@ public class LiquidChannel extends Block{
             addGraphs();
         }
 
-        @Override
+/*        @Override
         public void onProximityRemoved(){
             super.onProximityRemoved();
 
             removeGraphs();
-        }
+        }*/
 
         @Override
         public void draw(){
@@ -205,7 +205,7 @@ public class LiquidChannel extends Block{
                     && (tile == null || (source.relativeTo(tile.x, tile.y) + 2) % 4 != rotation);
         }
 
-        @Override
+/*        @Override
         public LiquidModule writeLiquids(){
             //"saved" liquids are based on a fraction, essentially splitting apart and re-joining
             tempLiquids.set(liquids, graph == null ? 1f : block.liquidCapacity / graph.totalCapacity);
@@ -215,7 +215,7 @@ public class LiquidChannel extends Block{
         @Override
         public float liquidCapacity(){
             return graph == null ? block.liquidCapacity : graph.totalCapacity;
-        }
+        }*/
 
         @Nullable
         @Override
@@ -270,7 +270,7 @@ public class LiquidChannel extends Block{
 
         public LiquidGraph(){
             entity = LiquidGraphUpdater.create();
-            entity.graph = this;
+            //entity.graph = this;
         }
 
         public void update(){
@@ -300,14 +300,14 @@ public class LiquidChannel extends Block{
             if(entity != null) entity.remove();
         }
 
-        public void remove(ChannelBuild build){
+/*        public void remove(ChannelBuild build){
             float fraction = build.block.liquidCapacity / totalCapacity;
             //remove fraction of liquids based on what part this conduit constituted
             //e.g. 70% of capacity was made up by this conduit = multiply liquids by 0.3 (remove 70%)
             liquids.mul(1f - fraction);
 
             totalCapacity -= build.block.liquidCapacity;
-        }
+        }*/
 
         public void reflow(@Nullable ChannelBuild ignore, ChannelBuild conduit){
             closedSet.clear();
@@ -356,7 +356,7 @@ public class LiquidChannel extends Block{
         protected void assign(ChannelBuild build, @Nullable Building ignore){
             if(build.graph != this){
 
-                //merge graph liquids - TODO - how does this react to different types
+/*                //merge graph liquids - TODO - how does this react to different types
                 if(build.graph != null){
                     build.graph.checkRemove();
 
@@ -365,7 +365,7 @@ public class LiquidChannel extends Block{
                 }else{
                     //simple direct liquid merge
                     liquids.add(build.liquids);
-                }
+                }*/
 
                 totalCapacity += build.block.liquidCapacity;
                 build.graph = this;
@@ -403,6 +403,5 @@ public class LiquidChannel extends Block{
                 smoothLiquid = liquids.currentAmount() / totalCapacity;
             }
         }
-
     }
 }
