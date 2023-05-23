@@ -1,4 +1,4 @@
-package serilia.vfx;
+package serilia.util;
 
 import arc.Core;
 import arc.graphics.g2d.Lines;
@@ -8,7 +8,7 @@ import arc.util.Nullable;
 
 import static arc.graphics.g2d.Fill.*;
 import static arc.util.Tmp.*;
-import static serilia.vfx.SeGraphics.quadHelper;
+import static serilia.util.SeUtil.quadHelper;
 
 /**Closs containing everything needed to make an illusion of height.*/
 public class Parallax{

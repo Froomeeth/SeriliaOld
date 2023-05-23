@@ -7,7 +7,7 @@ import arc.graphics.g2d.TextureRegion;
 import mindustry.gen.Unit;
 import mindustry.graphics.MultiPacker;
 import mindustry.type.UnitType;
-import serilia.vfx.SeVFX;
+import serilia.util.SeVFX;
 
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class SeriliaUnitType extends UnitType {

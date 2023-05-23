@@ -1,4 +1,4 @@
-package serilia.vfx;
+package serilia.util;
 
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;

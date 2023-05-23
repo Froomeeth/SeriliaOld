@@ -12,8 +12,8 @@ import mindustry.world.draw.DrawDefault;
 import mindustry.world.draw.DrawGlowRegion;
 import mindustry.world.draw.DrawMulti;
 import mindustry.world.draw.DrawRegion;
-import serilia.vfx.SeVFX;
-import serilia.world.blocks.misc.BitmaskTiler;
+import serilia.util.SeVFX;
+import serilia.world.blocks.liquid.LiquidChannel;
 import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
@@ -85,7 +85,7 @@ public class AhkarBlocks {
 
 
         //liquid
-        channel = new BitmaskTiler("channel"){{
+        channel = new LiquidChannel("channel"){{
             requirements(liquid, with(nickel, 2, metaglass, 1));
         }};
 

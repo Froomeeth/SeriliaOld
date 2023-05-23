@@ -2,7 +2,7 @@ package serilia.content;
 
 import mindustry.world.Block;
 import mindustry.world.blocks.storage.CoreBlock;
-import serilia.world.blocks.misc.BitmaskTiler;
+import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.misc.DrawTest;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 
@@ -20,6 +20,7 @@ public class CaliBlocks {
         bulkDrill,
 
         //distribution (payload too)
+        ducter,
 
         //liquid
 
@@ -46,6 +47,9 @@ public class CaliBlocks {
         //drill
 
         //distribution
+        ducter = new ShadedDuct("ducter"){{
+            requirements(distribution, sandboxOnly, with());
+        }};
 
         //defense
 
@@ -108,11 +112,6 @@ public class CaliBlocks {
         //misc
         drawTest = new DrawTest("draw-test"){{
             requirements(effect, sandboxOnly, with());
-        }};
-
-        bitTiler = new BitmaskTiler("connect-wall-large"){{
-            requirements(effect, sandboxOnly, with());
-            size = 2;
         }};
     }
 }
