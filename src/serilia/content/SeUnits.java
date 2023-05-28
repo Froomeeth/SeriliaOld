@@ -74,7 +74,7 @@ public class SeUnits {
             }});
 
             setEnginesMirror(
-                    new UnitEngine(10 / 4f, -16 / 4f, 1.8f, 270f)
+                    new UnitEngine(14 / 4f, -22 / 4f, 1.9f, 270f)
             );
         }};
 

@@ -1,6 +1,10 @@
 package serilia.content;
 
+import mindustry.content.Fx;
+import mindustry.type.Category;
+import mindustry.type.LiquidStack;
 import mindustry.world.Block;
+import mindustry.world.blocks.production.BurstDrill;
 import mindustry.world.blocks.storage.CoreBlock;
 import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.misc.DrawTest;
@@ -17,7 +21,7 @@ public class CaliBlocks {
         //turret
 
         //drill
-        bulkDrill,
+        heatDrill, largeheatdrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
 
         //distribution (payload too)
         ducter,
@@ -46,9 +50,28 @@ public class CaliBlocks {
 
         //drill
 
+        heatDrill = new BurstDrill("heat-drill"){{
+            requirements(Category.production, with(SeResources.iridium, 20));
+            scaledHealth = 75;
+            drillTime = 60f * 10f;
+            size = 2;
+            tier = 1;
+            drillEffect = Fx.mineBig;
+            shake = 0.5f;
+            itemCapacity = 16;
+            arrowOffset = 0f;
+            arrowSpacing = 0f;
+            arrows = 1;
+
+            drillMultipliers.put(SeResources.iridium, 1.5f);
+
+            consumeLiquids(LiquidStack.with(SeResources.methane, 5f / 60f));
+
+        }};
+
         //distribution
         ducter = new ShadedDuct("ducter"){{
-            requirements(distribution, sandboxOnly, with());
+            requirements(distribution, with(SeResources.iridium, 2));
         }};
 
         //defense
