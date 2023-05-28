@@ -5,7 +5,14 @@ import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.TextureRegion;
+import arc.math.Mathf;
 import arc.math.geom.Vec2;
+import arc.struct.Seq;
+import mindustry.core.UI;
+import mindustry.type.Category;
+import mindustry.type.ItemStack;
+import mindustry.world.blocks.defense.ShieldWall;
+import mindustry.world.blocks.defense.Wall;
 
 public class SeUtil{
     public static Color[] spectrum = {Color.red, Color.coral, Color.yellow, Color.lime, Color.green, Color.teal, Color.blue, Color.purple, Color.magenta};
@@ -62,6 +69,60 @@ public class SeUtil{
             tiles[step] = new TextureRegion(tex, 1 + (step * (margin + size)), 1 + (layer * (margin + size)), size, size);
         }
         return tiles;
+    }
+
+
+    //w a l l
+    public static void generateWalls(Seq<Wall> fromWalls, Seq<Integer> genSizes){
+        fromWalls.each(wall -> {
+            generateWalls(wall, genSizes);
+        });
+    }
+
+    public static void generateWalls(Wall wall, Seq<Integer> genSizes){
+        genSizes.each(si -> {
+            int s = si;
+            Wall w = wall instanceof ShieldWall ? new ShieldWall(wall.name.substring(8) + "-" + s) : new Wall(wall.name.substring(8) + "-" + s);
+
+            ItemStack[] reqs = new ItemStack[wall.requirements.length];
+            for(int i = 0; i < reqs.length; i++){
+                int quantity = Mathf.round(((float)wall.requirements[i].amount / (wall.size * wall.size) * s * s));
+                reqs[i] = new ItemStack(wall.requirements[i].item, UI.roundAmount(quantity));
+            }
+            w.requirements(Category.defense, wall.buildVisibility, reqs);
+            w.size = s;
+            w.buildVisibility = wall.buildVisibility;
+            w.scaledHealth = wall.scaledHealth;
+            w.lightningChance = wall.lightningChance;
+            w.lightningDamage = wall.lightningDamage;
+            w.lightningColor = wall.lightningColor;
+            w.lightningSound = wall.lightningSound;
+            w.lightningLength = wall.lightningLength;
+            w.flashHit = wall.flashHit;
+            w.flashColor = wall.flashColor;
+            w.deflectSound = wall.deflectSound;
+            w.chanceDeflect = wall.chanceDeflect;
+            w.conductivePower = wall.conductivePower;
+            w.variants = wall.variants;
+            w.insulated = wall.insulated;
+            w.envRequired = wall.envRequired;
+            w.envEnabled = wall.envEnabled;
+            w.envDisabled = wall.envDisabled;
+            w.placeEffect = wall.placeEffect;
+            w.placeSound = wall.placeSound;
+            w.breakEffect = wall.breakEffect;
+            w.breakSound = wall.breakSound;
+            w.destroySound = wall.destroySound;
+            if(wall instanceof ShieldWall){
+                ShieldWall sw = (ShieldWall)w, shWall = (ShieldWall)wall;
+                sw.shieldHealth = shWall.shieldHealth  / (wall.size * wall.size) * s * s;
+                sw.breakCooldown = shWall.breakCooldown;
+                sw.regenSpeed = shWall.regenSpeed / (wall.size * wall.size) * s * s;;
+                sw.glowColor = shWall.glowColor;
+                sw.glowMag = shWall.glowMag;
+                sw.glowScl = shWall.glowScl;
+            }
+        });
     }
 
 

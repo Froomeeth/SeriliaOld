@@ -7,7 +7,7 @@ import arc.graphics.g2d.TextureRegion;
 import mindustry.gen.Unit;
 import mindustry.graphics.MultiPacker;
 import mindustry.type.UnitType;
-import serilia.util.SeVFX;
+import serilia.content.SeFxPal;
 
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class SeriliaUnitType extends UnitType {
@@ -23,11 +23,11 @@ public class SeriliaUnitType extends UnitType {
     public void worldParams(){
         switch (homeWorld) {
             case 1 -> {
-                outlineColor = SeVFX.ahkarOutline;
+                outlineColor = SeFxPal.ahkarOutline;
                 glowCell = glowEngine = true;
                 lowAltitude = false;
             }
-            default -> outlineColor = SeVFX.caliOutline;
+            default -> outlineColor = SeFxPal.caliOutline;
         }
     }
     

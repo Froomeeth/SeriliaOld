@@ -9,7 +9,7 @@ import mindustry.gen.Building;
 import mindustry.world.Block;
 import mindustry.world.draw.DrawBlock;
 
-import static serilia.util.SeGraphics.drawHalfSpin;
+import static serilia.graphics.SeGraphics.drawHalfSpin;
 
 public class DrawHalfSpinner extends DrawBlock{
     public TextureRegion region;

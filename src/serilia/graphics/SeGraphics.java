@@ -1,4 +1,4 @@
-package serilia.util;
+package serilia.graphics;
 
 import arc.Core;
 import arc.graphics.g2d.Draw;

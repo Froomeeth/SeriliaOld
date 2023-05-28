@@ -1,19 +1,22 @@
 package serilia.content;
 
+import arc.graphics.Blending;
 import arc.graphics.Color;
+import arc.struct.Seq;
+import mindustry.content.UnitTypes;
 import mindustry.graphics.Layer;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.DirectionalForceProjector;
+import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.liquid.Conduit;
+import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.production.Separator;
-import mindustry.world.draw.DrawDefault;
-import mindustry.world.draw.DrawGlowRegion;
-import mindustry.world.draw.DrawMulti;
-import mindustry.world.draw.DrawRegion;
-import serilia.util.SeVFX;
+import mindustry.world.draw.*;
+import serilia.util.SeUtil;
 import serilia.world.blocks.liquid.LiquidChannel;
+import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
@@ -22,6 +25,7 @@ import serilia.world.draw.*;
 
 import static mindustry.content.Items.*;
 import static mindustry.content.Liquids.nitrogen;
+import static mindustry.content.Liquids.slag;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.*;
@@ -47,8 +51,10 @@ public class AhkarBlocks {
         //defense
         barrierProjector,
 
+        nickelWall,
+
         //crafting
-        centrifuge,
+        siliconFurnace, heater, foundry, centrifuge,
 
         //unit
 
@@ -123,8 +129,51 @@ public class AhkarBlocks {
             consumePower(4f);
         }};
 
+        nickelWall = new Wall("nickel-wall"){{
+            requirements(defense, shown, with(nickel, 24));
+            size = 2;
+            scaledHealth = 400f;
+        }};
+
 
         //crafting
+        siliconFurnace = new GenericCrafter("silicon-furnace"){{ //todo hothot liquid
+            requirements(production, with(nickel, 6, tarnide, 10, metaglass, 2));
+
+            craftTime = 80f;
+            consumeItems(with(sand, 2));
+            outputItems = with(silicon, 1);
+
+            drawer = new DrawMulti(
+                    new DrawRegion("-bottom"),
+                    new DrawGlowRegion("-inner"){{
+                        blending = Blending.normal;
+                        layer = -1f;
+                    }},
+                    new DrawDefault(),
+                    new DrawGlowRegion()
+            );
+        }};
+
+        heater = new GenericCrafter("heater"){{
+            requirements(production, with(nickel, 10, tarnide, 25, metaglass, 12));
+            size = 2;
+
+            craftTime = 30f;
+            consumeItems(with(nickel, 1));
+            outputLiquids = LiquidStack.with(slag, 0.5f); //todo metal variant gen
+        }};
+
+        foundry = new MoreGenericCrafter("foundry"){{
+            requirements(production, with(nickel, 10, tarnide, 25, metaglass, 12));
+            size = 4;
+
+            craftTime = 180f;
+            consumeLiquids(LiquidStack.with(slag, 0.5f));
+            consumeItems(with(metaglass, 6));
+            outputPayload = lens;
+        }};
+
         centrifuge = new Separator("centrifuge"){{
             requirements(production, with(surgeAlloy, 100, silicon, 125));
             size = 6;
@@ -158,15 +207,15 @@ public class AhkarBlocks {
         }};
 
 
-        coreFramework = new DrawerCore("coreFramework"){{
+        coreFramework = new DrawerCore("core-framework"){{
             requirements(effect, shown, with(nickel, 300, tarnide, 200));
             size = 3;
             scaledHealth = 160f;
-            //unitType = SeUnits.glow;
+            unitType = UnitTypes.incite; //SeUnits.glow;
 
             drawer = new DrawMulti(
                 new DrawDefault(),
-                new DrawGlowRegion(){{color = SeVFX.coreReactor;}},
+                new DrawGlowRegion(){{color = SeFxPal.coreReactor;}},
                 new DrawRegion("-top"),
                 new DrawTeam()
             );
@@ -178,5 +227,40 @@ public class AhkarBlocks {
 
         //misc
 
+
+
+        Seq<Block> ahkarBlocks = Seq.with(
+                sealedBore,
+
+                //distribution (payload too)
+                transporter, splitter, transporterBridge,
+
+                //liquid
+                channel, valve, pistonPump,
+
+                //power
+                solarCollector,
+
+                //defense
+                barrierProjector,
+
+                nickelWall,
+
+                //crafting
+                centrifuge,
+
+                //unit
+
+                //effect
+                caliAccelerator, ahkarDropPod, coreFramework
+        );
+        ahkarBlocks.each(b -> {
+            if(b != null){
+                b.placeEffect = SeFxPal.ahkarPlace;
+                b.breakEffect = SeFxPal.ahkarBreak;
+
+                if(b instanceof Wall) SeUtil.generateWalls((Wall)b, Seq.with(3));
+            }
+        });
     }
 }
