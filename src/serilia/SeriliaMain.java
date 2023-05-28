@@ -31,6 +31,7 @@ public class SeriliaMain extends Mod{
         SeResources.load();
         EntityRegistry.register();
         SeUnits.load();
+        SeEnvBlocks.load();
         AhkarBlocks.load();
         CaliBlocks.load();
         SeSystem.load();
