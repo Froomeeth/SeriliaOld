@@ -14,7 +14,7 @@ import serilia.AhkarPlanetGenerator;
 import static mindustry.content.Blocks.*;
 
 public class SeSystem {
-    public static Planet serilia, caliterra, ahkar; //TODO asteroids
+    public static Planet serilia, caliterra, ahkar, rogueParent, rogue; //TODO asteroids
 
     /**Due to skybox issues, keep orbit radii below 150, or some of the system may disappear when not focussed.*/
     public static void load(){
@@ -90,5 +90,61 @@ public class SeSystem {
 
             unlockedOnLand.add(coreBastion);
         }};
+
+
+        //rogue planet for underice underwater dark levels
+        /*rogueParent = new Planet("rogue-parent", Planets.sun, 33f, 3){{
+            bloom = true;
+            accessible = false;
+            drawOrbit = false;
+            orbitRadius = 1000f;
+            lightColor = Color.valueOf("00000000");
+
+            meshLoader = () -> new SunMesh(
+                    this, 7,
+                    5, 0.3, 1.7, 1.2, 1,
+                    1.1f,
+                    Color.valueOf("ff5738")
+            );
+        }};
+
+        rogue = new Planet("rogue", rogueParent, 1.5f, 1){{
+            orbitRadius = 1000f;
+            generator = new AhkarPlanetGenerator();
+            meshLoader = () -> new HexMesh(this, 5);
+            alwaysUnlocked = true;
+            landCloudColor = Pal.darkishGray.cpy().a(0f);
+            hasAtmosphere = false;
+            defaultEnv = Env.terrestrial;
+            startSector = 1;
+            atmosphereRadIn = 0f;
+            atmosphereRadOut = 0f;
+            tidalLock = false;
+            totalRadius = 0.65f;
+            lightSrcTo = 0.5f;
+            lightDstFrom = 0.2f;
+            solarSystem = rogueParent;
+            clearSectorOnLose = true;
+            defaultCore = coreAcropolis;
+            drawOrbit = false;
+            iconColor = beryllicStone.mapColor;
+            //hiddenItems.addAll(Items.serpuloItems).addAll(Items.erekirItems).removeAll(HResources.ahkarItems);
+
+            ruleSetter = r -> {
+                r.waveTeam = Team.green;
+                r.placeRangeCheck = false;
+                //r.attributes.set(Attribute.heat, 0.8f);
+                r.showSpawns = true;
+                //r.fog = true;
+                //r.staticFog = true;
+                r.lighting = false;
+                r.coreDestroyClear = true;
+                r.onlyDepositCore = true;
+                r.infiniteResources = true;
+                r.unitAmmo = true;
+            };
+
+            unlockedOnLand.add(coreBastion);
+        }};*/
     }
 }

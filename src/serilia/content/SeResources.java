@@ -2,11 +2,15 @@ package serilia.content;
 
 import arc.graphics.*;
 import mindustry.type.*;
+import mindustry.world.Block;
+
 public class SeResources {
     public static Item
             nickel, iridium, ferrite, vanadium, tarnide, galvanium, chirokyn, paragonite, graphene;
     public static Liquid
             methane, chlorine, acid, acidicSolution;
+    public static Block
+            lens;
     //public static PayloadItem
 
     public static void load(){
@@ -76,7 +80,6 @@ public class SeResources {
         }};
 
         //liquids
-
         methane = new Liquid("methane", Color.valueOf("bc5452")){{
             gas = true;
             explosiveness = 0.15f;
@@ -98,9 +101,11 @@ public class SeResources {
         acid = new Liquid("acid"){{
             explosiveness = flammability = heatCapacity = 0f; //todo acidity *stat*
         }};
-
         acidicSolution = new Liquid("acidic-solution"){{
             explosiveness = flammability = heatCapacity = 0f;
         }};
+
+        //payload
+        lens = new Block("lens"){{}};
     }
 }

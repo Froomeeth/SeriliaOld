@@ -17,8 +17,8 @@ import rhino.NativeJavaPackage;
 import serilia.content.*;
 import serilia.gen.entities.EntityRegistry;
 import serilia.util.Parallax;
-import serilia.util.SeGraphics;
-import serilia.util.SeMenuRenderer;
+import serilia.graphics.SeGraphics;
+import serilia.graphics.SeMenuRenderer;
 
 public class SeriliaMain extends Mod{
     public static Parallax parallax = new Parallax();
