@@ -43,5 +43,6 @@ public class SeEnvBlocks {
         oreIridium = new OreBlock(iridium){{
         }};
         oreGraphite = new OreBlock(graphite){{
+            variants = 3;
         }};
     }}

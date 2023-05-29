@@ -1,11 +1,21 @@
 package serilia.content;
 
 import mindustry.content.Fx;
+import mindustry.content.Items;
+import mindustry.gen.Sounds;
 import mindustry.type.Category;
+import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
+import mindustry.world.blocks.production.AttributeCrafter;
 import mindustry.world.blocks.production.BurstDrill;
+import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.storage.CoreBlock;
+import mindustry.world.draw.DrawDefault;
+import mindustry.world.draw.DrawLiquidTile;
+import mindustry.world.draw.DrawMulti;
+import mindustry.world.draw.DrawRegion;
+import mindustry.world.meta.Attribute;
 import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.misc.DrawTest;
 import serilia.world.blocks.payload.MoreGenericCrafter;
@@ -21,7 +31,7 @@ public class CaliBlocks {
         //turret
 
         //drill
-        heatDrill, largeheatdrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
+        methaneExtractor, heatDrill, largeheatdrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
 
         //distribution (payload too)
         ducter,
@@ -33,7 +43,7 @@ public class CaliBlocks {
         //defense
 
         //crafting
-        bulkRefinery,
+        fragisteelPress, bulkRefinery,
 
         //unit
 
@@ -49,6 +59,25 @@ public class CaliBlocks {
     public static void load() {
 
         //drill
+
+
+        methaneExtractor = new AttributeCrafter("methane-extractor"){{
+            requirements(Category.production, with(iridium, 70));
+            attribute = Attribute.steam;
+            minEfficiency = 9f - 0.0001f;
+            baseEfficiency = 0f;
+            displayEfficiency = false;
+            craftEffect = Fx.turbinegenerate;
+            drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(methane, 8f / 4f), new DrawDefault());
+            craftTime = 120f;
+            size = 3;
+            ambientSound = Sounds.hum;
+            ambientSoundVolume = 0.06f;
+            hasLiquids = true;
+            boostScale = 1f / 9f;
+            outputLiquid = new LiquidStack(methane, 80f / 60f);
+            liquidCapacity = 160f;
+        }};
 
         heatDrill = new BurstDrill("heat-drill"){{
             requirements(Category.production, with(SeResources.iridium, 20));
@@ -77,21 +106,17 @@ public class CaliBlocks {
         //defense
 
         //crafting
-        bulkRefinery = new MoreGenericCrafter("bulk-refinery"){{
-            requirements(crafting, sandboxOnly, with());
-            size = 4;
+        fragisteelPress = new GenericCrafter("fragisteel-press"){{
+            requirements(Category.crafting, with(SeResources.iridium, 50, Items.graphite, 40));
 
-            /*consumeLiquid(methane, 2);
-            recipes.add(
-                new CraftRecipe(){{
-                    inputPayload = vanadiniteRock;
-                    outputItems = with(vanadium, 6, sand, 6, metaglass, 2);
-                    outputLiquids = LiquidStack.with(chlorine, 0.3f);
+            craftEffect = Fx.pulverizeMedium;
+            health = 200;
+            outputItem = new ItemStack(SeResources.fragisteel, 1);
+            craftTime = 70f;
+            size = 2;
+            hasItems = true;
 
-                    craftTime = 120f;
-                    craftEffect = Fx.breakProp;
-                }}
-            );*/
+            consumeItem(SeResources.iridium, 2);
         }};
 
         //effect
