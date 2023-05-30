@@ -6,7 +6,7 @@ import mindustry.world.Block;
 
 public class SeResources {
     public static Item
-            nickel, iridium, ferrite, vanadium, tarnide, galvanium, chirokyn, paragonite, graphene;
+            nickel, iridium, fragisteel, ferrite, vanadium, tarnide, galvanium, chirokyn, paragonite, graphene;
     public static Liquid
             methane, chlorine, acid, acidicSolution;
     public static Block
@@ -27,6 +27,12 @@ public class SeResources {
 
             explosiveness = flammability = radioactivity = charge = 0f;
         }};
+        fragisteel = new Item("fragisteel", Color.valueOf("88a9bd")){{
+            hardness = 1;
+            cost = 2f;
+
+            explosiveness = flammability = radioactivity = charge = 0f;
+        }};
 
         ferrite = new Item("ferrite", Color.valueOf("876a67")){{
             hardness = 1;
@@ -42,7 +48,7 @@ public class SeResources {
             explosiveness = flammability = radioactivity = charge = 0f;
         }};
 
-        tarnide = new Item("tarnide", Color.valueOf("6a5d4d")){{
+        tarnide = new Item("tarnide", Color.valueOf("543f80")){{
             alwaysUnlocked = true;
 
             hardness = 2;
@@ -58,7 +64,7 @@ public class SeResources {
             explosiveness = flammability = radioactivity = charge = 0f;
         }};
 
-        chirokyn = new Item("chirokyn", Color.valueOf("6974c4")){{
+        chirokyn = new Item("chirokyn", Color.valueOf("1da27d")){{
             hardness = 3;
             cost = 1.7f;
 

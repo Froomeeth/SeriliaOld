@@ -1,11 +1,26 @@
 package serilia.content;
 
+import arc.graphics.Color;
+import arc.math.Mathf;
 import mindustry.content.Fx;
+import mindustry.content.Items;
+import mindustry.entities.Effect;
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.entities.part.RegionPart;
+import mindustry.entities.pattern.ShootAlternate;
+import mindustry.gen.Sounds;
+import mindustry.graphics.Pal;
 import mindustry.type.Category;
+import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
+import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.world.blocks.production.AttributeCrafter;
 import mindustry.world.blocks.production.BurstDrill;
+import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.storage.CoreBlock;
+import mindustry.world.draw.*;
+import mindustry.world.meta.Attribute;
 import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.misc.DrawTest;
 import serilia.world.blocks.payload.MoreGenericCrafter;
@@ -19,9 +34,10 @@ public class CaliBlocks {
     public static Block
 
         //turret
+        ballista,
 
         //drill
-        heatDrill, largeheatdrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
+        methaneExtractor, heatDrill, largeheatdrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
 
         //distribution (payload too)
         ducter,
@@ -33,7 +49,7 @@ public class CaliBlocks {
         //defense
 
         //crafting
-        bulkRefinery,
+        fragisteelPress, bulkRefinery,
 
         //unit
 
@@ -47,8 +63,146 @@ public class CaliBlocks {
         drawTest, bitTiler;
 
     public static void load() {
+        //turret
+        ballista = new ItemTurret("ballista") {{requirements(Category.turret, with(SeResources.iridium, 175, SeResources.tarnide, 100, SeResources.chirokyn, 75));
+
+            outlineColor = Color.valueOf("473a3a");
+            squareSprite = false;
+
+            health = 575;
+            armor = 1f;
+            size = 3;
+
+            itemCapacity = 1/2;
+            ammoPerShot = 3;
+
+            range = 280;
+            shootCone = 5;
+            reload = 60;
+
+            targetAir = true;
+            targetGround = false;
+
+            rotateSpeed = 2.5f;
+
+            shootSound = Sounds.shootAlt;
+            shootY = 3;
+            shoot = new ShootAlternate(){{
+                spread = 4.7f;
+                shots = 2;
+                barrels = 2;
+            }};
+
+            minWarmup = 0.94f;
+            shootWarmupSpeed = 0.07f;
+
+            Effect sfe = Fx.colorSparkBig;
+
+            ammo(
+                    SeResources.iridium, new BasicBulletType(10f, 95){{
+                        width = 12f;
+                        hitSize = 7f;
+                        height = 20f;
+                        lifetime = 28f;
+                        shootEffect = sfe;
+                        smokeEffect = Fx.shootBigSmoke;
+                        ammoMultiplier = 1;
+                        pierceCap = 2;
+                        pierce = true;
+                        pierceBuilding = true;
+                        hitColor = backColor = trailColor = Color.valueOf("738184");
+                        frontColor = Color.white;
+                        trailWidth = 2.1f;
+                        trailLength = 10;
+                        hitEffect = despawnEffect = Fx.hitBulletColor;
+                        buildingDamageMultiplier = 0.3f;
+                        collidesGround = false;
+
+                        backSprite = "large-bomb-back";
+                        sprite = "mine-bullet";
+                    }},
+                    SeResources.fragisteel, new BasicBulletType(10f, 115){{
+                        width = 13f;
+                        height = 19f;
+                        lifetime = 28f;
+                        hitSize = 7f;
+                        shootEffect = sfe;
+                        smokeEffect = Fx.shootBigSmoke;
+                        ammoMultiplier = 1;
+                        reloadMultiplier = 1f;
+                        pierceCap = 3;
+                        pierce = true;
+                        pierceBuilding = true;
+                        hitColor = backColor = trailColor = Pal.tungstenShot;
+                        frontColor = Color.white;
+                        trailWidth = 2.2f;
+                        trailLength = 11;
+                        hitEffect = despawnEffect = Fx.hitBulletColor;
+                        buildingDamageMultiplier = 0.3f;
+                        collidesGround = false;
+
+                        backSprite = "large-bomb-back";
+                        sprite = "mine-bullet";
+                    }}
+            );
+            drawer = new DrawTurret(){{
+                parts.add(
+                        new RegionPart("-front"){{
+                            progress = PartProgress.warmup;
+                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
+                            mirror = false;
+                            under = true;
+                            moveX = 0f;
+                            moveY = -2f;
+                        }},
+                        new  RegionPart("-lower-plate"){{
+                            progress = PartProgress.warmup;
+                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
+                            heatColor = Color.red;
+                            moveX = -1f;
+                            moveY = -1f;
+                            mirror = true;
+                            moves.add(new PartMove(PartProgress.recoil, 0f, -1.5f, 0f));
+                        }},
+                        new RegionPart("-upper-plate"){{
+                            progress = PartProgress.warmup;
+                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
+                            mirror = true;
+                            moveX = -1f;
+                            moveY = -1f;
+                            moves.add(new PartMove(PartProgress.recoil, 0f, -3f, 0f));
+                        }},
+
+                        new RegionPart("-middle-plate"){{
+                            progress = PartProgress.warmup;
+                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
+                            mirror = true;
+                            moveY = -3.5f;
+                            moveX = -1f;
+                            moves.add(new PartMove(PartProgress.recoil, 2f, 3f, -30f));
+                        }});
+            }};
+
+        }};
 
         //drill
+        methaneExtractor = new AttributeCrafter("methane-extractor"){{
+            requirements(Category.production, with(iridium, 70));
+            attribute = Attribute.steam;
+            minEfficiency = 9f - 0.0001f;
+            baseEfficiency = 0f;
+            displayEfficiency = false;
+            craftEffect = Fx.turbinegenerate;
+            drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawLiquidTile(methane, 8f / 4f), new DrawDefault());
+            craftTime = 120f;
+            size = 3;
+            ambientSound = Sounds.hum;
+            ambientSoundVolume = 0.06f;
+            hasLiquids = true;
+            boostScale = 1f / 9f;
+            outputLiquid = new LiquidStack(methane, 80f / 60f);
+            liquidCapacity = 160f;
+        }};
 
         heatDrill = new BurstDrill("heat-drill"){{
             requirements(Category.production, with(SeResources.iridium, 20));
@@ -77,21 +231,17 @@ public class CaliBlocks {
         //defense
 
         //crafting
-        bulkRefinery = new MoreGenericCrafter("bulk-refinery"){{
-            requirements(crafting, sandboxOnly, with());
-            size = 4;
+        fragisteelPress = new GenericCrafter("fragisteel-press"){{
+            requirements(Category.crafting, with(SeResources.iridium, 50, Items.graphite, 40));
 
-            /*consumeLiquid(methane, 2);
-            recipes.add(
-                new CraftRecipe(){{
-                    inputPayload = vanadiniteRock;
-                    outputItems = with(vanadium, 6, sand, 6, metaglass, 2);
-                    outputLiquids = LiquidStack.with(chlorine, 0.3f);
+            craftEffect = Fx.pulverizeMedium;
+            health = 200;
+            outputItem = new ItemStack(SeResources.fragisteel, 1);
+            craftTime = 70f;
+            size = 2;
+            hasItems = true;
 
-                    craftTime = 120f;
-                    craftEffect = Fx.breakProp;
-                }}
-            );*/
+            consumeItem(SeResources.iridium, 2);
         }};
 
         //effect
