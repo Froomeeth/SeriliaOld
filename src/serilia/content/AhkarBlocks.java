@@ -247,7 +247,7 @@ public class AhkarBlocks {
                 nickelWall,
 
                 //crafting
-                centrifuge,
+                siliconFurnace, heater, foundry, centrifuge,
 
                 //unit
 
