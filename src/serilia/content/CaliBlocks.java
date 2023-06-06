@@ -2,8 +2,10 @@ package serilia.content;
 
 import arc.graphics.Color;
 import arc.math.Mathf;
+import arc.struct.Seq;
 import mindustry.content.Fx;
 import mindustry.content.Items;
+import mindustry.content.UnitTypes;
 import mindustry.entities.Effect;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.part.RegionPart;
@@ -19,6 +21,7 @@ import mindustry.world.blocks.production.AttributeCrafter;
 import mindustry.world.blocks.production.BurstDrill;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.storage.CoreBlock;
+import mindustry.world.blocks.units.UnitFactory;
 import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
 import serilia.world.blocks.distribution.ShadedDuct;
@@ -52,6 +55,7 @@ public class CaliBlocks {
         fragisteelPress, bulkRefinery,
 
         //unit
+        mechManufactor, droneManufactor, shipManufactor,
 
         //effect
         coreSprout, coreBurgeon, coreGreenhouse,
@@ -242,6 +246,34 @@ public class CaliBlocks {
             hasItems = true;
 
             consumeItem(SeResources.iridium, 2);
+        }};
+        //unit
+
+        mechManufactor = new UnitFactory("mech-manufactor"){{
+            requirements(Category.units, with(Items.graphite, 55, Items.silicon, 200, iridium, 100, chirokyn, 100));
+            plans = Seq.with(
+                    new UnitPlan(UnitTypes.fortress, 60f * 15, with(Items.silicon, 95, Items.lead, 10)),
+                    new UnitPlan(UnitTypes.cleroi, 60f * 10, with(Items.silicon, 50, Items.coal, 10))
+            );
+            size = 4;
+            consumePower(4f);
+        }};
+        droneManufactor = new UnitFactory("drone-manufactor"){{
+            requirements(Category.units, with(Items.graphite, 55, Items.silicon, 200, iridium, 100, chirokyn, 100));
+            plans = Seq.with(
+                    new UnitPlan(UnitTypes.mega, 60f * 15, with(Items.silicon, 85, Items.lead, 10)),
+                    new UnitPlan(UnitTypes.elude, 60f * 10, with(Items.silicon, 90, Items.coal, 10))
+            );
+            size = 4;
+            consumePower(4f);
+        }};
+        shipManufactor = new UnitFactory("ship-manufactor"){{
+            requirements(Category.units, with(Items.graphite, 55, Items.silicon, 200, iridium, 100, chirokyn, 100));
+            plans = Seq.with(
+                    new UnitPlan(UnitTypes.minke, 60f * 10, with(Items.silicon, 180, Items.metaglass, 95))
+            );
+            size = 4;
+            consumePower(4f);
         }};
 
         //effect

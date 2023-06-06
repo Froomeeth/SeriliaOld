@@ -36,7 +36,7 @@ import static serilia.content.SeResources.*;
 public class SeEnvBlocks {
     public static Block
 
-    oreIridium, oreGraphite;
+    oreIridium, oreGraphite, oreTarnide;
 
     public static void load() {
 
@@ -44,5 +44,7 @@ public class SeEnvBlocks {
         }};
         oreGraphite = new OreBlock(graphite){{
             variants = 3;
+        }};
+        oreTarnide = new OreBlock(tarnide){{
         }};
     }}
