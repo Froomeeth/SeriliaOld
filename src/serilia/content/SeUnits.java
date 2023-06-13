@@ -1,12 +1,18 @@
 package serilia.content;
 
+import arc.graphics.Color;
 import mindustry.ai.types.BuilderAI;
+import mindustry.content.Fx;
 import mindustry.entities.bullet.MissileBulletType;
+import mindustry.entities.bullet.PointBulletType;
+import mindustry.entities.pattern.ShootAlternate;
+import mindustry.entities.pattern.ShootPattern;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
+import mindustry.type.unit.ErekirUnitType;
 import serilia.types.SeriliaUnitType;
 
 public class SeUnits {
@@ -16,10 +22,13 @@ public class SeUnits {
             merun,
     scion,
     converge,
-    youth;
+    youth,
 
-    public static void load(){
-        scion = new SeriliaUnitType("scion"){{
+    //assault
+    sunburst;
+
+    public static void load() {
+        scion = new SeriliaUnitType("scion") {{
 
             aiController = BuilderAI::new;
             isEnemy = false;
@@ -44,7 +53,7 @@ public class SeUnits {
             engineSize = 0;
             engineOffset = 0;
 
-            weapons.add(new Weapon(){{
+            weapons.add(new Weapon() {{
                 x = 3f;
                 y = 0f;
                 mirror = true;
@@ -56,7 +65,7 @@ public class SeUnits {
 
                 shootSound = Sounds.missile;
 
-                bullet = new MissileBulletType(){{
+                bullet = new MissileBulletType() {{
                     sprite = "missile";
                     width = 6f;
                     height = 10f;
@@ -116,5 +125,57 @@ public class SeUnits {
             engineOffset = 6f;
             engineSize = 1.8f;
         }};*/
-    }
-}
+
+        sunburst = new ErekirUnitType("sunburst") {
+            {
+                speed = 0.65f;
+                drag = 0.1f;
+                hitSize = 21f;
+                rotateSpeed = 3f;
+                health = 2900;
+                armor = 7f;
+                fogRadius = 40f;
+                stepShake = 0f;
+
+                legCount = 6;
+                legLength = 18f;
+                legGroupSize = 3;
+                lockLegBase = true;
+                legContinuousMove = true;
+                legExtension = -3f;
+                legBaseOffset = 7f;
+                legMaxLength = 1.1f;
+                legMinLength = 0.2f;
+                legLengthScl = 0.95f;
+                legForwardScl = 0.9f;
+
+                legMoveSpace = 1f;
+                hovering = true;
+
+                shadowElevation = 0.2f;
+                groundLayer = Layer.legUnit - 1f;
+
+                weapons.add(new Weapon("large-weapon"){{
+                    reload = 13f;
+                    x = 4f;
+                    y = 2f;
+                    top = false;
+                    ejectEffect = Fx.casing1;
+                    bullet = new PointBulletType(){{
+                        shootEffect = Fx.instShoot;
+                        hitEffect = Fx.instHit;
+                        smokeEffect = Fx.smokeCloud;
+                        trailEffect = Fx.instTrail;
+                        despawnEffect = Fx.instBomb;
+                        trailSpacing = 3f;
+                        damage = 70;
+                        splashDamage = 35;
+                        splashDamageRadius = 35;
+                        buildingDamageMultiplier = 0.2f;
+                        hitShake = 6f;
+                        ammoMultiplier = 1f;
+                    }};
+                }});
+            }
+        };
+    }}
