@@ -2,7 +2,11 @@ package serilia.content;
 
 import arc.graphics.Color;
 import mindustry.ai.types.BuilderAI;
+<<<<<<< HEAD
 import mindustry.content.Fx;
+=======
+import mindustry.entities.bullet.BulletType;
+>>>>>>> 6e893c1152ae3837cf9af4b199bfcd97f3ab6b18
 import mindustry.entities.bullet.MissileBulletType;
 import mindustry.entities.bullet.PointBulletType;
 import mindustry.entities.pattern.ShootAlternate;
@@ -10,25 +14,111 @@ import mindustry.entities.pattern.ShootPattern;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
+import mindustry.graphics.Pal;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
+<<<<<<< HEAD
 import mindustry.type.unit.ErekirUnitType;
+=======
+import mindustry.type.weapons.RepairBeamWeapon;
+import serilia.gen.entities.EntityRegistry;
+import serilia.gen.entities.TractorBeam;
+>>>>>>> 6e893c1152ae3837cf9af4b199bfcd97f3ab6b18
 import serilia.types.SeriliaUnitType;
 
+import static mindustry.Vars.tilesize;
+
 public class SeUnits {
-    //public static @EntityDef({Unitc.class, ElevationMovec.class/*, TractorBeamc.class*/}) UnitType glow;
+    //@Annotations.EntityDef({Posc.class, Rotc.class, Hitboxc.class, Unitc.class, Payloadc.class, TractorBeamc.class}) Object tractorUnit;
 
     public static UnitType
-            merun,
+            glow,
     scion,
     converge,
     youth,
 
+<<<<<<< HEAD
     //assault
     sunburst;
 
     public static void load() {
         scion = new SeriliaUnitType("scion") {{
+=======
+    public static void load(){
+
+        glow = EntityRegistry.content("glow", TractorBeam.class, name -> new SeriliaUnitType(name){{
+            homeWorld = 1;
+
+            coreUnitDock = true;
+            controller = u -> new BuilderAI(true, 60);
+            isEnemy = false;
+            envDisabled = 0;
+
+            targetPriority = -2;
+            lowAltitude = false;
+            mineWalls = true;
+            mineFloor = false;
+            mineHardnessScaling = false;
+            flying = true;
+            mineSpeed = 9f;
+            mineTier = 3;
+            buildSpeed = 1.5f;
+            drag = 0.08f;
+            speed = 7.5f;
+            rotateSpeed = 8f;
+            accel = 0.08f;
+            itemCapacity = 110;
+            health = 700f;
+            armor = 3f;
+            hitSize = 12f;
+            buildBeamOffset = 8f;
+            payloadCapacity = 2f * 2f * tilesize * tilesize;
+            pickupUnits = false;
+            vulnerableWithPayloads = true;
+
+            fogRadius = 0f;
+            targetable = false;
+            hittable = false;
+
+            engineOffset = 7.5f;
+            engineSize = 3.4f;
+
+            setEnginesMirror(
+                    new UnitEngine(35 / 4f, -13 / 4f, 2.7f, 315f),
+                    new UnitEngine(28 / 4f, -35 / 4f, 2.7f, 315f)
+            );
+
+            weapons.add(new RepairBeamWeapon(){{
+                widthSinMag = 0.11f;
+                reload = 20f;
+                x = 19f/4f;
+                y = 19f/4f;
+                rotate = false;
+                shootY = 0f;
+                beamWidth = 0.7f;
+                aimDst = 0f;
+                shootCone = 40f;
+                mirror = true;
+
+                repairSpeed = 3.6f / 2f;
+                fractionRepairSpeed = 0.03f;
+
+                targetUnits = false;
+                targetBuildings = true;
+                autoTarget = false;
+                controllable = true;
+                laserColor = Pal.accent;
+                healColor = Pal.accent;
+
+                bullet = new BulletType(){{
+                    maxRange = 65f;
+                }};
+            }});
+        }});
+
+
+        scion = new SeriliaUnitType("scion"){{
+>>>>>>> 6e893c1152ae3837cf9af4b199bfcd97f3ab6b18
 
             aiController = BuilderAI::new;
             isEnemy = false;

@@ -28,6 +28,7 @@ public class SeriliaMain extends Mod{
 
     @Override
     public void loadContent(){
+        SeSounds.load();
         SeResources.load();
         EntityRegistry.register();
         SeUnits.load();
@@ -38,6 +39,11 @@ public class SeriliaMain extends Mod{
         CaliterraTechTree.load();
 
         Events.on(EventType.ClientLoadEvent.class, (e) -> {
+
+           if(!Vars.mobile) {
+               //Vars.control.setInput(new SeInput());
+           }
+
             Vars.renderer.addEnvRenderer(1024 * 2, () ->
                     Draw.drawRange(Layer.legUnit, 1f, () -> buffer.begin(Color.clear), () -> {
                         buffer.end();
