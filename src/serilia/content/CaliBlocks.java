@@ -294,7 +294,7 @@ public class CaliBlocks {
                                 playerControllable = false;
                                 drawCell = false;
                                 createWreck = createScorch = false;
-                                size = 0;
+                                hitSize = 0;
                                 deathExplosionEffect = Fx.healWaveMend;
                                 deathSound = plasmaboom;
 
