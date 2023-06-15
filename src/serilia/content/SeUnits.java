@@ -1,7 +1,7 @@
 package serilia.content;
 
+import arc.graphics.Color;
 import mindustry.ai.types.BuilderAI;
-import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BulletType;
 import mindustry.entities.bullet.MissileBulletType;
 import mindustry.gen.Sounds;
@@ -10,6 +10,7 @@ import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
+import mindustry.type.unit.ErekirUnitType;
 import mindustry.type.weapons.RepairBeamWeapon;
 import serilia.gen.entities.EntityRegistry;
 import serilia.gen.entities.TractorBeam;
@@ -26,7 +27,10 @@ public class SeUnits {
             glow,
     scion,
     converge,
-    youth;
+    youth,
+
+    //assault
+    oversee;
 
     public static void load(){
 
@@ -109,7 +113,7 @@ public class SeUnits {
             engineSize = 0;
             engineOffset = 0;
 
-            weapons.add(new Weapon(){{
+            weapons.add(new Weapon() {{
                 x = 3f;
                 y = 0f;
                 mirror = true;
@@ -121,7 +125,7 @@ public class SeUnits {
 
                 shootSound = Sounds.missile;
 
-                bullet = new MissileBulletType(){{
+                bullet = new MissileBulletType() {{
                     sprite = "missile";
                     width = 6f;
                     height = 10f;
@@ -143,43 +147,69 @@ public class SeUnits {
             );
         }};
 
-        /*glow = new UnitType("glow"){{
-            //homeWorld = 1;
-            flying = true;
+        oversee = new ErekirUnitType("oversee") {{
+            constructor = LegsUnit::create;
+                speed = 0.65f;
+                drag = 0.1f;
+                hitSize = 21f;
+                rotateSpeed = 3f;
+                health = 2900;
+                armor = 7f;
+                fogRadius = 40f;
+                stepShake = 0f;
 
-            health = 700f;
-            armor = 3f;
-            hitSize = 64f/4f;
-            buildSpeed = 1.5f;
-            drag = 0.08f;
-            speed = 7.5f;
-            rotateSpeed = 8f;
-            accel = 0.08f;
+                legCount = 6;
+                legLength = 20f;
+                legGroupSize = 2;
+                lockLegBase = true;
+                legContinuousMove = true;
+                legExtension = -3f;
+                legBaseOffset = 7f;
+                legMaxLength = 2f;
+                legMinLength = 0.2f;
+                legLengthScl = 0.95f;
+                legForwardScl = 0.9f;
 
-            mineWalls = true;
-            mineFloor = false;
-            mineHardnessScaling = false;
-            mineSpeed = 9f;
-            mineTier = 3;
-            itemCapacity = 110;
+                legMoveSpace = 1f;
+                hovering = true;
 
-            coreUnitDock = true;
-            controller = u -> new BuilderAI(true, 500f);
+                shadowElevation = 0.2f;
+                groundLayer = Layer.legUnit - 1f;
 
-            payloadCapacity = 4f * 4f * 8 * 8;
-            pickupUnits = false;
-
-            vulnerableWithPayloads = true;
-            fogRadius = 0f;
-            targetable = false;
-            hittable = false;
-            isEnemy = false;
-            targetPriority = -2;
-
-            buildBeamOffset = 6f;
-            trailLength = 5;
-            engineOffset = 6f;
-            engineSize = 1.8f;
-        }};*/
-    }
-}
+                weapons.add(new Weapon("sunburst-weapon"){{
+                    shootSound = Sounds.shockBlast;
+                    reload = 90f;
+                    x = 0f;
+                    y = -8f;
+                    mirror = false;
+                    range = 600;
+                    inaccuracy = 6;
+                    shoot = new ShootPattern(){{
+                        shots = 3;
+                        shotDelay = 6f;
+                    }};
+                    bullet = new PointBulletType(){{
+                        float brange = range = 4.7f;
+                        recoil = 1.3f;
+                        shootEffect = Fx.instShoot;
+                        hitEffect = new ExplosionEffect(){{
+                            waveColor = Pal.sapBullet;
+                            smokeColor = Color.gray;
+                            sparkColor = Pal.sap;
+                            waveStroke = 4f;
+                            waveRad = 40f;
+                        }};
+                        smokeEffect = Fx.smokeCloud;
+                        trailEffect = Fx.disperseTrail;
+                        despawnEffect = Fx.instBomb;
+                        trailSpacing = 3f;
+                        damage = 110;
+                        splashDamage = 55;
+                        splashDamageRadius = 85;
+                        hitShake = 2f;
+                        speed = brange;
+                    }};
+                }});
+            }
+        };
+    }}

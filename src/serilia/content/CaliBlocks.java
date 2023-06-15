@@ -7,16 +7,24 @@ import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.content.UnitTypes;
 import mindustry.entities.Effect;
+import mindustry.entities.abilities.EnergyFieldAbility;
+import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
+import mindustry.entities.bullet.BulletType;
+import mindustry.entities.effect.MultiEffect;
 import mindustry.entities.part.RegionPart;
 import mindustry.entities.pattern.ShootAlternate;
+import mindustry.gen.MechUnit;
 import mindustry.gen.Sounds;
 import mindustry.graphics.Pal;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
+import mindustry.type.UnitType;
+import mindustry.type.unit.MissileUnitType;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.production.AttributeCrafter;
 import mindustry.world.blocks.production.BurstDrill;
 import mindustry.world.blocks.production.GenericCrafter;
@@ -28,6 +36,7 @@ import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.misc.DrawTest;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 
+import static mindustry.gen.Sounds.plasmaboom;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.sandboxOnly;
@@ -40,7 +49,7 @@ public class CaliBlocks {
         ballista,
 
         //drill
-        methaneExtractor, heatDrill, largeheatdrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
+        methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
 
         //distribution (payload too)
         ducter,
@@ -50,6 +59,7 @@ public class CaliBlocks {
         //power
 
         //defense
+        iridiumWall, smallIridiumWall, largeIridiumWall, allay,
 
         //crafting
         fragisteelPress, bulkRefinery,
@@ -233,6 +243,75 @@ public class CaliBlocks {
         }};
 
         //defense
+        allay = new PowerTurret("allay"){{
+            scaledHealth = 75f;
+            size = 4;
+            requirements(Category.turret, with( Items.silicon, 200, Items.graphite, 250, iridium, 500, chirokyn, 100));
+            liquidCapacity = 40/60f;
+            consumePower(200/60f);
+            consumeLiquid(steam, 20/60f);
+            range = 300f;
+            inaccuracy = 0;
+            reload = 60f * 4.5f;
+            targetAir = false;
+            targetHealing = true;
+            targetGround = false;
+
+            shootType = new ArtilleryBulletType(){
+                {
+                    shootEffect = new MultiEffect(Fx.colorSparkBig);
+                    hitColor = backColor = trailColor = Pal.heal;
+                    damage = 0;
+                    speed = 5;
+                    lifetime = 120;
+                    height = 19f;
+                    width = 17f;
+
+                    shrinkX = 0.2f;
+                    shrinkY = 0.1f;
+
+                    trailLength = 32;
+                    trailWidth = 3.35f;
+                    trailEffect = Fx.none;
+                    despawnEffect = Fx.greenBomb;
+                    despawnShake = 3;
+                    despawnSound = Sounds.shootSmite;
+                    fragBullets = 1;
+                    fragSpread = 0;
+                    fragAngle = 0;
+                    fragBullet = new BulletType() {{
+                        speed = 0f;
+                        spawnUnit = new MissileUnitType("allay-field") {{
+                                targetAir = false;
+                                targetGround = false;
+                                speed = 0;
+                                lifetime = 60f * 5;
+                                physics = false;
+                                engineSize = 0;
+                                targetable = false;
+                                hittable = false;
+                                rotateSpeed = 0;
+                                playerControllable = false;
+                                drawCell = false;
+                                createWreck = createScorch = false;
+                                hitSize = 0;
+                                deathExplosionEffect = Fx.healWaveMend;
+                                deathSound = plasmaboom;
+
+                                abilities.add(new EnergyFieldAbility(0f, 30f, 100f) {{
+                                    x = 0;
+                                    y = 0;
+                                    statusDuration = 0 * 6f;
+                                    maxTargets = 40;
+                                    healAmount = 100;
+                                    targetAir = false;
+                                    targetHealing = false;
+                                }});
+                            }
+                        };
+                    }};
+                }};
+        }};
 
         //crafting
         fragisteelPress = new GenericCrafter("fragisteel-press"){{
