@@ -2,16 +2,19 @@ package serilia.content;
 
 import arc.graphics.Color;
 import mindustry.ai.types.BuilderAI;
-import mindustry.entities.bullet.BulletType;
+import mindustry.content.Fx;
+import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.MissileBulletType;
+import mindustry.entities.bullet.PointBulletType;
+import mindustry.entities.effect.ExplosionEffect;
+import mindustry.entities.pattern.ShootPattern;
+import mindustry.gen.LegsUnit;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
-import mindustry.type.unit.ErekirUnitType;
-import mindustry.type.weapons.RepairBeamWeapon;
 import serilia.gen.entities.EntityRegistry;
 import serilia.gen.entities.TractorBeam;
 import serilia.types.SeriliaUnitType;
@@ -20,7 +23,7 @@ import serilia.world.draw.part.RangeCirclePart;
 
 import static mindustry.Vars.tilesize;
 
-public class SeUnits {
+public class SeUnits{
     //@Annotations.EntityDef({Posc.class, Rotc.class, Hitboxc.class, Unitc.class, Payloadc.class, TractorBeamc.class}) Object tractorUnit;
 
     public static UnitType
@@ -71,17 +74,10 @@ public class SeUnits {
             engineOffset = 7.5f;
             engineSize = 3.4f;
 
-            setEnginesMirror(
-                new UnitEngine(35 / 4f, -13 / 4f, 2.7f, 315f),
-                new UnitEngine(28 / 4f, -35 / 4f, 2.7f, 315f)
-            );
-
             weapons.add(
                 new Weapon(){{
                     bullet = new StatusFieldBulletType(){{
-                        fieldRange = 30f;
-                        fieldStatus = StatusEffects.melting;
-                        parts.add(new RangeCirclePart(30f, 0.5f, 101f, 99, Pal.orangeSpark, Pal.orangeSpark.cpy().a(0f)));
+                        parts.add(new RangeCirclePart(50f, 0.5f, 101f, 99, Pal.orangeSpark, Pal.orangeSpark.cpy().a(0f)));
                     }};
                 }}
             );
@@ -89,7 +85,6 @@ public class SeUnits {
 
 
         scion = new SeriliaUnitType("scion"){{
-
             aiController = BuilderAI::new;
             isEnemy = false;
             constructor = UnitEntity::create;
@@ -113,7 +108,7 @@ public class SeUnits {
             engineSize = 0;
             engineOffset = 0;
 
-            weapons.add(new Weapon() {{
+            weapons.add(new Weapon(){{
                 x = 3f;
                 y = 0f;
                 mirror = true;
@@ -125,7 +120,7 @@ public class SeUnits {
 
                 shootSound = Sounds.missile;
 
-                bullet = new MissileBulletType() {{
+                bullet = new MissileBulletType(){{
                     sprite = "missile";
                     width = 6f;
                     height = 10f;
@@ -147,69 +142,68 @@ public class SeUnits {
             );
         }};
 
-        oversee = new ErekirUnitType("oversee") {{
+        oversee = new SeriliaUnitType("oversee"){{
             constructor = LegsUnit::create;
-                speed = 0.65f;
-                drag = 0.1f;
-                hitSize = 21f;
-                rotateSpeed = 3f;
-                health = 2900;
-                armor = 7f;
-                fogRadius = 40f;
-                stepShake = 0f;
+            speed = 0.65f;
+            drag = 0.1f;
+            hitSize = 21f;
+            rotateSpeed = 3f;
+            health = 2900;
+            armor = 7f;
+            fogRadius = 40f;
+            stepShake = 0f;
 
-                legCount = 6;
-                legLength = 20f;
-                legGroupSize = 2;
-                lockLegBase = true;
-                legContinuousMove = true;
-                legExtension = -3f;
-                legBaseOffset = 7f;
-                legMaxLength = 2f;
-                legMinLength = 0.2f;
-                legLengthScl = 0.95f;
-                legForwardScl = 0.9f;
+            legCount = 6;
+            legLength = 20f;
+            legGroupSize = 2;
+            lockLegBase = true;
+            legContinuousMove = true;
+            legExtension = -3f;
+            legBaseOffset = 7f;
+            legMaxLength = 2f;
+            legMinLength = 0.2f;
+            legLengthScl = 0.95f;
+            legForwardScl = 0.9f;
 
-                legMoveSpace = 1f;
-                hovering = true;
+            legMoveSpace = 1f;
+            hovering = true;
 
-                shadowElevation = 0.2f;
-                groundLayer = Layer.legUnit - 1f;
+            shadowElevation = 0.2f;
+            groundLayer = Layer.legUnit - 1f;
 
-                weapons.add(new Weapon("sunburst-weapon"){{
-                    shootSound = Sounds.shockBlast;
-                    reload = 90f;
-                    x = 0f;
-                    y = -8f;
-                    mirror = false;
-                    range = 600;
-                    inaccuracy = 6;
-                    shoot = new ShootPattern(){{
-                        shots = 3;
-                        shotDelay = 6f;
+            weapons.add(new Weapon("sunburst-weapon"){{
+                shootSound = Sounds.shockBlast;
+                reload = 90f;
+                x = 0f;
+                y = -8f;
+                mirror = false;
+                range = 600;
+                inaccuracy = 6;
+                shoot = new ShootPattern(){{
+                    shots = 3;
+                    shotDelay = 6f;
+                }};
+                bullet = new PointBulletType(){{
+                    float brange = range = 4.7f;
+                    recoil = 1.3f;
+                    shootEffect = Fx.instShoot;
+                    hitEffect = new ExplosionEffect(){{
+                        waveColor = Pal.sapBullet;
+                        smokeColor = Color.gray;
+                        sparkColor = Pal.sap;
+                        waveStroke = 4f;
+                        waveRad = 40f;
                     }};
-                    bullet = new PointBulletType(){{
-                        float brange = range = 4.7f;
-                        recoil = 1.3f;
-                        shootEffect = Fx.instShoot;
-                        hitEffect = new ExplosionEffect(){{
-                            waveColor = Pal.sapBullet;
-                            smokeColor = Color.gray;
-                            sparkColor = Pal.sap;
-                            waveStroke = 4f;
-                            waveRad = 40f;
-                        }};
-                        smokeEffect = Fx.smokeCloud;
-                        trailEffect = Fx.disperseTrail;
-                        despawnEffect = Fx.instBomb;
-                        trailSpacing = 3f;
-                        damage = 110;
-                        splashDamage = 55;
-                        splashDamageRadius = 85;
-                        hitShake = 2f;
-                        speed = brange;
-                    }};
-                }});
-            }
-        };
+                    smokeEffect = Fx.smokeCloud;
+                    trailEffect = Fx.disperseTrail;
+                    despawnEffect = Fx.instBomb;
+                    trailSpacing = 3f;
+                    damage = 110;
+                    splashDamage = 55;
+                    splashDamageRadius = 85;
+                    hitShake = 2f;
+                    speed = brange;
+                }};
+            }});
+        }};
     }}
