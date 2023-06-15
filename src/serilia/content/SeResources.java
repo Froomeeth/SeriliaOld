@@ -8,7 +8,7 @@ public class SeResources {
     public static Item
             nickel, iridium, fragisteel, ferrite, vanadium, tarnide, galvanium, chirokyn, paragonite, graphene;
     public static Liquid
-            methane, chlorine, acid, acidicSolution;
+            methane, chlorine, steam, acid, acidicSolution;
     public static Block
             lens;
     //public static PayloadItem
@@ -101,6 +101,15 @@ public class SeResources {
             flammability = 0f;
             heatCapacity = 0.85f;
             viscosity = 0.68f;
+            temperature = 0.5f;
+        }};
+
+        steam = new Liquid("steam", Color.valueOf("f0f0f0")){{
+            gas = true;
+            explosiveness = 0f;
+            flammability = 0f;
+            heatCapacity = 0f;
+            viscosity = 0.5f;
             temperature = 0.5f;
         }};
 
