@@ -21,7 +21,7 @@ import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
 import serilia.world.blocks.storage.DrawerCore;
-import serilia.world.draw.*;
+import serilia.world.draw.drawblock.*;
 
 import static mindustry.content.Items.*;
 import static mindustry.content.Liquids.nitrogen;

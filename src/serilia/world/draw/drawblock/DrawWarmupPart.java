@@ -1,4 +1,4 @@
-package serilia.world.draw;
+package serilia.world.draw.drawblock;
 
 import mindustry.world.draw.DrawBlock;
 

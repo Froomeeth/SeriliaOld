@@ -1,6 +1,7 @@
 package serilia.content;
 
 import mindustry.ai.types.BuilderAI;
+import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BulletType;
 import mindustry.entities.bullet.MissileBulletType;
 import mindustry.gen.Sounds;
@@ -13,6 +14,8 @@ import mindustry.type.weapons.RepairBeamWeapon;
 import serilia.gen.entities.EntityRegistry;
 import serilia.gen.entities.TractorBeam;
 import serilia.types.SeriliaUnitType;
+import serilia.types.StatusFieldBulletType;
+import serilia.world.draw.part.RangeCirclePart;
 
 import static mindustry.Vars.tilesize;
 
@@ -65,36 +68,19 @@ public class SeUnits {
             engineSize = 3.4f;
 
             setEnginesMirror(
-                    new UnitEngine(35 / 4f, -13 / 4f, 2.7f, 315f),
-                    new UnitEngine(28 / 4f, -35 / 4f, 2.7f, 315f)
+                new UnitEngine(35 / 4f, -13 / 4f, 2.7f, 315f),
+                new UnitEngine(28 / 4f, -35 / 4f, 2.7f, 315f)
             );
 
-            weapons.add(new RepairBeamWeapon(){{
-                widthSinMag = 0.11f;
-                reload = 20f;
-                x = 19f/4f;
-                y = 19f/4f;
-                rotate = false;
-                shootY = 0f;
-                beamWidth = 0.7f;
-                aimDst = 0f;
-                shootCone = 40f;
-                mirror = true;
-
-                repairSpeed = 3.6f / 2f;
-                fractionRepairSpeed = 0.03f;
-
-                targetUnits = false;
-                targetBuildings = true;
-                autoTarget = false;
-                controllable = true;
-                laserColor = Pal.accent;
-                healColor = Pal.accent;
-
-                bullet = new BulletType(){{
-                    maxRange = 65f;
-                }};
-            }});
+            weapons.add(
+                new Weapon(){{
+                    bullet = new StatusFieldBulletType(){{
+                        fieldRange = 30f;
+                        fieldStatus = StatusEffects.melting;
+                        parts.add(new RangeCirclePart(30f, 0.5f, 101f, 99, Pal.orangeSpark, Pal.orangeSpark.cpy().a(0f)));
+                    }};
+                }}
+            );
         }});
 
 

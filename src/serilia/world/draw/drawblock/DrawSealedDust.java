@@ -1,4 +1,4 @@
-package serilia.world.draw;
+package serilia.world.draw.drawblock;
 
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
