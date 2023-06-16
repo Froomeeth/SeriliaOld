@@ -4,7 +4,6 @@ import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.struct.Seq;
 import mindustry.content.Fx;
-import mindustry.content.Items;
 import mindustry.content.UnitTypes;
 import mindustry.entities.Effect;
 import mindustry.entities.abilities.EnergyFieldAbility;
@@ -16,12 +15,10 @@ import mindustry.entities.part.RegionPart;
 import mindustry.entities.pattern.ShootAlternate;
 import mindustry.gen.Sounds;
 import mindustry.graphics.Pal;
-import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.type.unit.MissileUnitType;
 import mindustry.world.Block;
-import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.production.AttributeCrafter;
@@ -32,8 +29,10 @@ import mindustry.world.blocks.units.UnitFactory;
 import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
 import serilia.world.blocks.distribution.ShadedDuct;
+import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrawTest;
 
+import static mindustry.content.Items.*;
 import static mindustry.gen.Sounds.plasmaboom;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
@@ -53,13 +52,12 @@ public class CaliBlocks {
         ducter,
 
         //liquid
+        fluidDuct,
 
         //power
 
         //defense
-        iridiumWall, smallIridiumWall, largeIridiumWall,
-        fragisteelWall, smallFragisteelWall, largeFragisteelWall,
-        allay,
+        iridiumWall, smallIridiumWall, largeIridiumWall, allay,
 
         //crafting
         fragisteelPress, bulkRefinery,
@@ -78,7 +76,7 @@ public class CaliBlocks {
 
     public static void load() {
         //turret
-        ballista = new ItemTurret("ballista") {{requirements(Category.turret, with(SeResources.iridium, 175, SeResources.tarnide, 100, SeResources.chirokyn, 75));
+        ballista = new ItemTurret("ballista") {{requirements(turret, with(iridium, 175, tarnide, 100, chirokyn, 75));
 
             outlineColor = Color.valueOf("473a3a");
             squareSprite = false;
@@ -113,7 +111,7 @@ public class CaliBlocks {
             Effect sfe = Fx.colorSparkBig;
 
             ammo(
-                    SeResources.iridium, new BasicBulletType(10f, 95){{
+                    iridium, new BasicBulletType(10f, 95){{
                         width = 12f;
                         hitSize = 7f;
                         height = 20f;
@@ -135,7 +133,7 @@ public class CaliBlocks {
                         backSprite = "large-bomb-back";
                         sprite = "mine-bullet";
                     }},
-                    SeResources.fragisteel, new BasicBulletType(10f, 115){{
+                    fragisteel, new BasicBulletType(10f, 115){{
                         width = 13f;
                         height = 19f;
                         lifetime = 28f;
@@ -201,7 +199,7 @@ public class CaliBlocks {
 
         //drill
         methaneExtractor = new AttributeCrafter("methane-extractor"){{
-            requirements(Category.production, with(iridium, 70));
+            requirements(production, with(iridium, 70));
             attribute = Attribute.steam;
             minEfficiency = 9f - 0.0001f;
             baseEfficiency = 0f;
@@ -219,7 +217,7 @@ public class CaliBlocks {
         }};
 
         heatDrill = new BurstDrill("heat-drill"){{
-            requirements(Category.production, with(SeResources.iridium, 20));
+            requirements(production, with(iridium, 20));
             scaledHealth = 75;
             drillTime = 60f * 10f;
             size = 2;
@@ -231,57 +229,28 @@ public class CaliBlocks {
             arrowSpacing = 0f;
             arrows = 1;
 
-            drillMultipliers.put(SeResources.iridium, 1.5f);
+            drillMultipliers.put(iridium, 1.5f);
 
-            consumeLiquids(LiquidStack.with(SeResources.methane, 5f / 60f));
+            consumeLiquids(LiquidStack.with(methane, 5f / 60f));
 
         }};
 
         //distribution
         ducter = new ShadedDuct("ducter"){{
-            requirements(distribution, with(SeResources.iridium, 2));
+            requirements(distribution, with(iridium, 2));
+        }};
+
+        //liquid
+        fluidDuct = new ShadedConduit("fluid-duct"){{
+            requirements(liquid, with(metaglass, 2));
         }};
 
         //defense
-        iridiumWall = new Wall("iridium-wall"){{
-           scaledHealth = 425;
-           size = 2;
-           requirements(Category.defense, with( Items.graphite, 16, iridium, 16));
-        }};
-        smallIridiumWall = new Wall("small-iridium-wall"){{
-            scaledHealth = 425;
-            size = 1;
-            requirements(Category.defense, with( Items.graphite, 4, iridium, 4));
-        }};
-        largeIridiumWall = new Wall("large-iridium-wall"){{
-            scaledHealth = 425;
-            size = 3;
-            requirements(Category.defense, with( Items.graphite, 36, iridium, 36));
-        }};
-        fragisteelWall = new Wall("fragisteel-wall"){{
-            scaledHealth = 325;
-            size = 2;
-            requirements(Category.defense, with( fragisteel, 24));
-            absorbLasers = true;
-        }};
-        smallFragisteelWall = new Wall("small-fragisteel-wall"){{
-            scaledHealth = 325;
-            size = 1;
-            requirements(Category.defense, with( fragisteel, 6));
-            absorbLasers = true;
-        }};
-        largeFragisteelWall = new Wall("large-fragisteel-wall"){{
-            scaledHealth = 325;
-            size = 3;
-            requirements(Category.defense, with( fragisteel, 64));
-            absorbLasers = true;
-        }};
-
         allay = new PowerTurret("allay"){{
             scaledHealth = 75f;
             size = 4;
-            requirements(Category.defense, with( Items.silicon, 200, Items.graphite, 250, iridium, 500, chirokyn, 100));
-            liquidCapacity = 40f;
+            requirements(turret, with( silicon, 200, graphite, 250, iridium, 500, chirokyn, 100));
+            liquidCapacity = 40/60f;
             consumePower(200/60f);
             consumeLiquid(steam, 20/60f);
             range = 300f;
@@ -349,41 +318,41 @@ public class CaliBlocks {
 
         //crafting
         fragisteelPress = new GenericCrafter("fragisteel-press"){{
-            requirements(Category.crafting, with(SeResources.iridium, 50, Items.graphite, 40));
+            requirements(crafting, with(iridium, 50, graphite, 40));
 
             craftEffect = Fx.pulverizeMedium;
             health = 200;
-            outputItem = new ItemStack(SeResources.fragisteel, 1);
+            outputItem = new ItemStack(fragisteel, 1);
             craftTime = 70f;
             size = 2;
             hasItems = true;
 
-            consumeItem(SeResources.iridium, 2);
+            consumeItem(iridium, 2);
         }};
         //unit
 
         mechManufactor = new UnitFactory("mech-manufactor"){{
-            requirements(Category.units, with(Items.graphite, 55, Items.silicon, 200, iridium, 100, chirokyn, 100));
+            requirements(units, with(graphite, 55, silicon, 200, iridium, 100, chirokyn, 100));
             plans = Seq.with(
-                    new UnitPlan(UnitTypes.fortress, 60f * 15, with(Items.silicon, 95, Items.lead, 10)),
-                    new UnitPlan(UnitTypes.cleroi, 60f * 10, with(Items.silicon, 50, Items.coal, 10))
+                    new UnitPlan(UnitTypes.fortress, 60f * 15, with(silicon, 95, lead, 10)),
+                    new UnitPlan(UnitTypes.cleroi, 60f * 10, with(silicon, 50, coal, 10))
             );
             size = 4;
             consumePower(4f);
         }};
         droneManufactor = new UnitFactory("drone-manufactor"){{
-            requirements(Category.units, with(Items.graphite, 55, Items.silicon, 200, iridium, 100, chirokyn, 100));
+            requirements(units, with(graphite, 55, silicon, 200, iridium, 100, chirokyn, 100));
             plans = Seq.with(
-                    new UnitPlan(UnitTypes.mega, 60f * 15, with(Items.silicon, 85, Items.lead, 10)),
-                    new UnitPlan(UnitTypes.elude, 60f * 10, with(Items.silicon, 90, Items.coal, 10))
+                    new UnitPlan(UnitTypes.mega, 60f * 15, with(silicon, 85, lead, 10)),
+                    new UnitPlan(UnitTypes.elude, 60f * 10, with(silicon, 90, coal, 10))
             );
             size = 4;
             consumePower(4f);
         }};
         shipManufactor = new UnitFactory("ship-manufactor"){{
-            requirements(Category.units, with(Items.graphite, 55, Items.silicon, 200, iridium, 100, chirokyn, 100));
+            requirements(units, with(graphite, 55, silicon, 200, iridium, 100, chirokyn, 100));
             plans = Seq.with(
-                    new UnitPlan(UnitTypes.minke, 60f * 10, with(Items.silicon, 180, Items.metaglass, 95))
+                    new UnitPlan(UnitTypes.minke, 60f * 10, with(silicon, 180, metaglass, 95))
             );
             size = 4;
             consumePower(4f);
