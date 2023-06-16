@@ -21,6 +21,7 @@ import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.type.unit.MissileUnitType;
 import mindustry.world.Block;
+import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.liquid.LiquidRouter;
@@ -62,7 +63,9 @@ public class CaliBlocks {
         //power
 
         //defense
-        iridiumWall, smallIridiumWall, largeIridiumWall, allay,
+        iridiumWall, smallIridiumWall, largeIridiumWall,
+        fragisteelWall, smallFragisteelWall, largeFragisteelWall,
+        allay,
 
         //crafting
         fragisteelPress, bulkRefinery,
@@ -258,11 +261,45 @@ public class CaliBlocks {
         }};
 
         //defense
+        iridiumWall = new Wall("iridium-wall"){{
+           scaledHealth = 425;
+           size = 2;
+           requirements(Category.defense, with( Items.graphite, 16, iridium, 16));
+        }};
+        smallIridiumWall = new Wall("small-iridium-wall"){{
+            scaledHealth = 425;
+            size = 1;
+            requirements(Category.defense, with( Items.graphite, 4, iridium, 4));
+        }};
+        largeIridiumWall = new Wall("large-iridium-wall"){{
+            scaledHealth = 425;
+            size = 3;
+            requirements(Category.defense, with( Items.graphite, 36, iridium, 36));
+        }};
+        fragisteelWall = new Wall("fragisteel-wall"){{
+            scaledHealth = 325;
+            size = 2;
+            requirements(Category.defense, with( fragisteel, 24));
+            absorbLasers = true;
+        }};
+        smallFragisteelWall = new Wall("small-fragisteel-wall"){{
+            scaledHealth = 325;
+            size = 1;
+            requirements(Category.defense, with( fragisteel, 6));
+            absorbLasers = true;
+        }};
+        largeFragisteelWall = new Wall("large-fragisteel-wall"){{
+            scaledHealth = 325;
+            size = 3;
+            requirements(Category.defense, with( fragisteel, 64));
+            absorbLasers = true;
+        }};
+
         allay = new PowerTurret("allay"){{
             scaledHealth = 75f;
             size = 4;
-            requirements(turret, with( silicon, 200, graphite, 250, iridium, 500, chirokyn, 100));
-            liquidCapacity = 40/60f;
+            requirements(Category.defense, with( Items.silicon, 200, Items.graphite, 250, iridium, 500, chirokyn, 100));
+            liquidCapacity = 40f;
             consumePower(200/60f);
             consumeLiquid(steam, 20/60f);
             range = 300f;

@@ -21,6 +21,8 @@ public class ShadedConduit extends Conduit { //todo junction replacement
             {1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1},
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 1, 1}
     };
+    static final float rotatePad = 6, hpad = rotatePad / 2f / 4f;
+    static final float[][] rotateOffsets = {{hpad, hpad}, {-hpad, hpad}, {-hpad, -hpad}, {hpad, -hpad}};
 
     public ShadedConduit(String name){
         super(name);
@@ -51,7 +53,12 @@ public class ShadedConduit extends Conduit { //todo junction replacement
             int wrapRot = (int)(rotation + offset) % 4;
             TextureRegion liquidr = blendbits == 1 ? rotateRegions[wrapRot][gas][frame] : renderer.fluidFrames[gas][frame];
 
-            float xscl = Draw.xscl, yscl = Draw.yscl;
+            if(blendbits == 1){
+                ox = rotateOffsets[wrapRot][0];
+                oy = rotateOffsets[wrapRot][1];
+            }
+
+            float xscl = Draw.xscl, yscl = Draw.yscl; //todo FUCK
             Draw.scl(1f, 1f);
             Drawf.liquid(sliced(liquidr, SliceMode.none), x + ox, y + oy, smoothLiquid, liquids.current().color.write(Tmp.c1).a(1f));
             Draw.scl(xscl, yscl);
