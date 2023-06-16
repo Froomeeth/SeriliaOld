@@ -103,7 +103,7 @@ public class SeUnits{
             itemCapacity = 30;
             buildSpeed = 3;
             mineTier = 1;
-            mineSpeed = 2;
+            mineSpeed = 8.5f;
 
             engineSize = 0;
             engineOffset = 0;
