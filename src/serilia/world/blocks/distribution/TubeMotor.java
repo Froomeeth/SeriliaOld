@@ -19,6 +19,7 @@ public class TubeMotor extends ConveyorTube{
     public TubeMotor(String name){
         super(name);
         canOverdrive = true;
+        quickRotate = false;
     }
 
     @Override
@@ -52,8 +53,16 @@ public class TubeMotor extends ConveyorTube{
                 if(other.build instanceof TubeThing tube && !(other.build instanceof TubeMotorBuild)){
                     tube.carryDst(Mathf.floor(carDst - i));
                     tube.driveSpeed(drvSpd);
-                    if(carDst - i >= 0) tube.lastMotor(motor);
-                } else break; //todo bridge
+                    if(carDst - i >= 0){
+                        if(tube instanceof ConveyorTubeBuild){
+                            tube.lastMotor(motor);
+                        }else{
+                            tube.addMotor(this);
+                        }
+                    }else{
+                        tube.clearMotors();
+                    }
+                }else break; //todo bridge
             }
         }
 

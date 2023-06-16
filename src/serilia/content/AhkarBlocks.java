@@ -17,6 +17,7 @@ import mindustry.world.draw.*;
 import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.TubeMotor;
 import serilia.world.blocks.distribution.ConveyorTube;
+import serilia.world.blocks.distribution.TubeRouter;
 import serilia.world.blocks.liquid.LiquidChannel;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayloadDuct;
@@ -42,7 +43,7 @@ public class AhkarBlocks {
         sealedBore,
 
         //distribution (payload too)
-        poweredConveyorTube, conveyorTubeMotor, tubeSplitter,
+        poweredConveyorTube, conveyorTubeMotor, conveyorTubeSplitter,
         transporter, splitter, transporterBridge,
 
         //liquid
@@ -89,12 +90,13 @@ public class AhkarBlocks {
         //distribution
         poweredConveyorTube = new ConveyorTube("powered-conveyor-tube"){{
             requirements(distribution, sandboxOnly, with());
-            itemCapacity = 2;
         }};
         conveyorTubeMotor = new TubeMotor("conveyor-tube-motor"){{
             requirements(distribution, sandboxOnly, with());
             consumePower(0.5f);
-            itemCapacity = 2;
+        }};
+        conveyorTubeSplitter = new TubeRouter("conveyor-tube-splitter"){{
+            requirements(distribution, sandboxOnly, with());
         }};
 
         transporter = new PayloadDuct("transporter"){{
