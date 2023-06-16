@@ -30,12 +30,12 @@ public class ConveyorTube extends ShadedDuct{
         canOverdrive = false;
     }
 
-    public class ConveyorTubeBuild extends ShadedDuctBuild{
-        public Building back, lastMotor;
-        public int carryDst;
-        public float driveSpeed;
+    public class ConveyorTubeBuild extends ShadedDuctBuild implements TubeThing{
+        Building back, lastMotor;
+        int carryDst;
+        float driveSpeed;
 
-        @Override
+        /*@Override
         public void update(){
             super.update();
 
@@ -44,12 +44,11 @@ public class ConveyorTube extends ShadedDuct{
                 lastMotor = ((ConveyorTubeBuild) back).lastMotor;
                 if(lastMotor != null) driveSpeed = ((ConveyorTubeBuild)lastMotor).driveSpeed;
             }
-        }
+        }*/
 
         @Override
         public void updateTile(){
             if(carryDst >= 0){
-                if(lastMotor == null) return;
                 progress += edelta() / driveSpeed * 2f;
 
                 if(current != null && next != null){
@@ -110,6 +109,36 @@ public class ConveyorTube extends ShadedDuct{
             carryDst = 0;
             lastMotor = null;
             driveSpeed = 0f;
+        }
+
+        @Override
+        public Building lastMotor(){
+            return lastMotor;
+        }
+
+        @Override
+        public void lastMotor(TubeMotorBuild set){
+            lastMotor = set;
+        }
+
+        @Override
+        public int carryDst(){
+            return carryDst;
+        }
+
+        @Override
+        public void carryDst(int set){
+            carryDst = set;
+        }
+
+        @Override
+        public float driveSpeed(){
+            return driveSpeed;
+        }
+
+        @Override
+        public void driveSpeed(float set){
+            driveSpeed = set;
         }
     }
 }
