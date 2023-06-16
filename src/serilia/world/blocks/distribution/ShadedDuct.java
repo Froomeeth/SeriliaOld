@@ -11,7 +11,6 @@ import mindustry.content.Blocks;
 import mindustry.entities.units.BuildPlan;
 import mindustry.gen.Building;
 import mindustry.graphics.Layer;
-import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
 import mindustry.world.blocks.distribution.DuctBridge;
 import serilia.util.SeUtil;
@@ -55,10 +54,6 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
     }
 
-    public boolean blends(Block block){
-        return block.outputsItems();
-    }
-
     public class ShadedDuctBuild extends DuctBuild{
         public int tiling = 0;
 
@@ -84,7 +79,9 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
         @Override
         public void onProximityUpdate(){
-            super.onProximityUpdate();
+            noSleep();
+            next = front();
+            nextc = next instanceof DuctBuild d ? d : null;
 
             tiling = 0;
 

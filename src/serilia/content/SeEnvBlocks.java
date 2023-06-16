@@ -1,50 +1,43 @@
 package serilia.content;
 
-import arc.graphics.Blending;
-import arc.graphics.Color;
-import arc.struct.Seq;
-import mindustry.content.Items;
-import mindustry.content.UnitTypes;
-import mindustry.graphics.Layer;
-import mindustry.type.ItemStack;
-import mindustry.type.LiquidStack;
 import mindustry.world.Block;
-import mindustry.world.blocks.defense.DirectionalForceProjector;
-import mindustry.world.blocks.defense.Wall;
+import mindustry.world.blocks.environment.Floor;
 import mindustry.world.blocks.environment.OreBlock;
-import mindustry.world.blocks.liquid.Conduit;
-import mindustry.world.blocks.production.GenericCrafter;
-import mindustry.world.blocks.production.Separator;
-import mindustry.world.draw.*;
-import serilia.util.SeUtil;
-import serilia.world.blocks.liquid.LiquidChannel;
-import serilia.world.blocks.payload.MoreGenericCrafter;
-import serilia.world.blocks.payload.PayloadDuct;
-import serilia.world.blocks.power.SolarCollector;
-import serilia.world.blocks.production.DrawerDrill;
-import serilia.world.blocks.storage.DrawerCore;
-import serilia.world.draw.*;
+import mindustry.world.blocks.environment.StaticWall;
 
-import static mindustry.content.Items.*;
-import static mindustry.content.Liquids.nitrogen;
-import static mindustry.content.Liquids.slag;
-import static mindustry.type.Category.*;
-import static mindustry.type.ItemStack.with;
-import static mindustry.world.meta.BuildVisibility.*;
-import static serilia.content.SeResources.*;
+import static mindustry.content.Items.graphite;
+import static mindustry.content.Items.metaglass;
+import static serilia.content.SeResources.iridium;
+import static serilia.content.SeResources.tarnide;
 
 public class SeEnvBlocks {
     public static Block
 
-    oreIridium, oreGraphite, oreTarnide;
+        //cali
+        oreIridium, oreGraphite, oreTarnide,
+
+
+        //ahkar
+        quartz,
+
+        ashRock,     blooRock    , rockRock    ,
+        ashRockWall, blooRockWall, rockRockWall;
+
+
+
 
     public static void load() {
 
-        oreIridium = new OreBlock(iridium){{
-        }};
-        oreGraphite = new OreBlock(graphite){{
-            variants = 3;
-        }};
-        oreTarnide = new OreBlock(tarnide){{
-        }};
+        //cali
+        oreIridium = new OreBlock(iridium); //variants are 3 by default
+        oreGraphite = new OreBlock(graphite);
+        oreTarnide = new OreBlock(tarnide);
+
+        //ahkar
+        quartz = new OreBlock(metaglass);
+
+            //needs brackets because the variables would be the same otherwise
+        (ashRock = new Floor("ash-rock")).asFloor().wall = ashRockWall = new StaticWall("ash-rock-wall");
+        (blooRock = new Floor("bloo-rock")).asFloor().wall = blooRockWall = new StaticWall("bloo-rock-wall");
+        (rockRock = new Floor("rock-rock")).asFloor().wall = rockRockWall = new StaticWall("rock-rock-wall");
     }}

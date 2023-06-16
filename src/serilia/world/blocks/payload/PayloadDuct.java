@@ -101,16 +101,6 @@ public class PayloadDuct extends PayloadBlock implements Autotiler{
             float rotation = rotdeg();
             int r = this.rotation;
 
-            //draw extra ducts facing this one for tiling purposes
-            for(int i = 0; i < 4; i++){
-                if((blending & (1 << i)) != 0){
-                    int dir = r - i;
-                    float rot = i == 0 ? rotation : (dir)*90;
-                    Draw.scl(xscl, yscl);
-                    drawAt(x + Geometry.d4x(dir) * tilesize*0.75f, y + Geometry.d4y(dir) * tilesize*0.75f, 0, rot, i != 0 ? Autotiler.SliceMode.bottom : Autotiler.SliceMode.top);
-                }
-            }
-
             drawPayload();
 
             Draw.scl(xscl, yscl);
