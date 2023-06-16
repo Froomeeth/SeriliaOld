@@ -89,10 +89,12 @@ public class AhkarBlocks {
         //distribution
         poweredConveyorTube = new ConveyorTube("powered-conveyor-tube"){{
             requirements(distribution, sandboxOnly, with());
+            itemCapacity = 2;
         }};
         conveyorTubeMotor = new TubeMotor("conveyor-tube-motor"){{
             requirements(distribution, sandboxOnly, with());
             consumePower(0.5f);
+            itemCapacity = 2;
         }};
 
         transporter = new PayloadDuct("transporter"){{

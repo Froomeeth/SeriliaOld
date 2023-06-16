@@ -3,22 +3,15 @@ package serilia.world.blocks.liquid;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
-import arc.math.Mathf;
 import arc.math.geom.Geometry;
-import arc.struct.Seq;
 import arc.util.Tmp;
-import mindustry.content.Blocks;
-import mindustry.entities.units.BuildPlan;
 import mindustry.gen.Building;
+import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
-import mindustry.world.Block;
-import mindustry.world.blocks.distribution.Duct;
-import mindustry.world.blocks.distribution.DuctBridge;
 import mindustry.world.blocks.liquid.Conduit;
 import serilia.util.SeUtil;
 
-import static mindustry.Vars.itemSize;
-import static mindustry.Vars.tilesize;
+import static mindustry.Vars.renderer;
 
 public class ShadedConduit extends Conduit { //todo junction replacement
     public TextureRegion[][] regionLayers;
@@ -34,13 +27,6 @@ public class ShadedConduit extends Conduit { //todo junction replacement
     }
 
     @Override
-    public void init(){
-        super.init();
-
-        if(bridgeReplacement == null || !(bridgeReplacement instanceof DuctBridge)) bridgeReplacement = Blocks.ductBridge;
-    }
-
-    @Override
     public void load(){
         super.load();
         regionLayers = SeUtil.splitLayers(name + "-sheet", 32, 2);
@@ -51,15 +37,6 @@ public class ShadedConduit extends Conduit { //todo junction replacement
         return new TextureRegion[]{Core.atlas.find(name)};
     }
 
-    @Override
-    public void handlePlacementLine(Seq<BuildPlan> plans){
-
-    }
-
-    public boolean blends(Block block){
-        return block.outputsItems();
-    }
-
     public class ShadedConduitBuild extends ConduitBuild{
         public int tiling = 0;
 
@@ -68,6 +45,16 @@ public class ShadedConduit extends Conduit { //todo junction replacement
             Draw.z(Layer.blockUnder);
             Draw.rect(regionLayers[1][0], x, y, 0f);
 
+            int frame = liquids.current().getAnimationFrame();
+            int gas = liquids.current().gas ? 1 : 0;
+            float ox = 0f, oy = 0f;
+            int wrapRot = (int)(rotation + offset) % 4;
+            TextureRegion liquidr = blendbits == 1 ? rotateRegions[wrapRot][gas][frame] : renderer.fluidFrames[gas][frame];
+
+            float xscl = Draw.xscl, yscl = Draw.yscl;
+            Draw.scl(1f, 1f);
+            Drawf.liquid(sliced(liquidr, SliceMode.none), x + ox, y + oy, smoothLiquid, liquids.current().color.write(Tmp.c1).a(1f));
+            Draw.scl(xscl, yscl);
 
             Draw.z(Layer.blockUnder + 0.2f);
             Draw.rect(regionLayers[0][tiling], x, y, 0f);

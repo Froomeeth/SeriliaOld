@@ -10,6 +10,7 @@ public class TubeMotor extends ConveyorTube{
 
     public TubeMotor(String name){
         super(name);
+        canOverdrive = true;
     }
 
     public class TubeMotorBuild extends ConveyorTubeBuild{
@@ -17,8 +18,9 @@ public class TubeMotor extends ConveyorTube{
         @Override
         public void updateTile(){
             super.updateTile();
-            carryDst = Mathf.floor(baseCarryDst * efficiency);
+            carryDst = Mathf.floor(baseCarryDst * efficiency); //todo boost
             lastMotor = this;
+            driveSpeed = (speed * efficiency / timeScale);
         }
 
         @Override
