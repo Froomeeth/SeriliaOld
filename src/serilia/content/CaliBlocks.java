@@ -4,6 +4,7 @@ import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.struct.Seq;
 import mindustry.content.Fx;
+import mindustry.content.Items;
 import mindustry.content.UnitTypes;
 import mindustry.entities.Effect;
 import mindustry.entities.abilities.EnergyFieldAbility;
@@ -23,6 +24,7 @@ import mindustry.world.Block;
 import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
+import mindustry.world.blocks.liquid.LiquidRouter;
 import mindustry.world.blocks.production.AttributeCrafter;
 import mindustry.world.blocks.production.BurstDrill;
 import mindustry.world.blocks.production.GenericCrafter;
@@ -34,6 +36,8 @@ import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrawTest;
+import serilia.world.blocks.storage.DrawerCore;
+import serilia.world.draw.drawblock.DrawTeam;
 
 import static mindustry.content.Items.*;
 import static mindustry.gen.Sounds.plasmaboom;
@@ -54,7 +58,7 @@ public class CaliBlocks {
         ducter,
 
         //liquid
-        fluidDuct,
+        fluidDuct, fluidRouter,
 
         //power
 
@@ -245,6 +249,14 @@ public class CaliBlocks {
 
         //liquid
         fluidDuct = new ShadedConduit("fluid-duct"){{
+            requirements(liquid, with(iridium, 1));
+        }};
+
+        fluidRouter = new LiquidRouter("fluid-router"){{
+            requirements(Category.liquid, with(iridium, 3));
+            liquidCapacity = 20f;
+            underBullets = true;
+            solid = false;
             requirements(liquid, ItemStack.with(metaglass, 2));
         }};
 
@@ -272,10 +284,9 @@ public class CaliBlocks {
             range = 300f;
             inaccuracy = 0;
             reload = 60f * 4.5f;
+            shootY = 0;
             targetAir = false;
             targetHealing = true;
-            targetGround = false;
-
             shootType = new ArtilleryBulletType(){
                 {
                     shootEffect = new MultiEffect(Fx.colorSparkBig);
@@ -295,12 +306,9 @@ public class CaliBlocks {
                     despawnEffect = Fx.greenBomb;
                     despawnShake = 3;
                     despawnSound = Sounds.shootSmite;
-                    fragBullets = 1;
-                    fragSpread = 0;
-                    fragAngle = 0;
-                    fragBullet = new BulletType() {{
-                        speed = 0f;
-                        spawnUnit = new MissileUnitType("allay-field") {{
+                    despawnUnitRadius = 0;
+                    despawnUnitCount = 1;
+                    despawnUnit = new MissileUnitType("allay-field") {{
                                 targetAir = false;
                                 targetGround = false;
                                 speed = 0;
@@ -314,7 +322,7 @@ public class CaliBlocks {
                                 drawCell = false;
                                 createWreck = createScorch = false;
                                 hitSize = 0;
-                                deathExplosionEffect = Fx.healWaveMend;
+
                                 deathSound = plasmaboom;
 
                                 abilities.add(new EnergyFieldAbility(0f, 30f, 100f) {{
@@ -330,7 +338,6 @@ public class CaliBlocks {
                         };
                     }};
                 }};
-        }};
 
         //crafting
         fragisteelPress = new GenericCrafter("fragisteel-press"){{
@@ -342,8 +349,10 @@ public class CaliBlocks {
             craftTime = 70f;
             size = 2;
             hasItems = true;
+            liquidCapacity = 10/60f;
 
             consumeItem(iridium, 2);
+            consumeLiquid(methane, 1f/60);
         }};
         //unit
 
@@ -375,20 +384,26 @@ public class CaliBlocks {
         }};
 
         //effect
-        coreSprout = new CoreBlock("core-sprout"){{
-            requirements(effect, ItemStack.with(iridium, 2500, vanadium, 2000, tarnide, 1500));
+        coreSprout = new DrawerCore("core-sprout"){{
+            requirements(effect, with(Items.graphite, 1000, iridium, 1000, fragisteel, 500));
             alwaysUnlocked = true;
 
             scaledHealth = 220;
             armor = 1f;
-            size = 4;
-            itemCapacity = 3000;
+            size = 3;
+            itemCapacity = 1500;
 
             isFirstTier = true;
             unitType = SeUnits.scion;
             thrusterLength = 34/4f;
 
             unitCapModifier = 5;
+
+            drawer = new DrawMulti(
+                    new DrawDefault(),
+                    new DrawRegion("-top"),
+                    new DrawTeam()
+            );
         }};
         coreBurgeon = new CoreBlock("core-burgeon"){{
             requirements(effect, ItemStack.with(iridium, 4000, tarnide, 2000, chirokyn, 1500, paragonite, 1500));
