@@ -20,6 +20,7 @@ import serilia.world.blocks.distribution.ConveyorTube;
 import serilia.world.blocks.distribution.TubeRouter;
 import serilia.world.blocks.liquid.LiquidChannel;
 import serilia.world.blocks.payload.MoreGenericCrafter;
+import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
@@ -100,6 +101,10 @@ public class AhkarBlocks {
         }};
 
         transporter = new PayloadDuct("transporter"){{
+            requirements(distribution, sandboxOnly, with());
+            size = 2;
+        }};
+        splitter = new PayDuctRouter("splitter"){{
             requirements(distribution, sandboxOnly, with());
             size = 2;
         }};

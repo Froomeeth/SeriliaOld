@@ -37,7 +37,6 @@ public class TubeMotor extends ConveyorTube{
 
     public class TubeMotorBuild extends ConveyorTubeBuild{
 
-
         @Override
         public void updateTile(){
             super.updateTile();
@@ -57,7 +56,7 @@ public class TubeMotor extends ConveyorTube{
                         if(tube instanceof ConveyorTubeBuild){
                             tube.lastMotor(motor);
                         }else{
-                            tube.addMotor(this);
+                            tube.addMotor(this); //todo awful awful awful
                         }
                     }else{
                         tube.clearMotors();
@@ -96,6 +95,10 @@ public class TubeMotor extends ConveyorTube{
         public void draw(){
             Draw.rect(block.region, this.x, this.y, drawrot());
             Draw.rect("arrow", this.x, this.y, drawrot());
+        }
+
+        @Override
+        public void drawSelect(){
         }
     }
 }

@@ -2,6 +2,7 @@ package serilia.world.blocks.distribution;
 
 import arc.struct.Seq;
 import mindustry.gen.Building;
+import mindustry.graphics.Drawf;
 import mindustry.type.Item;
 import mindustry.world.Tile;
 import mindustry.world.blocks.distribution.Router;
@@ -16,7 +17,7 @@ public class TubeRouter extends Router{
 
     public class TubeRouterBuild extends RouterBuild implements TubeThing{
         public float driveSpeed;
-        public Seq<TubeMotorBuild> motors = new Seq<>();
+        public Seq<TubeMotorBuild> motors = new Seq<>(), lastMotors = new Seq<>();
 
         @Override
         public void updateTile(){
@@ -51,8 +52,22 @@ public class TubeRouter extends Router{
         }
 
         @Override
-        public void update(){
+        public void drawSelect(){ //todo draw motor connections
+            Drawf.square(x, y, size * 8f, 0f);
+            lastMotors.each(motor -> {
+                Drawf.square(x, y, 8f, 0f);
+            });
+        }
+
+        @Override
+        public boolean acceptItem(Building source, Item item){
+            return super.acceptItem(source, item) && source instanceof TubeThing;
+        }
+
+        @Override
+        public void update(){ //todo awful awful awful
             super.update();
+            lastMotors.set(motors);
             clearMotors();
         }
 
