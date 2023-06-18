@@ -374,7 +374,7 @@ public class CaliBlocks {
             size = 4;
             consumePower(4f);
         }};
-        shipManufactor = new UnitFactory("ship-manufactor"){{
+        shipManufactor = new UnitFactory("ship-manufactor"){{ //TODO CHANGE NAME TO NAVAL FUCK YOU
             requirements(units, with(graphite, 55, silicon, 200, iridium, 100, chirokyn, 100));
             plans = Seq.with(
                     new UnitPlan(UnitTypes.minke, 60f * 10, with(silicon, 180, metaglass, 95))
