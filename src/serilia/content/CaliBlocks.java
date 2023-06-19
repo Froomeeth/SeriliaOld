@@ -10,7 +10,6 @@ import mindustry.entities.Effect;
 import mindustry.entities.abilities.EnergyFieldAbility;
 import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
-import mindustry.entities.bullet.BulletType;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.entities.part.RegionPart;
 import mindustry.entities.pattern.ShootAlternate;
@@ -32,6 +31,7 @@ import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.blocks.units.UnitFactory;
 import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
+import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrawTest;
@@ -63,8 +63,7 @@ public class CaliBlocks {
         //power
 
         //defense
-        iridiumWall, smallIridiumWall, largeIridiumWall,
-        fragisteelWall, smallFragisteelWall, largeFragisteelWall,
+        iridiumWall, fragisteelWall,
         allay,
 
         //crafting
@@ -258,47 +257,27 @@ public class CaliBlocks {
             liquidCapacity = 20f;
             underBullets = true;
             solid = false;
+            requirements(liquid, with(metaglass, 2));
         }};
 
         //defense
-        iridiumWall = new Wall("iridium-wall"){{
+        SeUtil.generateWalls(iridiumWall = new Wall("iridium-wall"){{
            scaledHealth = 425;
-           size = 2;
-           requirements(Category.defense, with( Items.graphite, 16, iridium, 16));
-        }};
-        smallIridiumWall = new Wall("small-iridium-wall"){{
-            scaledHealth = 425;
-            size = 1;
-            requirements(Category.defense, with( Items.graphite, 4, iridium, 4));
-        }};
-        largeIridiumWall = new Wall("large-iridium-wall"){{
-            scaledHealth = 425;
-            size = 3;
-            requirements(Category.defense, with( Items.graphite, 36, iridium, 36));
-        }};
-        fragisteelWall = new Wall("fragisteel-wall"){{
-            scaledHealth = 325;
-            size = 2;
-            requirements(Category.defense, with( fragisteel, 24));
-            absorbLasers = true;
-        }};
-        smallFragisteelWall = new Wall("small-fragisteel-wall"){{
+           size = 1;
+           requirements(Category.defense, with( graphite, 4, iridium, 4));
+        }}, Seq.with(2, 3));
+
+        SeUtil.generateWalls(fragisteelWall = new Wall("fragisteel-wall"){{
             scaledHealth = 325;
             size = 1;
             requirements(Category.defense, with( fragisteel, 6));
             absorbLasers = true;
-        }};
-        largeFragisteelWall = new Wall("large-fragisteel-wall"){{
-            scaledHealth = 325;
-            size = 3;
-            requirements(Category.defense, with( fragisteel, 64));
-            absorbLasers = true;
-        }};
+        }}, Seq.with(2, 3));
 
         allay = new PowerTurret("allay"){{
             scaledHealth = 75f;
             size = 4;
-            requirements(Category.defense, with( Items.silicon, 200, Items.graphite, 250, iridium, 500, chirokyn, 100));
+            requirements(Category.defense, with( silicon, 200, graphite, 250, iridium, 500, chirokyn, 100));
             liquidCapacity = 40f;
             consumePower(200/60f);
             consumeLiquid(steam, 20/60f);

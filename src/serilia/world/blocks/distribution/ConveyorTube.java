@@ -21,7 +21,7 @@ public class ConveyorTube extends ShadedDuct{
     public void setBars(){
         super.setBars();
         addBar("carrydist", (ConveyorTubeBuild e) ->
-                new Bar(() -> Core.bundle.format("bar.carrydist", e.carryDst), () -> SeFxPal.coreReactor, () -> e.lastMotor == null ? 0 : (e.carryDst + 1f) / (((TubeMotorBuild)e.lastMotor).carryDst + 1f))
+                new Bar(() -> e.carryDst < 0 ? Core.bundle.get("bar.nomotor") : Core.bundle.format("bar.carrydist", e.carryDst), () -> SeFxPal.coreReactor, () -> e.lastMotor == null ? 0 : (e.carryDst + 1f) / (((TubeMotorBuild)e.lastMotor).carryDst + 1f))
         );
     }
 
@@ -32,7 +32,7 @@ public class ConveyorTube extends ShadedDuct{
 
     public class ConveyorTubeBuild extends ShadedDuctBuild implements TubeThing{
         Building back, lastMotor;
-        int carryDst;
+        int carryDst = -150;
         float driveSpeed;
 
         /*@Override
@@ -48,7 +48,7 @@ public class ConveyorTube extends ShadedDuct{
 
         @Override
         public void updateTile(){
-            if(carryDst >= 0){
+            if(carryDst >= 0 && lastMotor != null){
                 progress += edelta() / driveSpeed * 2f;
 
                 if(current != null && next != null){
@@ -106,7 +106,7 @@ public class ConveyorTube extends ShadedDuct{
             if(back() != null && back() instanceof ConveyorTubeBuild){
                 back = back();
             }
-            carryDst = 0;
+            carryDst = -150;
             lastMotor = null;
             driveSpeed = 0f;
         }

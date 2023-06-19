@@ -13,6 +13,7 @@ import mindustry.gen.Building;
 import mindustry.graphics.Layer;
 import mindustry.world.blocks.distribution.Duct;
 import mindustry.world.blocks.distribution.DuctBridge;
+import mindustry.world.blocks.distribution.StackConveyor.StackConveyorBuild;
 import serilia.util.SeUtil;
 
 import static mindustry.Vars.itemSize;
@@ -87,7 +88,7 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
             for(int i = 0; i < 4; i++){
                 Building b = nearby(Geometry.d4(i).x, Geometry.d4(i).y);
-                if(i == rotation || b != null && (b instanceof ShadedDuctBuild ? (b.front() != null && b.front() == this) : b.block.outputsItems())){
+                if(i == rotation || b != null && (b instanceof DuctBuild ? (b.front() != null && b.front() == this) : (b.block.outputsItems() && !(b instanceof StackConveyorBuild stack && stack.state != 2)))){
                     tiling |= (1 << i);
                 }
             }
