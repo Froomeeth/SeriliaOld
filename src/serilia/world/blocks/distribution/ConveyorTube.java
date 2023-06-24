@@ -123,7 +123,7 @@ public class ConveyorTube extends ShadedDuct{
                 if(
                     i == rotation || //if this direction is the one it's facing OR (||)
                     b != null &&     //the building is not null (prevent NPE) AND (&&)
-                                     //the condition below gave a true in the condition in ().
+                                     //the condition in () below gave a true.
 
                     ( //() so it's considered as one value
                         /**Use ? : to switch between values depending on a condition.*/
