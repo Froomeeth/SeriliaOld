@@ -18,6 +18,16 @@ import mindustry.world.blocks.defense.Wall;
 public class SeUtil{
     public static Color[] spectrum = {Color.red, Color.coral, Color.yellow, Color.lime, Color.green, Color.teal, Color.blue, Color.purple, Color.magenta};
 
+    //vec
+    public static Vec2 vecSetLine(Vec2 vec, Vec2 pos, float rotation, float length){
+        vec.setLength(length).setAngle(rotation).add(pos);
+        return vec;
+    }
+    public static Vec2 vecSetLine(Vec2 vec, float x, float y, float rotation, float length){
+        vec.setLength(length).setAngle(rotation).add(x, y);
+        return vec;
+    }
+
 
     public static void quadHelper(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4){
         Fill.quad(x1, y1, x2, y2, x3, y3, x4, y4);

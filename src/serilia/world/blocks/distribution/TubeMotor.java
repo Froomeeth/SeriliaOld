@@ -30,8 +30,8 @@ public class TubeMotor extends ConveyorTube{
         Drawf.dashLine(Pal.placing,
                 x * tilesize + dx * (tilesize / 2f + 2),
                 y * tilesize + dy * (tilesize / 2f + 2),
-                x * tilesize + dx * (baseCarryDst * tilesize),
-                y * tilesize + dy * (baseCarryDst * tilesize)
+                x * tilesize + dx * (baseCarryDst * 8 + 8),
+                y * tilesize + dy * (baseCarryDst * 8 + 8)
         );
     }
 
@@ -99,6 +99,13 @@ public class TubeMotor extends ConveyorTube{
 
         @Override
         public void drawSelect(){
+            int dx = Geometry.d4x(rotation), dy = Geometry.d4y(rotation);
+            Drawf.dashLine(Pal.placing,
+                    x * tilesize + dx * (tilesize / 2f + 2),
+                    y * tilesize + dy * (tilesize / 2f + 2),
+                    x * tilesize + dx * (baseCarryDst * tilesize),
+                    y * tilesize + dy * (baseCarryDst * tilesize)
+            );
         }
     }
 }

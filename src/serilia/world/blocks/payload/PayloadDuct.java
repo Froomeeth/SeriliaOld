@@ -95,7 +95,7 @@ public class PayloadDuct extends PayloadBlock{
         @Override
         public void draw(){ //todo draw
             Draw.z(Layer.blockUnder);
-            Draw.rect(regionLayers[0][tiling], x, y, 0f);
+            //Draw.rect(regionLayers[0][tiling], x, y, 0f);
 
             drawPayload();
 

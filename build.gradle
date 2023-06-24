@@ -1,15 +1,8 @@
 
 plugins{
-    // Apply the entity generation plugin.
+    id 'java'
     id 'com.github.GlennFolker.EntityAnno' version "$entVersion"
 }
-
-apply plugin: "java"
-
-version '1.0'
-
-targetCompatibility = 8
-sourceCompatibility = JavaVersion.VERSION_16
 
 sourceSets.main.java.srcDirs = ["src"]
 
@@ -19,31 +12,27 @@ repositories{
 }
 
 ext{
-    //the build number that this mod is made for
-    mindustryVersion = 'v143.1'
-    jabelVersion = "93fde537c7"
-    sdkRoot = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
+    sdkRoot = System.getenv("ANDROID_SDK_ROOT") ?: System.getenv("ANDROID_HOME")
 }
 
-//java 8 backwards compatibility flag
-allprojects{
-    tasks.withType(JavaCompile){
-        options.compilerArgs.addAll(['--release', '8'])
-    }
+sourceCompatibility = 17
+tasks.withType(JavaCompile).configureEach{
+    sourceCompatibility = 17
+    options.release = 8
+
+    options.incremental = true
+    options.encoding = 'UTF-8'
 }
 
 dependencies{
-    // Downgrade Java 9+ syntax into being available in Java 8.
+    compileOnly "com.github.Anuken.Arc:arc-core:$arcVersion"
+    compileOnly "com.github.Anuken.MindustryJitpack:core:$mindustryVersion"
+
     annotationProcessor "com.github.GlennFolker.EntityAnno:downgrader:$entVersion"
 
-    // Use the entity generation annotation processor.
     compileOnly "com.github.GlennFolker.EntityAnno:entity:$entVersion"
+
     kapt "com.github.GlennFolker.EntityAnno:entity:$entVersion"
-
-    compileOnly "com.github.Anuken.Arc:arc-core:$mindustryVersion"
-    compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
-
-    annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
 }
 
 entityAnno{
@@ -59,15 +48,6 @@ entityAnno{
     genSrcPackage = 'serilia.entities.comp'
     // Root generated entity classes package.
     rootPackage = 'serilia.gen'
-}
-
-//force arc version
-configurations.all{
-    resolutionStrategy.eachDependency { details ->
-        if(details.requested.group == 'com.github.Anuken.Arc'){
-            details.useVersion "$mindustryVersion"
-        }
-    }
 }
 
 task jarAndroid{

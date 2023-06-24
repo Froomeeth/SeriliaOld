@@ -13,15 +13,20 @@ import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.liquid.Conduit;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.production.Separator;
-import mindustry.world.draw.*;
+import mindustry.world.draw.DrawDefault;
+import mindustry.world.draw.DrawGlowRegion;
+import mindustry.world.draw.DrawMulti;
+import mindustry.world.draw.DrawRegion;
 import serilia.util.SeUtil;
-import serilia.world.blocks.distribution.TubeMotor;
 import serilia.world.blocks.distribution.ConveyorTube;
+import serilia.world.blocks.distribution.TubeMotor;
 import serilia.world.blocks.distribution.TubeRouter;
 import serilia.world.blocks.liquid.LiquidChannel;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
+import serilia.world.blocks.power.LaserNode;
+import serilia.world.blocks.power.PowerWire;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
 import serilia.world.blocks.storage.DrawerCore;
@@ -51,7 +56,7 @@ public class AhkarBlocks {
         channel, valve, pistonPump,
 
         //power
-        solarCollector,
+        solarCollector, wire, laserEmitter, laserRelay, laserReceiver,
 
         //defense
         barrierProjector,
@@ -121,7 +126,7 @@ public class AhkarBlocks {
 
 
         //power
-        solarCollector = new SolarCollector("solar-collector"){{
+        solarCollector = new SolarCollector("solar-collector"){{ //todo remove
             requirements(power, sandboxOnly, with());
             size = 6;
             powerProduction = 2f;
@@ -133,6 +138,29 @@ public class AhkarBlocks {
                         color = Color.brown;
                     }}
             );
+        }};
+
+        wire = new PowerWire("wire"){{
+            requirements(power, sandboxOnly, with());
+            hasPower = true;
+            consumesPower = false;
+            conductivePower = true;
+        }};
+
+        laserEmitter = new LaserNode("laser-emitter"){{
+            requirements(power, sandboxOnly, with());
+            maxEmit = 100f;
+            consumePower(maxEmit / powerEfficiency);
+        }};
+        laserRelay = new LaserNode("laser-relay"){{
+            requirements(power, sandboxOnly, with());
+            accept = true;
+            produce = false;
+        }};
+        laserReceiver = new LaserNode("laser-receiver"){{
+            requirements(power, sandboxOnly, with());
+            accept = hasPower = outputsPower = true;
+            emit = rotate = consumesPower = false;
         }};
 
 

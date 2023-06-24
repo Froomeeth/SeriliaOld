@@ -10,6 +10,7 @@ import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Healthc;
 import mindustry.gen.Unit;
+import serilia.world.blocks.power.laserbase.LaserThing;
 
 import static mindustry.Vars.world;
 
@@ -21,7 +22,7 @@ public class Damage2TheSequel{
     private static Building tmpBuilding;
     private static Unit tmpUnit;
 
-    public static Healthc linecast(float x, float y, float angle, float length, boolean ground, boolean air, Team team){ //todo needs a tile detection thing
+    public static Healthc linecast(float x, float y, float angle, float length, boolean ground, boolean air, Team team, LaserThing ignore){ //todo needs a tile detection thing
         vec.trns(angle, length);
 
         tmpBuilding = null;
@@ -29,7 +30,7 @@ public class Damage2TheSequel{
         if(ground){
             World.raycastEachWorld(x, y, x + vec.x, y + vec.y, (cx, cy) -> {
                 Building tile = world.build(cx, cy);
-                if(tile != null && tile.team != team){
+                if(tile != null && tile.team != team && tile != ignore){
                     tmpBuilding = tile;
                     return true;
                 }
@@ -60,7 +61,7 @@ public class Damage2TheSequel{
         tmpUnit = null;
 
         Units.nearbyEnemies(team, rect, e -> {
-            if((tmpUnit != null && e.dst2(x, y) > tmpUnit.dst2(x, y)) || !e.checkTarget(air, ground) || !e.targetable(team)) return;
+            if((tmpUnit != null && e  != ignore && e.dst2(x, y) > tmpUnit.dst2(x, y)) || !e.checkTarget(air, ground) || !e.targetable(team)) return;
 
             e.hitbox(hitrect);
             Rect other = hitrect;

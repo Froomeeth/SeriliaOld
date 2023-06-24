@@ -9,6 +9,7 @@ import arc.util.Nullable;
 import static arc.graphics.g2d.Fill.*;
 import static arc.util.Tmp.*;
 import static serilia.util.SeUtil.quadHelper;
+import static serilia.util.SeUtil.vecSetLine;
 
 /**Closs containing everything needed to make an illusion of height.*/
 public class Parallax{
@@ -17,7 +18,7 @@ public class Parallax{
             v1.set(1f, 1f); //line start
             v2.set(Core.camera.position);
 
-            v1.setLength(radius).setAngle(i * (360f / lineCount) + rot).add(x, y);
+            vecSetLine(v1, x, y, i * (360f / lineCount) + rot, radius);
 
             Lines.lineAngle(v1.x, v1.y, v2.sub(v1.x, v1.y).angle() + 180f, v2.dst(0f, 0f) * height);
         }
@@ -30,7 +31,7 @@ public class Parallax{
         v1.set(1f, 1f);
         v2.set(Core.camera.position);
 
-        v1.setAngle(v2.sub(x, y).angle() + 180f).setLength(ignoreCamDst ? height : height * v2.dst(0f, 0f)).add(x, y);
+        vecSetLine(v1, x, y, v2.sub(x, y).angle() + 180f, ignoreCamDst ? height : height * v2.dst(0f, 0f));
 
         return v1;
     }
@@ -46,13 +47,15 @@ public class Parallax{
         v1.set(parallax(x, y, height, false));
         v2.set(Core.camera.position);
 
-        poly(x,    y,    48, radius);
+        poly(x, y, 48, radius);
         //Fill.poly(v1.x, v1.y, 48, radius * upScl);
 
-        v3.set(1f, 1f).setLength(radius)        .setAngle(v2.sub(x, y).angle() - 90f).add(x, y); v2.set(Core.camera.position);
-        v4.set(1f, 1f).setLength(radius)        .setAngle(v2.sub(x, y).angle() + 90f).add(x, y); v2.set(Core.camera.position);
-        v5.set(1f, 1f).setLength(radius * upScl).setAngle(v2.sub(x, y).angle() + 90f).add(v1);   v2.set(Core.camera.position);
-        v6.set(1f, 1f).setLength(radius * upScl).setAngle(v2.sub(x, y).angle() - 90f).add(v1);
+        vecSetLine(v3, x, y, v2.sub(x, y).angle() - 90f, radius       ); v2.set(Core.camera.position);
+        vecSetLine(v4, x, y, v2.sub(x, y).angle() + 90f, radius       ); v2.set(Core.camera.position);
+        vecSetLine(v5, v1  , v2.sub(x, y).angle() + 90f, radius * upScl); v2.set(Core.camera.position);
+        vecSetLine(v6, v1  , v2.sub(x, y).angle() - 90f, radius * upScl);
+
+
 
         quadHelper(v3.x, v3.y, v4.x, v4.y, v5.x, v5.y, v6.x, v6.y);
     }
