@@ -8,6 +8,7 @@ import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
 import mindustry.type.Item;
 import mindustry.world.Tile;
+import serilia.content.SeFxPal;
 
 import static mindustry.Vars.tilesize;
 import static mindustry.Vars.world;
@@ -36,11 +37,12 @@ public class TubeMotor extends ConveyorTube{
     }
 
     public class TubeMotorBuild extends ConveyorTubeBuild{
+        int length;
 
         @Override
         public void updateTile(){
             super.updateTile();
-            carryDst = Mathf.floor(baseCarryDst * efficiency); //todo boost
+            carryDst = baseCarryDst;  //Mathf.floor(baseCarryDst * efficiency); todo no
             driveSpeed = (speed * efficiency / timeScale);
         }
 
@@ -49,6 +51,7 @@ public class TubeMotor extends ConveyorTube{
             for(int i = 1; i <= dst; i++){
                 Tile other = world.tile(tileOn().x + dx * i, tileOn().y + dy * i);
 
+                //todo bridge
                 if(other.build instanceof TubeThing tube && !(other.build instanceof TubeMotorBuild)){
                     tube.carryDst(Mathf.floor(carDst - i));
                     tube.driveSpeed(drvSpd);
@@ -60,8 +63,12 @@ public class TubeMotor extends ConveyorTube{
                         }
                     }else{
                         tube.clearMotors();
+                        length = i;
+                        break;
                     }
-                }else break; //todo bridge
+                }else{
+                    break;
+                }
             }
         }
 
@@ -100,11 +107,11 @@ public class TubeMotor extends ConveyorTube{
         @Override
         public void drawSelect(){
             int dx = Geometry.d4x(rotation), dy = Geometry.d4y(rotation);
-            Drawf.dashLine(Pal.placing,
-                    x * tilesize + dx * (tilesize / 2f + 2),
-                    y * tilesize + dy * (tilesize / 2f + 2),
-                    x * tilesize + dx * (baseCarryDst * tilesize),
-                    y * tilesize + dy * (baseCarryDst * tilesize)
+            Drawf.dashLine(SeFxPal.coreReactor,
+                    x + dx * (tilesize / 2f + 2),
+                    y + dy * (tilesize / 2f + 2),
+                    x + dx * (length * tilesize),
+                    y + dy * (length * tilesize)
             );
         }
     }

@@ -21,7 +21,6 @@ import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.ConveyorTube;
 import serilia.world.blocks.distribution.TubeMotor;
 import serilia.world.blocks.distribution.TubeRouter;
-import serilia.world.blocks.liquid.LiquidChannel;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
@@ -116,10 +115,6 @@ public class AhkarBlocks {
 
 
         //liquid
-        channel = new LiquidChannel("channel"){{
-            requirements(liquid, with(nickel, 2, metaglass, 1));
-        }};
-
         valve = new Conduit("valve"){{ //todo make togglable
             requirements(liquid, sandboxOnly, with());
         }};

@@ -1,11 +1,16 @@
 package serilia.world.blocks.distribution;
 
+import arc.Core;
+import arc.graphics.g2d.Draw;
 import arc.struct.Seq;
 import mindustry.gen.Building;
 import mindustry.graphics.Drawf;
+import mindustry.graphics.Layer;
 import mindustry.type.Item;
+import mindustry.ui.Bar;
 import mindustry.world.Tile;
 import mindustry.world.blocks.distribution.Router;
+import serilia.content.SeFxPal;
 import serilia.world.blocks.distribution.TubeMotor.TubeMotorBuild;
 
 public class TubeRouter extends Router{
@@ -13,6 +18,14 @@ public class TubeRouter extends Router{
 
     public TubeRouter(String name){
         super(name);
+    }
+
+    @Override
+    public void setBars(){
+        super.setBars();
+        addBar("carrydist", (TubeRouterBuild e) ->
+                new Bar(() -> Core.bundle.format("bar.motors", e.motors.size), () -> SeFxPal.coreReactor, () -> 1f)
+        );
     }
 
     public class TubeRouterBuild extends RouterBuild implements TubeThing{
@@ -53,10 +66,13 @@ public class TubeRouter extends Router{
 
         @Override
         public void drawSelect(){ //todo draw motor connections
-            Drawf.square(x, y, size * 8f, 0f);
             lastMotors.each(motor -> {
-                Drawf.square(x, y, 8f, 0f);
+                Draw.z(Layer.blockOver);
+                motor.drawSelect();
+                Drawf.square(motor.x, motor.y, 8f, 45f, SeFxPal.coreReactor);
             });
+            super.draw();
+            Drawf.square(x, y, size * 6f, 0f);
         }
 
         @Override

@@ -14,7 +14,15 @@ import static mindustry.Vars.renderer;
 /**Stolen from FOS, thanks slot*/
 public class SeMenuRenderer extends MenuRenderer{
     public static FrameBuffer buffer;
-    public PlanetParams params = new PlanetParams();
+    public PlanetParams params = new PlanetParams(){{
+        camPos.set(0f, -1f, 4f);
+        alwaysDrawAtmosphere = true;
+        drawUi = false;
+        planet = SeSystem.serilia;
+        zoom = 0.3f;
+    }};
+
+
 
     @Override
     public void render() {
@@ -24,12 +32,8 @@ public class SeMenuRenderer extends MenuRenderer{
 
         buffer.begin(Color.clear);
 
-        params.alwaysDrawAtmosphere = true;
-        params.drawUi = false;
-        params.planet = SeSystem.serilia;
-        params.zoom = 0.3f;
-
-        params.camPos.rotate(Vec3.Y, 0.03f);
+        params.camPos.rotate(Vec3.Y, 0.10f);
+        params.camPos.rotate(Vec3.Y, -0.10f); //I don't know how, but it still moves with this. At least I can bypass the lower speed limit with it.
 
         renderer.planets.render(params);
 
