@@ -308,6 +308,7 @@ public class CaliBlocks {
                     despawnSound = Sounds.shootSmite;
                     despawnUnitRadius = 0;
                     despawnUnitCount = 1;
+                    collides = false;
                     despawnUnit = new MissileUnitType("allay-field") {{
                                 targetAir = false;
                                 targetGround = false;
@@ -321,10 +322,7 @@ public class CaliBlocks {
                                 playerControllable = false;
                                 drawCell = false;
                                 createWreck = createScorch = false;
-                                hitSize = 0;
-
                                 deathSound = plasmaboom;
-
                                 abilities.add(new EnergyFieldAbility(0f, 30f, 100f) {{
                                     x = 0;
                                     y = 0;
