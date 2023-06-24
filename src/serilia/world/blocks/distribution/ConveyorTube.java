@@ -37,7 +37,7 @@ public class ConveyorTube extends ShadedDuct{
 
         @Override
         public void updateTile(){
-            //the only part that actually changes
+            //the only part that actually matters
             if(carryDst >= 0 && lastMotor != null){
 
                 //copy paste of duct
