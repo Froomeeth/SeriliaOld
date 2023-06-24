@@ -35,20 +35,12 @@ public class ConveyorTube extends ShadedDuct{
         int carryDst = -150;
         float driveSpeed;
 
-        /*@Override
-        public void update(){
-            super.update();
-
-            if(back != null && back.front() == this && (lastMotor == null || lastMotor != this)){
-                carryDst = ((ConveyorTubeBuild) back).carryDst - 1;
-                lastMotor = ((ConveyorTubeBuild) back).lastMotor;
-                if(lastMotor != null) driveSpeed = ((ConveyorTubeBuild)lastMotor).driveSpeed;
-            }
-        }*/
-
         @Override
         public void updateTile(){
+            //the only part that actually changes
             if(carryDst >= 0 && lastMotor != null){
+
+                //copy paste of duct
                 progress += edelta() / driveSpeed * 2f;
 
                 if(current != null && next != null){
