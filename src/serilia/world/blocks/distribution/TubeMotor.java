@@ -13,7 +13,7 @@ import static mindustry.Vars.tilesize;
 import static mindustry.Vars.world;
 
 public class TubeMotor extends ConveyorTube{
-    public float baseCarryDst = 7;
+    public int baseCarryDst = 7;
     public int maxDst = 10;
 
     public TubeMotor(String name){
@@ -68,7 +68,7 @@ public class TubeMotor extends ConveyorTube{
         @Override
         public void update(){
             super.update();
-            updateLine(maxDst, carryDst, speed * efficiency / timeScale, this);
+            updateLine(baseCarryDst, carryDst, speed * efficiency / timeScale, this);
         }
 
         @Override
