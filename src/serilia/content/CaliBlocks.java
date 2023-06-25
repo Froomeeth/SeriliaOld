@@ -258,6 +258,7 @@ public class CaliBlocks {
             drillMultipliers.put(iridium, 1.5f);
 
             consumeLiquids(LiquidStack.with(methane, 10f / 60f));
+            consumePower(25/60f);
 
         }};
 
