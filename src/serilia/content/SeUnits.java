@@ -1,6 +1,7 @@
 package serilia.content;
 
 import arc.graphics.Color;
+import arc.math.geom.Rect;
 import mindustry.ai.types.BuilderAI;
 import mindustry.content.Fx;
 import mindustry.content.StatusEffects;
@@ -10,11 +11,13 @@ import mindustry.entities.effect.ExplosionEffect;
 import mindustry.entities.pattern.ShootPattern;
 import mindustry.gen.LegsUnit;
 import mindustry.gen.Sounds;
+import mindustry.gen.TankUnit;
 import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
+import mindustry.type.unit.TankUnitType;
 import serilia.gen.entities.EntityRegistry;
 import serilia.gen.entities.TractorBeam;
 import serilia.types.SeriliaUnitType;
@@ -33,7 +36,9 @@ public class SeUnits{
     youth,
 
     //assault
-    oversee;
+    oversee,
+    //tanks
+     nephila, lobata, coelestis;
 
     public static void load(){
 
@@ -206,4 +211,17 @@ public class SeUnits{
                 }};
             }});
         }};
-    }}
+    //tanks
+
+        lobata = new TankUnitType("lobata"){{
+                constructor = TankUnit::create;
+                hitSize = 28f;
+                treadPullOffset = 4;
+                speed = 0.63f;
+                health = 11000;
+                armor = 20f;
+                itemCapacity = 0;
+                crushDamage = 13f / 5f;
+                treadRects = new Rect[]{new Rect(22 - 154f / 2f, 16 - 154f / 2f, 28, 130)};
+            }};
+        }}

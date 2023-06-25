@@ -49,10 +49,11 @@ public class CaliBlocks {
     public static Block
 
         //turret
+        quiver, scourge, quail,
         ballista,
 
         //drill
-        methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkQuarry, bulkDrill,
+        methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
         ducter,
@@ -239,6 +240,24 @@ public class CaliBlocks {
             drillMultipliers.put(iridium, 1.5f);
 
             consumeLiquids(LiquidStack.with(methane, 5f / 60f));
+
+        }};
+        largeHeatDrill = new BurstDrill("large-heat-drill"){{
+            requirements(production, with(graphite, 60, iridium, 80, chirokyn, 50));
+            scaledHealth = 95;
+            drillTime = 60f * 6.5f;
+            size = 3;
+            tier = 2;
+            drillEffect = Fx.mineHuge;
+            shake = 1.8f;
+            itemCapacity = 30;
+            arrowOffset = 0f;
+            arrowSpacing = 0f;
+            arrows = 1;
+
+            drillMultipliers.put(iridium, 1.5f);
+
+            consumeLiquids(LiquidStack.with(methane, 10f / 60f));
 
         }};
 
