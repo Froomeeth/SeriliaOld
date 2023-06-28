@@ -23,6 +23,8 @@ import mindustry.world.Block;
 import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
+import mindustry.world.blocks.distribution.Junction;
+import mindustry.world.blocks.distribution.Router;
 import mindustry.world.blocks.liquid.LiquidRouter;
 import mindustry.world.blocks.production.AttributeCrafter;
 import mindustry.world.blocks.production.BurstDrill;
@@ -56,7 +58,7 @@ public class CaliBlocks {
         methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
-        ducter,
+        ducter, ductjunction, ductRouter,
 
         //liquid
         fluidDuct, fluidRouter,
@@ -267,6 +269,23 @@ public class CaliBlocks {
             requirements(distribution, with(iridium, 2));
         }};
 
+
+        ductjunction = new Junction("duct-junction"){{
+            requirements(Category.distribution, with(iridium, 4));
+            speed = 16;
+            capacity = 2;
+            health = 45;
+            buildCostMultiplier = 6f;
+
+            ((ShadedDuct)ducter).junctionReplacement = this;
+        }};
+
+        ductRouter = new Router("duct-router"){{
+            requirements(Category.distribution, with(iridium, 5));
+            health = 45;
+            buildCostMultiplier = 6f;
+        }};
+
         //liquid
         fluidDuct = new ShadedConduit("fluid-duct"){{
             requirements(liquid, with(iridium, 1));
@@ -277,7 +296,6 @@ public class CaliBlocks {
             liquidCapacity = 20f;
             underBullets = true;
             solid = false;
-            requirements(liquid, with(metaglass, 2));
         }};
 
         //defense
