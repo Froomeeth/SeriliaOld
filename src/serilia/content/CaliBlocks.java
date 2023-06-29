@@ -224,22 +224,23 @@ public class CaliBlocks {
            range = 240;
            inaccuracy = 3;
            velocityRnd = 0.3f;
-           reload = 30;
+           reload = 20;
            targetAir = true;
            targetGround = false;
            shoot = new ShootAlternate(){{
-                spread = 3.1f * 1.9f;
+                spread = 2.8f * 1.9f;
                 shots = barrels = 3;
+                shotDelay = 3;
            }};
            ammo(
-               fragisteel, new FlakBulletType(10, 15){{
+               fragisteel, new FlakBulletType(10, 35){{
                    sprite = "missile-large";
                    width = 6f;
                    height = 10f;
                    hitSize = 7f;
                    trailWidth = 2.1f;
                    trailLength = 18;
-                   trailEffect = Fx.colorSpark;
+                   trailEffect = Fx.colorSparkBig;
                    trailRotation = true;
 
                    frontColor = Color.white;
@@ -248,32 +249,36 @@ public class CaliBlocks {
                    lifetime = 24;
 
                    splashDamage = 50;
-                   splashDamageRadius = 15;
-                   explodeRange = 30;
+                   splashDamageRadius = 35;
+                   explodeRange = 20;
                    explodeDelay = 0f;
 
-                   hitEffect = new MultiEffect(Fx.flakExplosion, Fx.colorSparkBig);
+                   hitEffect = new MultiEffect(Fx.flakExplosion, Fx.colorSpark);
+                   collidesGround = collideFloor = false;
             }}
            );
            shootY = 0.7f;
            ammoPerShot = 2;
 
            outlineColor = Color.valueOf("313a3b");
+           heatColor = Color.red;
+           cooldownTime = 50;
+           minWarmup = 0.99f;
+           shootEffect = Fx.colorSparkBig;
             drawer = new DrawTurret(){{
                     parts.add(
                             new RegionPart("-outer-gun") {{
                                 progress = PartProgress.warmup;
-                                heatProgress = PartProgress.recoil.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.recoil);
                                 mirror = true;
                                 under = true;
-                                moveX = 1.2f;
+                                moveX = 0f;
                                 moveY = -2f;
+                                moves.add(new PartMove(PartProgress.recoil, 0f, -1f, 0f));
                             }},
                             new RegionPart("-inner-gun") {{
                                 progress = PartProgress.warmup;
-                                heatProgress = PartProgress.recoil.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.recoil);
                                 mirror = true;
-                                under = true;
+                                under = false;
                                 moveX = 0f;
                                 moveY = -1f;
                             }});
