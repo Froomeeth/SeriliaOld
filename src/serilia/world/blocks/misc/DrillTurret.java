@@ -35,23 +35,26 @@ public class DrillTurret extends Block {
     public class DrillTurretBuild extends Building{
         public float counter;
         public Unit target;
-        public @Nullable ItemStack outputItem;
         @Override
         public void updateTile() {
             target = Units.closest(team, x, y, Unit::isFlying);
 
             if (target != null){
                 counter += edelta();
-                    if (outputItem != null) {
-                        items.set(outputItem.item, outputItem.amount);
+
+                if(counter >= craftTime && outputItem != null){ //&& is a boolean AND, & is for bits and not very useful
+
+                    for(int i = 0; i < outputItem.amount; i++){ //for loop so it outputs the right count
                         offload(outputItem.item);
                     }
+                    counter %= craftTime; //% divides and outputs the remainder; 31.2 % 30 = 1.2. Useful for resetting numbers without messing with remaining times.
+                }
             }
 
         }
         public void draw(){
             if (target != null){
-                Drawf.laser(laser, laserStart, laserEnd, target.x,target.y, x, y, efficiency);
+                Drawf.laser(laser, laserStart, laserEnd, x, y, target.x, target.y, efficiency);
             }
             if (target != null) {
                 trailEffect.at(target.x, target.y);
