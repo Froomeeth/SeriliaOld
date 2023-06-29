@@ -5,6 +5,7 @@ import arc.math.geom.Rect;
 import mindustry.ai.types.BuilderAI;
 import mindustry.content.Fx;
 import mindustry.content.StatusEffects;
+import mindustry.entities.abilities.EnergyFieldAbility;
 import mindustry.entities.bullet.MissileBulletType;
 import mindustry.entities.bullet.PointBulletType;
 import mindustry.entities.effect.ExplosionEffect;
@@ -21,6 +22,7 @@ import mindustry.type.unit.TankUnitType;
 import serilia.gen.entities.EntityRegistry;
 import serilia.gen.entities.TractorBeam;
 import serilia.types.SeriliaUnitType;
+import serilia.types.StatusAuraAbility;
 import serilia.types.StatusFieldBulletType;
 import serilia.world.draw.part.RangeCirclePart;
 
@@ -113,6 +115,10 @@ public class SeUnits{
             engineSize = 0;
             engineOffset = 0;
 
+            abilities.add(new StatusAuraAbility(65f, 180f){{
+                    statusDuration = 60f * 6f;
+                    maxTargets = 25;
+                }});
             weapons.add(new Weapon(){{
                 x = 3f;
                 y = 0f;
@@ -223,5 +229,9 @@ public class SeUnits{
                 itemCapacity = 0;
                 crushDamage = 13f / 5f;
                 treadRects = new Rect[]{new Rect(22 - 154f / 2f, 16 - 154f / 2f, 28, 130)};
+                abilities.add(new StatusAuraAbility(65f, 180f){{
+                statusDuration = 60f * 6f;
+                maxTargets = 25;
+            }});
             }};
         }}

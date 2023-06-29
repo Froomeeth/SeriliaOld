@@ -222,8 +222,8 @@ public class CaliBlocks {
            itemCapacity = 10;
 
            range = 240;
-           inaccuracy = 3;
-           velocityRnd = 0.3f;
+           inaccuracy = 7;
+           velocityRnd = 0.4f;
            reload = 20;
            targetAir = true;
            targetGround = false;
@@ -246,7 +246,7 @@ public class CaliBlocks {
                    frontColor = Color.white;
                    hitColor = backColor = trailColor = Color.valueOf("88a9bd");
 
-                   lifetime = 24;
+                   lifetime = 30;
 
                    splashDamage = 50;
                    splashDamageRadius = 35;
@@ -488,7 +488,7 @@ public class CaliBlocks {
             size = 4;
             consumePower(4f);
         }};
-        shipManufactor = new UnitFactory("ship-manufactor"){{ //TODO CHANGE NAME TO NAVAL FUCK YOU
+        shipManufactor = new UnitFactory("ship-manufactor"){{ //TODO no kill yourself
             requirements(units, with(graphite, 55, silicon, 200, iridium, 100, chirokyn, 100));
             plans = Seq.with(
                     new UnitPlan(UnitTypes.minke, 60f * 10, with(silicon, 180, metaglass, 95))
@@ -551,7 +551,7 @@ public class CaliBlocks {
             size = 2;
             itemCapacity = 10;
             hasItems = true;
-            outputItem = new ItemStack(silicon, 5);
+            outputItem = new ItemStack(silicon, 1);
             scaledHealth = 1;
         }};
     }
