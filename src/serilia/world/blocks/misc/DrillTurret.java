@@ -11,20 +11,15 @@ import mindustry.gen.Unit;
 import mindustry.graphics.Drawf;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
-import mindustry.world.meta.Stat;
-import mindustry.world.meta.StatValues;
 
-import static mindustry.world.meta.Stat.output;
-
-public class PointsDerogatorily extends Block {
-    public  TextureRegion finger;
-    public  TextureRegion fingerStart;
-    public  TextureRegion fingerEnd;
+public class DrillTurret extends Block {
+    public  TextureRegion laser;
+    public  TextureRegion laserStart;
+    public  TextureRegion laserEnd;
     public Effect trailEffect = Fx.hitBulletSmall;
     public @Nullable ItemStack outputItem;
-
     public float craftTime = 30;
-    public PointsDerogatorily(String name) {
+    public DrillTurret(String name) {
         super(name);
         update = true;
     }
@@ -32,12 +27,12 @@ public class PointsDerogatorily extends Block {
     @Override
     public void load() {
         super.load();
-        finger = Core.atlas.find(name + "-finger");
-        fingerStart = Core.atlas.find(name + "-finger-start");
-        fingerEnd = Core.atlas.find(name + "-finger-end");
+        laser = Core.atlas.find(name + "-laser");
+        laserStart = Core.atlas.find(name + "-laser-start");
+        laserEnd = Core.atlas.find(name + "-laser-end");
     }
 
-    public class PointerBuild extends Building{
+    public class DrillTurretBuild extends Building{
         public float counter;
         public Unit target;
         public @Nullable ItemStack outputItem;
@@ -47,15 +42,16 @@ public class PointsDerogatorily extends Block {
 
             if (target != null){
                 counter += edelta();
-                    items.set(outputItem.item, outputItem.amount);
-                    dump(outputItem.item);
+                    if (outputItem != null) {
+                        items.set(outputItem.item, outputItem.amount);
+                        offload(outputItem.item);
+                    }
             }
 
         }
         public void draw(){
             if (target != null){
-                Drawf.laser(finger, fingerStart, fingerEnd,
-                        target.x,target.y, x, y, efficiency);
+                Drawf.laser(laser, laserStart, laserEnd, target.x,target.y, x, y, efficiency);
             }
             if (target != null) {
                 trailEffect.at(target.x, target.y);

@@ -10,9 +10,11 @@ import mindustry.entities.Effect;
 import mindustry.entities.abilities.EnergyFieldAbility;
 import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
+import mindustry.entities.bullet.FlakBulletType;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.entities.part.RegionPart;
 import mindustry.entities.pattern.ShootAlternate;
+import mindustry.entities.pattern.ShootMulti;
 import mindustry.gen.Sounds;
 import mindustry.graphics.Pal;
 import mindustry.type.Category;
@@ -37,14 +39,17 @@ import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrawTest;
+import serilia.world.blocks.misc.DrillTurret;
 import serilia.world.blocks.storage.DrawerCore;
 import serilia.world.draw.drawblock.DrawTeam;
 
 import static mindustry.content.Items.*;
+import static mindustry.gen.Sounds.drill;
 import static mindustry.gen.Sounds.plasmaboom;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.sandboxOnly;
+import static mindustry.world.meta.BuildVisibility.shown;
 import static serilia.content.SeResources.*;
 
 public class CaliBlocks {
@@ -52,7 +57,7 @@ public class CaliBlocks {
 
         //turret
         quiver, scourge, quail,
-        ballista,
+        ballista, overturn,
 
         //drill
         methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
@@ -82,7 +87,7 @@ public class CaliBlocks {
         vanadiniteRock,
 
         //misc
-        drawTest, bitTiler;
+        drillTurret, drawTest, bitTiler;
 
     public static void load() {
         //turret
@@ -205,6 +210,74 @@ public class CaliBlocks {
                         }});
             }};
 
+        }};
+
+        overturn = new ItemTurret("overturn"){{
+           scaledHealth = 350;
+           size = 3;
+           buildCostMultiplier = 1.40449438202f;
+           requirements (turret, with(iridium, 100, fragisteel, 50, chirokyn, 75));
+
+           liquidCapacity = 10;
+           itemCapacity = 10;
+
+           range = 240;
+           inaccuracy = 3;
+           velocityRnd = 0.3f;
+           reload = 30;
+           targetAir = true;
+           targetGround = false;
+           shoot = new ShootAlternate(){{
+                spread = 3.1f * 1.9f;
+                shots = barrels = 3;
+           }};
+           ammo(
+               fragisteel, new FlakBulletType(10, 15){{
+                   sprite = "missile-large";
+                   width = 6f;
+                   height = 10f;
+                   hitSize = 7f;
+                   trailWidth = 2.1f;
+                   trailLength = 18;
+                   trailEffect = Fx.colorSpark;
+                   trailRotation = true;
+
+                   frontColor = Color.white;
+                   hitColor = backColor = trailColor = Color.valueOf("88a9bd");
+
+                   lifetime = 24;
+
+                   splashDamage = 50;
+                   splashDamageRadius = 15;
+                   explodeRange = 30;
+                   explodeDelay = 0f;
+
+                   hitEffect = new MultiEffect(Fx.flakExplosion, Fx.colorSparkBig);
+            }}
+           );
+           shootY = 0.7f;
+           ammoPerShot = 2;
+
+           outlineColor = Color.valueOf("313a3b");
+            drawer = new DrawTurret(){{
+                    parts.add(
+                            new RegionPart("-outer-gun") {{
+                                progress = PartProgress.warmup;
+                                heatProgress = PartProgress.recoil.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.recoil);
+                                mirror = true;
+                                under = true;
+                                moveX = 1.2f;
+                                moveY = -2f;
+                            }},
+                            new RegionPart("-inner-gun") {{
+                                progress = PartProgress.warmup;
+                                heatProgress = PartProgress.recoil.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.recoil);
+                                mirror = true;
+                                under = true;
+                                moveX = 0f;
+                                moveY = -1f;
+                            }});
+                }};
         }};
 
         //drill
@@ -466,6 +539,15 @@ public class CaliBlocks {
         //misc
         drawTest = new DrawTest("draw-test"){{
             requirements(effect, sandboxOnly, with());
+        }};
+
+        drillTurret = new DrillTurret("drill-turret"){{
+            requirements(effect, shown, with(nickel, 80000, tarnide, 2, carbide, 12));
+            size = 2;
+            itemCapacity = 10;
+            hasItems = true;
+            outputItem = new ItemStack(silicon, 5);
+            scaledHealth = 1;
         }};
     }
 }

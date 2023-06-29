@@ -22,7 +22,7 @@ import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.ConveyorTube;
 import serilia.world.blocks.distribution.TubeMotor;
 import serilia.world.blocks.distribution.TubeRouter;
-import serilia.world.blocks.misc.PointsDerogatorily;
+import serilia.world.blocks.misc.DrillTurret;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
@@ -272,13 +272,6 @@ public class AhkarBlocks {
 
 
         //misc
-        stickyFingers = new PointsDerogatorily("finger"){{
-            requirements(effect, shown, with(nickel, 80000, tarnide, 2, carbide, 12));
-            size = 2;
-            itemCapacity = 10;
-            outputItem = new ItemStack(Items.silicon, 5);
-            scaledHealth = 1;
-        }};
 
 
 
