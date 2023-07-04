@@ -458,12 +458,12 @@ public class CaliBlocks {
             requirements(crafting, with(iridium, 50, graphite, 40));
 
             craftEffect = Fx.pulverizeMedium;
-            health = 200;
+            scaledHealth = 90;
             outputItem = new ItemStack(fragisteel, 1);
             craftTime = 70f;
-            size = 2;
+            size = 3;
             hasItems = true;
-            liquidCapacity = 10/60f;
+            liquidCapacity = 10f;
 
             consumeItem(iridium, 2);
             consumeLiquid(methane, 1f/60);
