@@ -2,11 +2,11 @@ displayName: "Serilia"
 
 name: "serilia"
 
-author: "FrooMeeth, Nullevoy, GlennFolker (EntityAnno)"
+author: "FrooMeeth & Nullevoy"
 
 main: "serilia.SeriliaMain"
 
-description: "Serilia but on steroids (Java)"
+description: "A "
 
 version: 1.0
 
