@@ -13,9 +13,9 @@ import mindustry.content.Blocks;
 import mindustry.entities.units.BuildPlan;
 import mindustry.gen.Building;
 import mindustry.graphics.Layer;
+import mindustry.type.Item;
 import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
-import mindustry.world.blocks.distribution.DuctBridge;
 import mindustry.world.blocks.distribution.Junction;
 import mindustry.world.blocks.distribution.StackConveyor.StackConveyorBuild;
 import serilia.util.SeUtil;
@@ -25,6 +25,7 @@ import static mindustry.Vars.tilesize;
 
 public class ShadedDuct extends Duct{ //todo junction replacement
     public TextureRegion[][] regionLayers;
+    public Seq<Block> acceptFrom = new Seq<>();
     public int[][] ductArrows = {
             {1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1},
             {1, 1, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -108,6 +109,11 @@ public class ShadedDuct extends Duct{ //todo junction replacement
                     tiling |= (1 << i);
                 }
             }
+        }
+
+        @Override
+        public boolean acceptItem(Building source, Item item){
+            return current == null && items.total() == 0 && acceptFrom.contains(source.block);
         }
     }
 }
