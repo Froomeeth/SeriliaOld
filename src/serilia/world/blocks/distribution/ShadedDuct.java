@@ -17,7 +17,6 @@ import mindustry.type.Item;
 import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
 import mindustry.world.blocks.distribution.Junction;
-import mindustry.world.blocks.distribution.StackConveyor.StackConveyorBuild;
 import serilia.content.CaliBlocks;
 import serilia.util.SeUtil;
 
@@ -97,6 +96,13 @@ public class ShadedDuct extends Duct{ //todo junction replacement
             Draw.rect(regionLayers[1][ductArrows[rotation][tiling] + 1], x, y, rotdeg());
         }
 
+        public boolean acceptFrom(Building build){
+            return block == build.block || (
+                    block == CaliBlocks.ducter ?
+                            (ductJunction == build.block || ductRouter == build.block) : //add more "block == x ? (blocks) : " for additional types
+                    false);
+        }
+
         @Override
         public void onProximityUpdate(){
             noSleep();
@@ -107,7 +113,7 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
             for(int i = 0; i < 4; i++){
                 Building b = nearby(Geometry.d4(i).x, Geometry.d4(i).y);
-                if(i == rotation || b != null && (b instanceof DuctBuild ? (b.front() != null && b.front() == this) : (b.block.outputsItems() && !(b instanceof StackConveyorBuild stack && stack.state != 2)))){
+                if(i == rotation || b != null && acceptFrom(b)){
                     tiling |= (1 << i);
                 }
             }
@@ -115,11 +121,7 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
         @Override
         public boolean acceptItem(Building source, Item item){
-            return current == null && items.total() == 0 && block == source.block || (
-                    block == CaliBlocks.ducter ?
-                            (ductJunction == source.block || ductRouter == source.block) : //add another "block == x ? (blocks) : " for more types
-                    false
-                    );
+            return current == null && items.total() == 0 && acceptFrom(source);
         }
     }
 }
