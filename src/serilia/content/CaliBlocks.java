@@ -64,7 +64,7 @@ public class CaliBlocks {
         methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
-        ducter, ductjunction, ductRouter,
+        ducter, ductJunction, ductRouter,
 
         //liquid
         fluidDuct, fluidRouter,
@@ -287,11 +287,10 @@ public class CaliBlocks {
         //distribution
         ducter = new ShadedDuct("ducter"){{
             requirements(distribution, with(iridium, 2));
-            acceptFrom = Seq.with(ducter, ductjunction, ductRouter);
         }};
 
 
-        ductjunction = new Junction("duct-junction"){{
+        ductJunction = new Junction("duct-junction"){{
             requirements(Category.distribution, with(iridium, 4));
             speed = 16;
             capacity = 2;

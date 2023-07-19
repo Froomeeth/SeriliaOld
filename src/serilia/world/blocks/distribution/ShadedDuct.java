@@ -18,14 +18,16 @@ import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
 import mindustry.world.blocks.distribution.Junction;
 import mindustry.world.blocks.distribution.StackConveyor.StackConveyorBuild;
+import serilia.content.CaliBlocks;
 import serilia.util.SeUtil;
 
 import static mindustry.Vars.itemSize;
 import static mindustry.Vars.tilesize;
+import static serilia.content.CaliBlocks.ductJunction;
+import static serilia.content.CaliBlocks.ductRouter;
 
 public class ShadedDuct extends Duct{ //todo junction replacement
     public TextureRegion[][] regionLayers;
-    public Seq<Block> acceptFrom = new Seq<>();
     public int[][] ductArrows = {
             {1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1},
             {1, 1, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -113,7 +115,11 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
         @Override
         public boolean acceptItem(Building source, Item item){
-            return current == null && items.total() == 0 && acceptFrom.contains(source.block);
+            return current == null && items.total() == 0 && block == source.block || (
+                    block == CaliBlocks.ducter ?
+                            (ductJunction == source.block || ductRouter == source.block) : //add another "block == x ? (blocks) : " for more types
+                    false
+                    );
         }
     }
 }
