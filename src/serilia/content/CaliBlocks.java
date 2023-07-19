@@ -1,25 +1,25 @@
 package serilia.content;
 
 import arc.graphics.Color;
-import arc.math.Mathf;
 import arc.struct.Seq;
 import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.content.UnitTypes;
-import mindustry.entities.Effect;
 import mindustry.entities.abilities.EnergyFieldAbility;
 import mindustry.entities.bullet.ArtilleryBulletType;
 import mindustry.entities.bullet.BasicBulletType;
+import mindustry.entities.bullet.ExplosionBulletType;
 import mindustry.entities.bullet.FlakBulletType;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.entities.part.RegionPart;
 import mindustry.entities.pattern.ShootAlternate;
-import mindustry.entities.pattern.ShootMulti;
 import mindustry.gen.Sounds;
+import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
+import mindustry.type.Weapon;
 import mindustry.type.unit.MissileUnitType;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.Wall;
@@ -28,6 +28,8 @@ import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.distribution.Junction;
 import mindustry.world.blocks.distribution.Router;
 import mindustry.world.blocks.liquid.LiquidRouter;
+import mindustry.world.blocks.power.BeamNode;
+import mindustry.world.blocks.power.ConsumeGenerator;
 import mindustry.world.blocks.production.AttributeCrafter;
 import mindustry.world.blocks.production.BurstDrill;
 import mindustry.world.blocks.production.GenericCrafter;
@@ -44,7 +46,6 @@ import serilia.world.blocks.storage.DrawerCore;
 import serilia.world.draw.drawblock.DrawTeam;
 
 import static mindustry.content.Items.*;
-import static mindustry.gen.Sounds.drill;
 import static mindustry.gen.Sounds.plasmaboom;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
@@ -69,13 +70,14 @@ public class CaliBlocks {
         fluidDuct, fluidRouter,
 
         //power
+        galvaniumNode, combustionReactor,
 
         //defense
         iridiumWall, fragisteelWall,
         allay,
 
         //crafting
-        fragisteelPress, bulkRefinery,
+        fragisteelSmelter, galvaniumFurnace, chirokynSmelter, chlorineSynthesizer, bulkRefinery,
 
         //unit
         mechManufactor, droneManufactor, shipManufactor,
@@ -91,139 +93,82 @@ public class CaliBlocks {
 
     public static void load() {
         //turret
-        ballista = new ItemTurret("ballista") {{requirements(turret, with(iridium, 175, tarnide, 100, chirokyn, 75));
+        scourge = new ItemTurret("scourge"){{
+            scaledHealth = 140;
+            size = 2;
+            buildCostMultiplier = 10/3.05f;
+            requirements (turret, with(iridium, 70, graphite, 30, galvanium, 10));
 
-            outlineColor = Color.valueOf("473a3a");
-            squareSprite = false;
+            liquidCapacity = 10;
+            maxAmmo = 20;
+            ammoPerShot = 10;
 
-            health = 575;
-            armor = 1f;
-            size = 3;
-
-            itemCapacity = 1/2;
-            ammoPerShot = 3;
-
-            range = 280;
-            shootCone = 5;
-            reload = 60;
-
-            targetAir = true;
-            targetGround = false;
-
-            rotateSpeed = 2.5f;
-
-            shootSound = Sounds.shootAlt;
-            shootY = 3;
-            shoot = new ShootAlternate(){{
-                spread = 4.7f;
-                shots = 2;
-                barrels = 2;
-            }};
-
-            minWarmup = 0.94f;
-            shootWarmupSpeed = 0.07f;
-
-            Effect sfe = Fx.colorSparkBig;
+            range = 290;
+            shootY = 0.7f;
+            shootSound = Sounds.missileLaunch;
+            inaccuracy = 0;
+            rotateSpeed = 1.4f;
+            reload = 140;
+            minWarmup = 0.90f;
+            targetAir = false;
+            targetGround = true;
 
             ammo(
-                    iridium, new BasicBulletType(10f, 95){{
-                        width = 12f;
-                        hitSize = 7f;
-                        height = 20f;
-                        lifetime = 28f;
-                        shootEffect = sfe;
-                        smokeEffect = Fx.shootBigSmoke;
-                        ammoMultiplier = 1;
-                        pierceCap = 2;
-                        pierce = true;
-                        pierceBuilding = true;
-                        hitColor = backColor = trailColor = Color.valueOf("738184");
-                        frontColor = Color.white;
-                        trailWidth = 2.1f;
+                graphite, new BasicBulletType(0f, 0){{
+                    shootEffect = Fx.shootBig;
+                    ammoMultiplier = 1f;
+                    spawnUnit = new MissileUnitType("scourge-missile"){{
+                        health = 100;
+                        speed =  7;
+                        missileAccelTime = 30f;
+                        lifetime = 62f;
+                        targetAir = false;
+
                         trailLength = 10;
-                        hitEffect = despawnEffect = Fx.hitBulletColor;
-                        buildingDamageMultiplier = 0.3f;
-                        collidesGround = false;
 
-                        backSprite = "large-bomb-back";
-                        sprite = "mine-bullet";
-                    }},
-                    fragisteel, new BasicBulletType(10f, 115){{
-                        width = 13f;
-                        height = 19f;
-                        lifetime = 28f;
-                        hitSize = 7f;
-                        shootEffect = sfe;
-                        smokeEffect = Fx.shootBigSmoke;
-                        ammoMultiplier = 1;
-                        reloadMultiplier = 1f;
-                        pierceCap = 3;
-                        pierce = true;
-                        pierceBuilding = true;
-                        hitColor = backColor = trailColor = Pal.tungstenShot;
-                        frontColor = Color.white;
-                        trailWidth = 2.2f;
-                        trailLength = 11;
-                        hitEffect = despawnEffect = Fx.hitBulletColor;
-                        buildingDamageMultiplier = 0.3f;
-                        collidesGround = false;
+                        engineColor = trailColor = Color.valueOf("d4806b");
+                        engineLayer = Layer.effect;
+                        engineSize = 1.1f;
 
-                        backSprite = "large-bomb-back";
-                        sprite = "mine-bullet";
-                    }}
-            );
-            drawer = new DrawTurret(){{
-                parts.add(
-                        new RegionPart("-front"){{
-                            progress = PartProgress.warmup;
-                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
+                        drawCell = false;
+                        lowAltitude = true;
+                        outlineColor = Color.valueOf("313a3b");
+                        weapons.add(new Weapon(){{
+                            shootCone = 360f;
                             mirror = false;
-                            under = true;
-                            moveX = 0f;
-                            moveY = -2f;
-                        }},
-                        new  RegionPart("-lower-plate"){{
-                            progress = PartProgress.warmup;
-                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
-                            heatColor = Color.red;
-                            moveX = -1f;
-                            moveY = -1f;
-                            mirror = true;
-                            moves.add(new PartMove(PartProgress.recoil, 0f, -1.5f, 0f));
-                        }},
-                        new RegionPart("-upper-plate"){{
-                            progress = PartProgress.warmup;
-                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
-                            mirror = true;
-                            moveX = -1f;
-                            moveY = -1f;
-                            moves.add(new PartMove(PartProgress.recoil, 0f, -3f, 0f));
-                        }},
-
-                        new RegionPart("-middle-plate"){{
-                            progress = PartProgress.warmup;
-                            heatProgress = PartProgress.warmup.add(-0.2f).add(p -> Mathf.sin(9f, 0.2f) * p.warmup);
-                            mirror = true;
-                            moveY = -3.5f;
-                            moveX = -1f;
-                            moves.add(new PartMove(PartProgress.recoil, 2f, 3f, -30f));
+                            reload = 1f;
+                            shootOnDeath = true;
+                            x = 0;
+                            y = 0;
+                            shootY = 0;
+                            shootX = 0;
+                            bullet = new ExplosionBulletType(130f, 25f){{
+                                shootEffect = Fx.massiveExplosion;
+                                collidesAir = false;
+                            }};
                         }});
-            }};
+                    }};
+                }}
+            );
+
+            outlineColor = Color.valueOf("313a3b");
 
         }};
-
         overturn = new ItemTurret("overturn"){{
            scaledHealth = 350;
            size = 3;
-           buildCostMultiplier = 1.40449438202f;
+           buildCostMultiplier = 20/7.12f;
            requirements (turret, with(iridium, 100, fragisteel, 50, chirokyn, 75));
 
            liquidCapacity = 10;
-           itemCapacity = 10;
+           maxAmmo = 10;
+           ammoPerShot = 2;
 
            range = 240;
+           shootY = 0.7f;
            inaccuracy = 7;
            velocityRnd = 0.4f;
+           minWarmup = 0.99f;
            reload = 20;
            targetAir = true;
            targetGround = false;
@@ -257,13 +202,10 @@ public class CaliBlocks {
                    collidesGround = collideFloor = false;
             }}
            );
-           shootY = 0.7f;
-           ammoPerShot = 2;
 
            outlineColor = Color.valueOf("313a3b");
            heatColor = Color.red;
            cooldownTime = 50;
-           minWarmup = 0.99f;
            shootEffect = Fx.colorSparkBig;
             drawer = new DrawTurret(){{
                     parts.add(
@@ -345,6 +287,7 @@ public class CaliBlocks {
         //distribution
         ducter = new ShadedDuct("ducter"){{
             requirements(distribution, with(iridium, 2));
+            acceptFrom = Seq.with(ducter, ductjunction, ductRouter);
         }};
 
 
@@ -374,6 +317,27 @@ public class CaliBlocks {
             liquidCapacity = 20f;
             underBullets = true;
             solid = false;
+        }};
+        //power
+        galvaniumNode = new BeamNode("galvanium-node"){{
+            requirements(Category.power, with(galvanium,10));
+            consumesPower = outputsPower = true;
+            health = 90;
+            range = 10;
+
+            consumePowerBuffered(500f);
+        }};
+        combustionReactor = new ConsumeGenerator("combustion-reactor"){{
+            scaledHealth = 45;
+            size = 2;
+            requirements(Category.power, with(iridium,65,galvanium,35));
+
+            powerProduction = 3f;
+            ambientSound = Sounds.smelter;
+            ambientSoundVolume = 0.03f;
+            generateEffect = Fx.none;
+
+            consumeLiquid(methane, 5f/60);
         }};
 
         //defense
@@ -454,20 +418,52 @@ public class CaliBlocks {
                 }};
 
         //crafting
-        fragisteelPress = new GenericCrafter("fragisteel-press"){{
+        fragisteelSmelter = new GenericCrafter("fragisteel-smelter"){{
             requirements(crafting, with(iridium, 50, graphite, 40));
 
-            craftEffect = Fx.pulverizeMedium;
+            craftEffect = Fx.smeltsmoke;
             scaledHealth = 90;
             outputItem = new ItemStack(fragisteel, 1);
-            craftTime = 70f;
-            size = 3;
+            craftTime = 85f;
+            size = 2;
             hasItems = true;
             liquidCapacity = 10f;
 
             consumeItem(iridium, 2);
             consumeLiquid(methane, 1f/60);
+
+            drawer = new DrawMulti(new DrawRegion("-bottom"),new DrawDefault(), new DrawFlame(Color.valueOf("feb380")));
         }};
+        galvaniumFurnace = new GenericCrafter("galvanium-furnace"){{
+            requirements(crafting, with(iridium, 70, fragisteel, 30));
+
+            craftEffect = Fx.hitLancer;
+            scaledHealth = 80;
+            outputItem = new ItemStack(galvanium, 3);
+            craftTime = 65f;
+            size = 3;
+            hasItems = true;
+            liquidCapacity = 10f;
+
+            consumeItems(with(iridium, 1, Items.sand, 2));
+            consumeLiquid(methane, 1f/60);
+        }};
+        chirokynSmelter = new GenericCrafter("chirokyn-smelter"){{
+            requirements(crafting, with(iridium,60, fragisteel,50, galvanium,25));
+
+            craftEffect = Fx.smeltsmoke;
+            scaledHealth = 80;
+            outputItem = new ItemStack(chirokyn, 2);
+            craftTime = 70f;
+            size = 3;
+            hasItems = true;
+            liquidCapacity = 10f;
+
+            consumeItems(with(iridium, 3, graphite, 2));
+            consumePower(1.5f);
+        }};
+        //power
+
         //unit
 
         mechManufactor = new UnitFactory("mech-manufactor"){{
