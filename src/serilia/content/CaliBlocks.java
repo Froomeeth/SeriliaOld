@@ -26,6 +26,7 @@ import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.distribution.Junction;
+import mindustry.world.blocks.distribution.OverflowGate;
 import mindustry.world.blocks.distribution.Router;
 import mindustry.world.blocks.liquid.LiquidRouter;
 import mindustry.world.blocks.power.BeamNode;
@@ -64,7 +65,7 @@ public class CaliBlocks {
         methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
-        ducter, ductJunction, ductRouter,
+        heavyDuct, heavyDuctJunction, heavyDuctRouter,
 
         //liquid
         fluidDuct, fluidRouter,
@@ -285,25 +286,28 @@ public class CaliBlocks {
         }};
 
         //distribution
-        ducter = new ShadedDuct("ducter"){{
+        heavyDuct = new ShadedDuct("heavy-duct"){{
             requirements(distribution, with(iridium, 2));
+            armored = true;
+            speed = 5;
         }};
 
 
-        ductJunction = new Junction("duct-junction"){{
+        heavyDuctJunction = new Junction("heavy-duct-junction"){{
             requirements(Category.distribution, with(iridium, 4));
-            speed = 16;
+            speed = 5;
             capacity = 2;
             health = 45;
             buildCostMultiplier = 6f;
 
-            ((ShadedDuct)ducter).junctionReplacement = this;
+            ((ShadedDuct) heavyDuct).junctionReplacement = this;
         }};
 
-        ductRouter = new Router("duct-router"){{
+        heavyDuctRouter = new OverflowGate("heavy-duct-router"){{
             requirements(Category.distribution, with(iridium, 5));
             health = 45;
             buildCostMultiplier = 6f;
+            speed = 5;
         }};
 
         //liquid
