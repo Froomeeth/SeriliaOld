@@ -97,6 +97,7 @@ public class ShadedDuct extends Duct{ //todo junction replacement
         }
 
         public boolean acceptFrom(Building build){
+
             return block == build.block || build.block == Blocks.itemSource || (
                     block == CaliBlocks.heavyDuct ?
                             (heavyDuctJunction == build.block || heavyDuctRouter == build.block) : //add more "block == x ? (blocks) : " for additional types
@@ -113,7 +114,7 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
             for(int i = 0; i < 4; i++){
                 Building b = nearby(Geometry.d4(i).x, Geometry.d4(i).y);
-                if(i == rotation || b != null && acceptFrom(b)){
+                if(b != null && acceptFrom(b)){
                     tiling |= (1 << i);
                 }
             }

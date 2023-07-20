@@ -4,6 +4,7 @@ import arc.graphics.Color;
 import arc.struct.Seq;
 import mindustry.content.Fx;
 import mindustry.content.Items;
+import mindustry.content.Liquids;
 import mindustry.content.UnitTypes;
 import mindustry.entities.abilities.EnergyFieldAbility;
 import mindustry.entities.bullet.ArtilleryBulletType;
@@ -27,7 +28,6 @@ import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.distribution.Junction;
 import mindustry.world.blocks.distribution.OverflowGate;
-import mindustry.world.blocks.distribution.Router;
 import mindustry.world.blocks.liquid.LiquidRouter;
 import mindustry.world.blocks.power.BeamNode;
 import mindustry.world.blocks.power.ConsumeGenerator;
@@ -38,6 +38,8 @@ import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.blocks.units.UnitFactory;
 import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
+import mindustry.world.meta.BlockGroup;
+import serilia.types.DrawWeaveColor;
 import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.ShadedDuct;
 import serilia.world.blocks.liquid.ShadedConduit;
@@ -48,6 +50,7 @@ import serilia.world.draw.drawblock.DrawTeam;
 
 import static mindustry.content.Items.*;
 import static mindustry.gen.Sounds.plasmaboom;
+import static mindustry.gen.Sounds.techloop;
 import static mindustry.type.Category.*;
 import static mindustry.type.ItemStack.with;
 import static mindustry.world.meta.BuildVisibility.sandboxOnly;
@@ -78,7 +81,7 @@ public class CaliBlocks {
         allay,
 
         //crafting
-        fragisteelSmelter, galvaniumFurnace, chirokynSmelter, chlorineSynthesizer, bulkRefinery,
+        fragisteelSmelter, galvaniumPrinter, chirokynSmelter, electrolysisModule, bulkRefinery,
 
         //unit
         mechManufactor, droneManufactor, shipManufactor,
@@ -437,10 +440,11 @@ public class CaliBlocks {
 
             drawer = new DrawMulti(new DrawRegion("-bottom"),new DrawDefault(), new DrawFlame(Color.valueOf("feb380")));
         }};
-        galvaniumFurnace = new GenericCrafter("galvanium-furnace"){{
+        galvaniumPrinter = new GenericCrafter("galvanium-printer"){{
             requirements(crafting, with(iridium, 70, fragisteel, 30));
 
             craftEffect = Fx.hitLancer;
+            loopSound = techloop;
             scaledHealth = 80;
             outputItem = new ItemStack(galvanium, 3);
             craftTime = 65f;
@@ -450,6 +454,8 @@ public class CaliBlocks {
 
             consumeItems(with(iridium, 1, Items.sand, 2));
             consumeLiquid(methane, 1f/60);
+
+            drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawRegion("-rods"), new DrawWeaveColor(Color.valueOf("c0ecff")), new DrawDefault());
         }};
         chirokynSmelter = new GenericCrafter("chirokyn-smelter"){{
             requirements(crafting, with(iridium,60, fragisteel,50, galvanium,25));
@@ -465,7 +471,47 @@ public class CaliBlocks {
             consumeItems(with(iridium, 3, graphite, 2));
             consumePower(1.5f);
         }};
-        //power
+        electrolysisModule = new GenericCrafter("electrolysis-module"){{
+            requirements(Category.crafting, with());
+            size = 2;
+
+            researchCostMultiplier = 1.2f;
+            craftTime = 10f;
+            rotate = true;
+            invertFlip = true;
+
+            liquidCapacity = 30f;
+
+            consumeLiquid(Liquids.arkycite, 20f / 60f);
+            consumePower(0.5f);
+
+            drawer = new DrawMulti(
+                    new DrawRegion("-bottom"),
+                    new DrawLiquidTile(Liquids.arkycite, 2f),
+                    new DrawBubbles(Color.valueOf("7693e3")){{
+                        sides = 4;
+                        recurrence = 3f;
+                        spread = 6;
+                        radius = 1.5f;
+                        amount = 20;
+                    }},
+                    new DrawRegion(),
+                    new DrawLiquidOutputs(),
+                    new DrawGlowRegion(){{
+                        alpha = 0.7f;
+                        color = Color.valueOf("c4bdf3");
+                        glowIntensity = 0.2f;
+                        glowScale = 6f;
+                    }}
+            );
+
+            ambientSound = Sounds.electricHum;
+            ambientSoundVolume = 0.08f;
+
+            regionRotated1 = 3;
+            outputLiquids = LiquidStack.with(methane, 5f / 60, chlorine, 15f / 60);
+            liquidOutputDirections = new int[]{1, 3};
+        }};
 
         //unit
 
