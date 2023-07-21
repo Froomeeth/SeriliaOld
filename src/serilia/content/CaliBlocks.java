@@ -304,6 +304,7 @@ public class CaliBlocks {
             health = 45;
             buildCostMultiplier = 6f;
             speed = 5;
+            s
         }};
         heavyDuctJunction = new Junction("heavy-duct-junction"){{
             requirements(Category.distribution, with(iridium, 4));
