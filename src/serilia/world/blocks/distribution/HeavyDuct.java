@@ -22,8 +22,6 @@ import serilia.util.SeUtil;
 
 import static mindustry.Vars.itemSize;
 import static mindustry.Vars.tilesize;
-import static serilia.content.CaliBlocks.heavyDuctJunction;
-import static serilia.content.CaliBlocks.ductNode;
 
 public class HeavyDuct extends Duct{ //todo junction replacement
     public TextureRegion[] regions;
@@ -86,17 +84,15 @@ public class HeavyDuct extends Duct{ //todo junction replacement
             }
 
             Draw.z(Layer.blockUnder + 0.2f);
-            Draw.rect(regions[state == 4 ? 2 : state + 1], x, y, state == 4 ? -8 : 8, (rotation == 1 || rotation == 3) ? -8 : 8, rotdeg());
+            Draw.rect(regions[state == 4 ? 2 : state + 1], x, y, state == 4 ? -8 : 8, rotation < 3 ? -8 : 8, rotdeg());
             Draw.rect(regions[4], x, y, rotdeg());
         }
 
         public boolean acceptFrom(Building build){
-            if(build == null) return false; // I added an and below but it still crashed and I don't care to add more brackets
-
-            return (build == back() || build == front()) && (block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
+            return build != null && (build == back() || build == front()) && ((block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
                     block == CaliBlocks.heavyDuct ?
-                            (heavyDuctJunction == build.block || ductNode == build.block) : //add more "block == x ? (blocks) : " for additional types
-                    false);
+                            (CaliBlocks.heavyDuctJunction == build.block || CaliBlocks.ductNode == build.block) : //add more "block == x ? (blocks) : " for additional types
+                    false));
         }
 
         @Override
