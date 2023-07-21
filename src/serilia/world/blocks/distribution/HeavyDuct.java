@@ -26,13 +26,7 @@ import static serilia.content.CaliBlocks.heavyDuctJunction;
 import static serilia.content.CaliBlocks.heavyDuctRouter;
 
 public class HeavyDuct extends Duct{ //todo junction replacement
-    public TextureRegion[][] regionLayers;
-    public int[][] ductArrows = {
-            {1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1},
-            {1, 1, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 1, 1}
-    };
+    public TextureRegion[] regions;
 
     public HeavyDuct(String name){
         super(name);
@@ -48,7 +42,7 @@ public class HeavyDuct extends Duct{ //todo junction replacement
     @Override
     public void load(){
         super.load();
-        regionLayers = SeUtil.splitLayers(name + "-sheet", 32, 2);
+        regions = SeUtil.split(name + "-sheet", 32, 0);
     }
 
     @Override
@@ -74,12 +68,12 @@ public class HeavyDuct extends Duct{ //todo junction replacement
     }
 
     public class ShadedDuctBuild extends DuctBuild{
-        public int tiling = 0;
+        public int state = 0;
 
         @Override
         public void draw(){
             Draw.z(Layer.blockUnder);
-            Draw.rect(regionLayers[1][0], x, y, 0f);
+            Draw.rect(regions[0], x, y, 0f);
 
             //draw item
             if(current != null){
@@ -92,11 +86,12 @@ public class HeavyDuct extends Duct{ //todo junction replacement
             }
 
             Draw.z(Layer.blockUnder + 0.2f);
-            Draw.rect(regionLayers[0][tiling], x, y, 0f);
-            Draw.rect(regionLayers[1][ductArrows[rotation][tiling] + 1], x, y, rotdeg());
+            Draw.rect(regions[state == 4 ? 2 : state + 1], x, y, state == 4 ? -8 : 8, (rotation == 1 || rotation == 3) ? -8 : 8, rotdeg());
+            Draw.rect(regions[4], x, y, rotdeg());
         }
 
         public boolean acceptFrom(Building build){
+            if(build == null) return false; // I added an and below but it still crashed and I don't care to add more brackets
 
             return (build == back() || build == front()) && (block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
                     block == CaliBlocks.heavyDuct ?
@@ -110,14 +105,13 @@ public class HeavyDuct extends Duct{ //todo junction replacement
             next = front();
             nextc = next instanceof DuctBuild d ? d : null;
 
-            tiling = 0;
-
-            for(int i = 0; i < 4; i++){
-                Building b = nearby(Geometry.d4(i).x, Geometry.d4(i).y);
-                if(b != null && acceptFrom(b)){
-                    tiling |= (1 << i);
-                }
-            }
+            state = 0;
+            if(acceptFrom(next)){
+                state += 1;
+                if(acceptFrom(back()))
+                    state += 1;
+            } else if(acceptFrom(back()))
+                state = 4;
         }
 
         @Override
