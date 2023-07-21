@@ -22,8 +22,8 @@ import serilia.util.SeUtil;
 
 import static mindustry.Vars.itemSize;
 import static mindustry.Vars.tilesize;
-import static serilia.content.CaliBlocks.ductJunction;
-import static serilia.content.CaliBlocks.ductRouter;
+import static serilia.content.CaliBlocks.heavyDuctJunction;
+import static serilia.content.CaliBlocks.heavyDuctRouter;
 
 public class ShadedDuct extends Duct{ //todo junction replacement
     public TextureRegion[][] regionLayers;
@@ -97,9 +97,10 @@ public class ShadedDuct extends Duct{ //todo junction replacement
         }
 
         public boolean acceptFrom(Building build){
-            return block == build.block || (
-                    block == CaliBlocks.ducter ?
-                            (ductJunction == build.block || ductRouter == build.block) : //add more "block == x ? (blocks) : " for additional types
+
+            return block == build.block || build.block == Blocks.itemSource || (
+                    block == CaliBlocks.heavyDuct ?
+                            (heavyDuctJunction == build.block || heavyDuctRouter == build.block) : //add more "block == x ? (blocks) : " for additional types
                     false);
         }
 
@@ -113,7 +114,7 @@ public class ShadedDuct extends Duct{ //todo junction replacement
 
             for(int i = 0; i < 4; i++){
                 Building b = nearby(Geometry.d4(i).x, Geometry.d4(i).y);
-                if(i == rotation || b != null && acceptFrom(b)){
+                if(b != null && acceptFrom(b)){
                     tiling |= (1 << i);
                 }
             }
