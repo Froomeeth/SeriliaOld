@@ -98,7 +98,7 @@ public class HeavyDuct extends Duct{ //todo junction replacement
 
         public boolean acceptFrom(Building build){
 
-            return block == build.block || build.block == Blocks.itemSource || (
+            return (build == back() || build == front()) && (block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
                     block == CaliBlocks.heavyDuct ?
                             (heavyDuctJunction == build.block || heavyDuctRouter == build.block) : //add more "block == x ? (blocks) : " for additional types
                     false);
