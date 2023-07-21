@@ -67,7 +67,7 @@ public class CaliBlocks {
         methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
-        heavyDuct, heavyDuctJunction, heavyDuctRouter,
+        heavyDuct, heavyDuctJunction, ductNode,
 
         //liquid
         fluidDuct, fluidRouter,
@@ -296,8 +296,12 @@ public class CaliBlocks {
             armored = true;
             speed = 5;
         }};
-
-
+        ductNode = new OverflowGate("duct-node"){{
+            requirements(Category.distribution, with(iridium, 5));
+            health = 45;
+            buildCostMultiplier = 6f;
+            speed = 5;
+        }};
         heavyDuctJunction = new Junction("heavy-duct-junction"){{
             requirements(Category.distribution, with(iridium, 4));
             speed = 5;
@@ -307,14 +311,6 @@ public class CaliBlocks {
 
             ((HeavyDuct) heavyDuct).junctionReplacement = this;
         }};
-
-        heavyDuctRouter = new OverflowGate("heavy-duct-router"){{
-            requirements(Category.distribution, with(iridium, 5));
-            health = 45;
-            buildCostMultiplier = 6f;
-            speed = 5;
-        }};
-
         //liquid
         fluidDuct = new ShadedConduit("fluid-duct"){{
             requirements(liquid, with(iridium, 1));

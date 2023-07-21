@@ -23,7 +23,7 @@ import serilia.util.SeUtil;
 import static mindustry.Vars.itemSize;
 import static mindustry.Vars.tilesize;
 import static serilia.content.CaliBlocks.heavyDuctJunction;
-import static serilia.content.CaliBlocks.heavyDuctRouter;
+import static serilia.content.CaliBlocks.ductNode;
 
 public class HeavyDuct extends Duct{ //todo junction replacement
     public TextureRegion[][] regionLayers;
@@ -100,7 +100,7 @@ public class HeavyDuct extends Duct{ //todo junction replacement
 
             return (build == back() || build == front()) && (block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
                     block == CaliBlocks.heavyDuct ?
-                            (heavyDuctJunction == build.block || heavyDuctRouter == build.block) : //add more "block == x ? (blocks) : " for additional types
+                            (heavyDuctJunction == build.block || ductNode == build.block) : //add more "block == x ? (blocks) : " for additional types
                     false);
         }
 
