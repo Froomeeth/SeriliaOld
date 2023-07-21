@@ -65,7 +65,7 @@ public class HeavyDuct extends Duct{ //todo junction replacement
 
     }
 
-    public class ShadedDuctBuild extends DuctBuild{
+    public class HeavyDuctBuild extends DuctBuild{
         public int state = 0;
         public Building last;
 

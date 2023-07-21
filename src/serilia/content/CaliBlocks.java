@@ -40,6 +40,7 @@ import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
 import serilia.types.DrawWeaveColor;
 import serilia.util.SeUtil;
+import serilia.world.blocks.distribution.DuctNode;
 import serilia.world.blocks.distribution.HeavyDuct;
 import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrawTest;
@@ -64,7 +65,7 @@ public class CaliBlocks {
         ballista, overturn,
 
         //drill
-        methaneExtractor, heatDrill, largeHeatDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
+        methaneExtractor, combustionDrill, largeCombustionDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
         heavyDuct, heavyDuctJunction, ductNode,
@@ -249,11 +250,13 @@ public class CaliBlocks {
             liquidCapacity = 160f;
         }};
 
-        heatDrill = new BurstDrill("heat-drill"){{
-            requirements(production, with(iridium, 20));
+        combustionDrill = new BurstDrill("combustion-drill"){{
             scaledHealth = 75;
-            drillTime = 60f * 10f;
             size = 2;
+            buildCostMultiplier = 0.99f/0.66f;
+            requirements(production, with(iridium, 20));
+
+            drillTime = 60f * 10f;
             tier = 1;
             drillEffect = Fx.mineBig;
             shake = 0.5f;
@@ -267,7 +270,7 @@ public class CaliBlocks {
             consumeLiquids(LiquidStack.with(methane, 5f / 60f));
 
         }};
-        largeHeatDrill = new BurstDrill("large-heat-drill"){{
+        largeCombustionDrill = new BurstDrill("large-combustion-drill"){{
             requirements(production, with(graphite, 60, iridium, 80, chirokyn, 50));
             scaledHealth = 95;
             drillTime = 60f * 6.5f;
@@ -296,7 +299,7 @@ public class CaliBlocks {
             armored = true;
             speed = 5;
         }};
-        ductNode = new OverflowGate("duct-node"){{
+        ductNode = new DuctNode("duct-node"){{
             requirements(Category.distribution, with(iridium, 5));
             health = 45;
             buildCostMultiplier = 6f;
