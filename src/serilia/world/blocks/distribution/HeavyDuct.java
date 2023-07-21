@@ -85,7 +85,7 @@ public class HeavyDuct extends Duct{ //todo junction replacement
             }
 
             Draw.z(Layer.blockUnder + 0.2f);
-            Draw.rect(regions[state == 4 ? 2 : state + 1], x, y, state == 4 ? -8 : 8, rotation < 3 ? -8 : 8, rotdeg());
+            Draw.rect(regions[state == 4 ? 2 : state + 1], x, y, state == 4 ? -8 : 8, rotation == 1 || rotation == 2 ? -8 : 8, rotdeg());
             Draw.rect(regions[4], x, y, rotdeg());
         }
 

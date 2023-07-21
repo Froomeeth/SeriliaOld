@@ -16,11 +16,11 @@ public class DuctNode extends Duct{
         topRegion = Core.atlas.find(name + "-top");
     }
     @Override
-    public void drawPlanRegion(){
-        Draw.rect(region, x, y);
-        Draw.color(Pal.accent);
-        Draw.rect(topRegion, x, y, rotdeg());
-        Draw.color();
+    public void drawPlan(BuildPlan plan, Eachable<BuildPlan> list, boolean valid){
+        Draw.rect(region, plan.drawx(), plan.drawy())
+        Draw.color(chainCount >= 2 ? Color.red : Pal.accent)
+        Draw.rect(topRegion, plan.drawx(), plan.drawy(), plan.rotation * 90)
+        Draw.color()
     }
     public DuctNode(String name) {
         super(name);
