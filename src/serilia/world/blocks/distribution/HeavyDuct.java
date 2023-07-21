@@ -25,7 +25,7 @@ import static mindustry.Vars.tilesize;
 import static serilia.content.CaliBlocks.heavyDuctJunction;
 import static serilia.content.CaliBlocks.heavyDuctRouter;
 
-public class ShadedDuct extends Duct{ //todo junction replacement
+public class HeavyDuct extends Duct{ //todo junction replacement
     public TextureRegion[][] regionLayers;
     public int[][] ductArrows = {
             {1, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1},
@@ -34,7 +34,7 @@ public class ShadedDuct extends Duct{ //todo junction replacement
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 1, 1}
     };
 
-    public ShadedDuct(String name){
+    public HeavyDuct(String name){
         super(name);
     }
     public Block junctionReplacement, bridgeReplacement;
@@ -60,11 +60,11 @@ public class ShadedDuct extends Duct{ //todo junction replacement
     public Block getReplacement(BuildPlan req, Seq<BuildPlan> plans){
         if(junctionReplacement == null) return this;
 
-        Boolf<Point2> cont = p -> plans.contains(o -> o.x == req.x + p.x && o.y == req.y + p.y && (req.block instanceof ShadedDuct || req.block instanceof Junction));
+        Boolf<Point2> cont = p -> plans.contains(o -> o.x == req.x + p.x && o.y == req.y + p.y && (req.block instanceof HeavyDuct || req.block instanceof Junction));
         return cont.get(Geometry.d4(req.rotation)) &&
                 cont.get(Geometry.d4(req.rotation - 2)) &&
                 req.tile() != null &&
-                req.tile().block() instanceof ShadedDuct &&
+                req.tile().block() instanceof HeavyDuct &&
                 Mathf.mod(req.tile().build.rotation - req.rotation, 2) == 1 ? junctionReplacement : this;
     }
 

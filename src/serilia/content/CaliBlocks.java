@@ -38,10 +38,9 @@ import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.blocks.units.UnitFactory;
 import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
-import mindustry.world.meta.BlockGroup;
 import serilia.types.DrawWeaveColor;
 import serilia.util.SeUtil;
-import serilia.world.blocks.distribution.ShadedDuct;
+import serilia.world.blocks.distribution.HeavyDuct;
 import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrawTest;
 import serilia.world.blocks.misc.DrillTurret;
@@ -289,8 +288,11 @@ public class CaliBlocks {
         }};
 
         //distribution
-        heavyDuct = new ShadedDuct("heavy-duct"){{
+        heavyDuct = new HeavyDuct("heavy-duct"){{
+            health = 190;
+            size = 1;
             requirements(distribution, with(iridium, 2));
+
             armored = true;
             speed = 5;
         }};
@@ -303,7 +305,7 @@ public class CaliBlocks {
             health = 45;
             buildCostMultiplier = 6f;
 
-            ((ShadedDuct) heavyDuct).junctionReplacement = this;
+            ((HeavyDuct) heavyDuct).junctionReplacement = this;
         }};
 
         heavyDuctRouter = new OverflowGate("heavy-duct-router"){{

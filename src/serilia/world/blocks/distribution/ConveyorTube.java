@@ -14,7 +14,7 @@ import serilia.world.blocks.distribution.TubeMotor.TubeMotorBuild;
 import static mindustry.Vars.itemSize;
 import static mindustry.Vars.tilesize;
 
-public class ConveyorTube extends ShadedDuct{
+public class ConveyorTube extends HeavyDuct {
     public int[] ductArrows = {1, 1, 1, 6, 1, 1, 6, 6, 1, 6, 1, 6, 6, 6, 6, 1};
 
     @Override
