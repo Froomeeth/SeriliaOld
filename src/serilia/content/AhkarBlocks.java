@@ -3,7 +3,6 @@ package serilia.content;
 import arc.graphics.Blending;
 import arc.graphics.Color;
 import arc.struct.Seq;
-import mindustry.content.Items;
 import mindustry.content.UnitTypes;
 import mindustry.graphics.Layer;
 import mindustry.type.ItemStack;
@@ -19,10 +18,6 @@ import mindustry.world.draw.DrawGlowRegion;
 import mindustry.world.draw.DrawMulti;
 import mindustry.world.draw.DrawRegion;
 import serilia.util.SeUtil;
-import serilia.world.blocks.distribution.ConveyorTube;
-import serilia.world.blocks.distribution.TubeMotor;
-import serilia.world.blocks.distribution.TubeRouter;
-import serilia.world.blocks.misc.DrillTurret;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
@@ -96,16 +91,6 @@ public class AhkarBlocks {
 
 
         //distribution
-        poweredConveyorTube = new ConveyorTube("powered-conveyor-tube"){{
-            requirements(distribution, sandboxOnly, with());
-        }};
-        conveyorTubeMotor = new TubeMotor("conveyor-tube-motor"){{
-            requirements(distribution, sandboxOnly, with());
-            consumePower(0.5f);
-        }};
-        conveyorTubeSplitter = new TubeRouter("conveyor-tube-splitter"){{
-            requirements(distribution, sandboxOnly, with());
-        }};
 
         transporter = new PayloadDuct("transporter"){{
             requirements(distribution, sandboxOnly, with());

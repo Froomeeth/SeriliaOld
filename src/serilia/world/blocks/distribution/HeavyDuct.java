@@ -67,6 +67,7 @@ public class HeavyDuct extends Duct{ //todo junction replacement
 
     public class ShadedDuctBuild extends DuctBuild{
         public int state = 0;
+        public Building last;
 
         @Override
         public void draw(){
@@ -99,20 +100,21 @@ public class HeavyDuct extends Duct{ //todo junction replacement
         public void onProximityUpdate(){
             noSleep();
             next = front();
+            last = back();
             nextc = next instanceof DuctBuild d ? d : null;
 
             state = 0;
             if(acceptFrom(next)){
                 state += 1;
-                if(acceptFrom(back()))
+                if(acceptFrom(last))
                     state += 1;
-            } else if(acceptFrom(back()))
+            } else if(acceptFrom(last))
                 state = 4;
         }
 
         @Override
         public boolean acceptItem(Building source, Item item){
-            return current == null && items.total() == 0 && acceptFrom(source);
+            return current == null && items.total() == 0 && source != next && acceptFrom(source);
         }
     }
 }
