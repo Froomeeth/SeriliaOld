@@ -94,10 +94,11 @@ public class HeavyDuct extends Duct{
             Draw.rect(regions[4], x, y, rotdeg());
         }
 
+
         public boolean acceptFrom(Building build){ //TODO fix ends capping at block inputs
             return build != null && (build == last || build == next) && ((block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
-                    block == CaliBlocks.heavyDuct && (CaliBlocks.heavyDuctJunction == build.block || CaliBlocks.ductNode == build.block) ||
-                    block == AhkarBlocks.heavyDuct && (AhkarBlocks.heavyDuctJunction == build.block || AhkarBlocks.ductInserter == build.block)
+                    block == CaliBlocks.heavyDuct && (CaliBlocks.ductJunction == build.block || CaliBlocks.ductNode == build.block) ||
+                    block == AhkarBlocks.heavyDuct && (AhkarBlocks.ductJunction == build.block || AhkarBlocks.ductInserter == build.block)
             ));
         }
 

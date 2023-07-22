@@ -27,6 +27,8 @@ import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.distribution.Junction;
+import mindustry.world.blocks.distribution.Router;
+import mindustry.world.blocks.liquid.LiquidBridge;
 import mindustry.world.blocks.liquid.LiquidRouter;
 import mindustry.world.blocks.power.BeamNode;
 import mindustry.world.blocks.power.ConsumeGenerator;
@@ -67,10 +69,10 @@ public class CaliBlocks {
         methaneExtractor, combustionDrill, largeCombustionDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
-        heavyDuct, heavyDuctJunction, ductNode,
+        heavyDuct, ductNode, ductJunction, heavyDuctRouter,
 
         //liquid
-        fluidDuct, fluidRouter,
+        fluidDuct, fluidRouter, fluidBridge,
 
         //power
         galvaniumNode, combustionReactor,
@@ -289,9 +291,10 @@ public class CaliBlocks {
 
         }};
 
-        //distribution
+        //Distribution
+
         heavyDuct = new HeavyDuct("heavy-duct"){{
-            health = 190;
+            health = 200;
             size = 1;
             requirements(distribution, with(iridium, 2));
 
@@ -299,30 +302,40 @@ public class CaliBlocks {
             speed = 5;
         }};
         ductNode = new DuctNode("duct-node"){{
-            requirements(Category.distribution, with(iridium, 5));
-            health = 45;
+            requirements(Category.distribution, with(iridium, 10));
+            health = 75;
             buildCostMultiplier = 6f;
             speed = 5;
         }};
-        heavyDuctJunction = new Junction("heavy-duct-junction"){{
-            requirements(Category.distribution, with(iridium, 4));
+        ductJunction = new Junction("duct-junction"){{
+            health = 75;
+            buildCostMultiplier = 6f;
+            requirements(Category.distribution, with(iridium, 5));
+
             speed = 5;
             capacity = 2;
-            health = 45;
-            buildCostMultiplier = 6f;
-
             ((HeavyDuct) heavyDuct).junctionReplacement = this;
+        }};
+        heavyDuctRouter = new Router("heavy-duct-router"){{
+            health = 75;
+            requirements(Category.distribution, with(iridium, 10));
         }};
         //liquid
         fluidDuct = new ShadedConduit("fluid-duct"){{
             requirements(liquid, with(iridium, 1));
         }};
-
         fluidRouter = new LiquidRouter("fluid-router"){{
             requirements(Category.liquid, with(iridium, 3));
             liquidCapacity = 20f;
             underBullets = true;
             solid = false;
+        }};
+        fluidBridge = new LiquidBridge("fluid-bridge"){{
+            health = 80;
+            requirements(Category.liquid, with(iridium, 5));
+
+            range = 4;
+            ((ShadedConduit) fluidDuct).bridgeReplacement = this;
         }};
         //power
         galvaniumNode = new BeamNode("galvanium-node"){{
