@@ -15,7 +15,7 @@ public class PayDuctRouter extends PayloadDuct{
         public @Nullable UnlockableContent sorted;
         public int recDir;
         public boolean matches, blocked;
-        public float[] blinkDurations = {0, 0, 0, 0};
+        public float[] blinkDurations = {0, 0, 0, 0}; //todo
 
         public void pickNext(){
             if(payload != null){

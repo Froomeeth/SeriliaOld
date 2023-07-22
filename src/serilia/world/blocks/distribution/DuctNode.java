@@ -3,18 +3,21 @@ package serilia.world.blocks.distribution;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
+import arc.struct.Seq;
 import arc.util.Eachable;
 import mindustry.entities.units.BuildPlan;
 import mindustry.graphics.Pal;
+import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
 
 public class DuctNode extends Duct{
     public int chainLimit = 2;
+    public TextureRegion topRegion;
+
     public DuctNode(String name) {
         super(name);
     }
 
-    public TextureRegion topRegion;
     @Override
     public void load() {
         super.load();
@@ -27,6 +30,11 @@ public class DuctNode extends Duct{
         Draw.color(Pal.accent);
         Draw.rect(topRegion, plan.drawx(), plan.drawy(), plan.rotation * 90);
         Draw.color();
+    }
+
+    @Override
+    public Block getReplacement(BuildPlan req, Seq<BuildPlan> plans){
+        return this;
     }
 
     @Override

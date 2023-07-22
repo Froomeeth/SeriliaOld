@@ -5,11 +5,13 @@ import arc.graphics.Color;
 import arc.struct.Seq;
 import mindustry.content.UnitTypes;
 import mindustry.graphics.Layer;
+import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.DirectionalForceProjector;
 import mindustry.world.blocks.defense.Wall;
+import mindustry.world.blocks.distribution.Junction;
 import mindustry.world.blocks.liquid.Conduit;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.production.Separator;
@@ -18,6 +20,9 @@ import mindustry.world.draw.DrawGlowRegion;
 import mindustry.world.draw.DrawMulti;
 import mindustry.world.draw.DrawRegion;
 import serilia.util.SeUtil;
+import serilia.world.blocks.distribution.DuctNode;
+import serilia.world.blocks.distribution.HeavyDuct;
+import serilia.world.blocks.distribution.RotRouter;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
@@ -45,7 +50,8 @@ public class AhkarBlocks {
         sealedBore,
 
         //distribution (payload too)
-        poweredConveyorTube, conveyorTubeMotor, conveyorTubeSplitter,
+        heavyDuct, ductInserter, heavyDuctJunction, heavyDuctSplitter,
+
         transporter, splitter, transporterBridge,
 
         //liquid
@@ -91,6 +97,32 @@ public class AhkarBlocks {
 
 
         //distribution
+        heavyDuct = new HeavyDuct("stupid-heavy-duct"){{
+            health = 190;
+            size = 1;
+            requirements(distribution, with(nickel, 2));
+
+            armored = true;
+            speed = 5;
+        }};
+        ductInserter = new DuctNode("stupid-duct-inserter"){{
+            requirements(Category.distribution, with(nickel, 5));
+            health = 45;
+            buildCostMultiplier = 6f;
+            speed = 5;
+        }};
+        heavyDuctJunction = new Junction("stupid-heavy-duct-junction"){{
+            requirements(Category.distribution, with(nickel, 4));
+            speed = 5;
+            capacity = 2;
+            health = 45;
+            buildCostMultiplier = 6f;
+
+            ((HeavyDuct)heavyDuct).junctionReplacement = this;
+        }};
+        heavyDuctSplitter = new RotRouter("stupid-heavy-duct-router"){{
+            requirements(Category.distribution, with(nickel, 4));
+        }};
 
         transporter = new PayloadDuct("transporter"){{
             requirements(distribution, sandboxOnly, with());

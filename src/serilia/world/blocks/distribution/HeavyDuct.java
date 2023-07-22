@@ -8,6 +8,7 @@ import arc.math.Mathf;
 import arc.math.geom.Geometry;
 import arc.math.geom.Point2;
 import arc.struct.Seq;
+import arc.util.Eachable;
 import arc.util.Tmp;
 import mindustry.content.Blocks;
 import mindustry.entities.units.BuildPlan;
@@ -17,19 +18,20 @@ import mindustry.type.Item;
 import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
 import mindustry.world.blocks.distribution.Junction;
+import serilia.content.AhkarBlocks;
 import serilia.content.CaliBlocks;
 import serilia.util.SeUtil;
 
 import static mindustry.Vars.itemSize;
 import static mindustry.Vars.tilesize;
 
-public class HeavyDuct extends Duct{ //todo junction replacement
+public class HeavyDuct extends Duct{
     public TextureRegion[] regions;
 
     public HeavyDuct(String name){
         super(name);
     }
-    public Block junctionReplacement, bridgeReplacement;
+    public Block junctionReplacement;
 
     @Override
     public void init(){
@@ -49,6 +51,11 @@ public class HeavyDuct extends Duct{ //todo junction replacement
     }
 
     @Override
+    public void drawPlanRegion(BuildPlan plan, Eachable<BuildPlan> list){
+        Draw.rect(region, plan.drawx(), plan.drawy(), 8, plan.rotation == 1 || plan.rotation == 2 ? -8 : 8, plan.rotation * 90);
+    }
+
+    @Override
     public Block getReplacement(BuildPlan req, Seq<BuildPlan> plans){
         if(junctionReplacement == null) return this;
 
@@ -61,16 +68,14 @@ public class HeavyDuct extends Duct{ //todo junction replacement
     }
 
     @Override
-    public void handlePlacementLine(Seq<BuildPlan> plans){
-
-    }
+    public void handlePlacementLine(Seq<BuildPlan> plans){}
 
     public class HeavyDuctBuild extends DuctBuild{
         public int state = 0;
         public Building last;
 
         @Override
-        public void draw(){
+        public void draw(){ //TODO squaresprite
             Draw.z(Layer.blockUnder);
             Draw.rect(regions[0], x, y, 0f);
 
@@ -89,11 +94,11 @@ public class HeavyDuct extends Duct{ //todo junction replacement
             Draw.rect(regions[4], x, y, rotdeg());
         }
 
-        public boolean acceptFrom(Building build){
+        public boolean acceptFrom(Building build){ //TODO fix ends capping at block inputs
             return build != null && (build == last || build == next) && ((block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
-                    block == CaliBlocks.heavyDuct ?
-                            (CaliBlocks.heavyDuctJunction == build.block || CaliBlocks.ductNode == build.block) : //add more "block == x ? (blocks) : " for additional types
-                    false));
+                    block == CaliBlocks.heavyDuct && (CaliBlocks.heavyDuctJunction == build.block || CaliBlocks.ductNode == build.block) ||
+                    block == AhkarBlocks.heavyDuct && (AhkarBlocks.heavyDuctJunction == build.block || AhkarBlocks.ductInserter == build.block)
+            ));
         }
 
         @Override
