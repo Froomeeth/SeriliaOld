@@ -19,6 +19,7 @@ public class DuctNode extends Duct{
 
     @Override
     public void drawPlan(BuildPlan plan, Eachable<BuildPlan> list, boolean valid){
+        Draw.color();
         Draw.rect(region, plan.drawx(), plan.drawy());
         Draw.color(valid ? Pal.accent : Color.red);
         Draw.rect(topRegion, plan.drawx(), plan.drawy(), plan.rotation * 90);
