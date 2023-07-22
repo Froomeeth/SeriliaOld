@@ -50,7 +50,7 @@ public class AhkarBlocks {
         sealedBore,
 
         //distribution (payload too)
-        heavyDuct, ductInserter, heavyDuctJunction, heavyDuctSplitter,
+        heavyDuct, ductInserter, ductJunction, heavyDuctSplitter,
 
         transporter, splitter, transporterBridge,
 
@@ -111,7 +111,7 @@ public class AhkarBlocks {
             buildCostMultiplier = 6f;
             speed = 5;
         }};
-        heavyDuctJunction = new Junction("stupid-heavy-duct-junction"){{
+        ductJunction = new Junction("stupid-heavy-duct-junction"){{
             requirements(Category.distribution, with(nickel, 4));
             speed = 5;
             capacity = 2;
