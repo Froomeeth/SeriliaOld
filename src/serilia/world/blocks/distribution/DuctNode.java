@@ -43,6 +43,7 @@ public class DuctNode extends Duct{
         @Override
         public void onProximityUpdate(){
             super.onProximityUpdate();
+            chainCount = 0;
             if (next != null && next instanceof DuctNodeBuild duct){
                 duct.chainCount = chainCount+1;
             }
