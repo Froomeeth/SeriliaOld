@@ -4,7 +4,8 @@ import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
-import mindustry.gen.*;
+import arc.util.Eachable;
+import mindustry.entities.units.BuildPlan;
 import mindustry.graphics.Pal;
 import mindustry.world.blocks.distribution.Duct;
 
@@ -15,13 +16,15 @@ public class DuctNode extends Duct{
         super.load();
         topRegion = Core.atlas.find(name + "-top");
     }
+
     @Override
     public void drawPlan(BuildPlan plan, Eachable<BuildPlan> list, boolean valid){
-        Draw.rect(region, plan.drawx(), plan.drawy())
-        Draw.color(chainCount >= 2 ? Color.red : Pal.accent)
-        Draw.rect(topRegion, plan.drawx(), plan.drawy(), plan.rotation * 90)
-        Draw.color()
+        Draw.rect(region, plan.drawx(), plan.drawy());
+        Draw.color(Pal.accent);
+        Draw.rect(topRegion, plan.drawx(), plan.drawy(), plan.rotation * 90);
+        Draw.color();
     }
+
     public DuctNode(String name) {
         super(name);
 
