@@ -27,7 +27,6 @@ import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.blocks.distribution.Junction;
-import mindustry.world.blocks.distribution.OverflowGate;
 import mindustry.world.blocks.liquid.LiquidRouter;
 import mindustry.world.blocks.power.BeamNode;
 import mindustry.world.blocks.power.ConsumeGenerator;
@@ -304,7 +303,6 @@ public class CaliBlocks {
             health = 45;
             buildCostMultiplier = 6f;
             speed = 5;
-            s
         }};
         heavyDuctJunction = new Junction("heavy-duct-junction"){{
             requirements(Category.distribution, with(iridium, 4));
