@@ -12,7 +12,6 @@ public class DuctNode extends Duct{
     public int chainLimit = 2;
     public DuctNode(String name) {
         super(name);
-
     }
 
     public TextureRegion topRegion;
