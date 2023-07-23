@@ -8,7 +8,10 @@ import mindustry.type.Weapon;
 
 public class SeWaveUnits {
     public static UnitType
-    scout;
+    scout,
+
+    uncertainty, alert, distress, tension, emergency, danger, crisis, contingency;
+
     public static void load(){
 
         scout = new UnitType("scout"){{
