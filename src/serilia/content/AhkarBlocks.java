@@ -161,22 +161,6 @@ public class AhkarBlocks {
             conductivePower = true;
         }};
 
-        laserEmitter = new LaserNode("laser-emitter"){{
-            requirements(power, sandboxOnly, with());
-            maxEmit = 100f;
-            consumePower(maxEmit / powerEfficiency);
-        }};
-        laserRelay = new LaserNode("laser-relay"){{
-            requirements(power, sandboxOnly, with());
-            accept = true;
-            produce = false;
-        }};
-        laserReceiver = new LaserNode("laser-receiver"){{
-            requirements(power, sandboxOnly, with());
-            accept = hasPower = outputsPower = true;
-            emit = rotate = consumesPower = false;
-        }};
-
 
         //defense
         barrierProjector = new DirectionalForceProjector("barrier-projector"){{
