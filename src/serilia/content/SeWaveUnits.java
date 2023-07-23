@@ -1,7 +1,10 @@
 package serilia.content;
 
+import arc.graphics.Color;
 import mindustry.content.Fx;
+import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.bullet.FlakBulletType;
+import mindustry.gen.MechUnit;
 import mindustry.graphics.Pal;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
@@ -15,6 +18,7 @@ public class SeWaveUnits {
     public static void load(){
 
         scout = new UnitType("scout"){{
+            constructor = MechUnit::create;
             health = 200;
             armor = 2;
             hitSize = 8f;
@@ -24,7 +28,7 @@ public class SeWaveUnits {
             canBoost = false;
             itemCapacity = 0;
             weapons.add(new Weapon("serilia-scout-weapon"){{
-                reload = 20f;
+                reload = 30f;
                 inaccuracy = 1;
 
                 top = false;
@@ -32,17 +36,18 @@ public class SeWaveUnits {
                 y = 0f;
                 shootX = 3;
                 shootY = 2;
-                ejectEffect = Fx.hitBulletBig;
-                bullet = new FlakBulletType(3f, 15){{
+                bullet = new BasicBulletType(3f, 15){{
                     lifetime = 60f;
-                    despawnEffect = Fx.flakExplosion;
-                    explodeRange = 16;
-                    flakDelay = 4;
+                    despawnEffect = Fx.none;
 
                     width = 7f;
                     height = 9f;
-                    trailColor = backColor = Pal.lightFlame;
+                    trailColor = backColor = Pal.meltdownHit;
+                    trailLength = 16;
+                    trailWidth = 1.2f;
                 }};
+                drawCell = false;
+                mechLegColor = outlineColor = Color.valueOf("322727");
             }});
         }};
     }
