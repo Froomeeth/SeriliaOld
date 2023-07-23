@@ -599,10 +599,6 @@ public class CaliBlocks {
         }};
 
         //misc
-        drawTest = new DrawTest("draw-test"){{
-            requirements(effect, sandboxOnly, with());
-        }};
-
         drillTurret = new DrillTurret("drill-turret"){{
             requirements(effect, shown, with(nickel, 80000, tarnide, 2, carbide, 12));
             size = 2;
