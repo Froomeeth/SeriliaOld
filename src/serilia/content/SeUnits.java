@@ -130,7 +130,7 @@ public class SeUnits{
 
                     speed = 2.6f;
                     lifetime = 50f;
-                    damage = 18;
+                    damage = 23;
 
                     trailWidth = 2;
                     trailLength = 16;

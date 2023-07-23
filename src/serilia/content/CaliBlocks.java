@@ -299,20 +299,20 @@ public class CaliBlocks {
             requirements(distribution, with(iridium, 2));
 
             armored = true;
-            speed = 5;
+            speed = 5.5f;
         }};
         ductNode = new DuctNode("duct-node"){{
             requirements(Category.distribution, with(iridium, 10));
             health = 75;
             buildCostMultiplier = 6f;
-            speed = 5;
+            speed = 5.5f;
         }};
         ductJunction = new Junction("duct-junction"){{
             health = 75;
             buildCostMultiplier = 6f;
             requirements(Category.distribution, with(iridium, 5));
 
-            speed = 5;
+            speed = 5.5f;
             capacity = 2;
             ((HeavyDuct) heavyDuct).junctionReplacement = this;
         }};
