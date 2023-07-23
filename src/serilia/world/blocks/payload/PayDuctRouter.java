@@ -3,12 +3,23 @@ package serilia.world.blocks.payload;
 import arc.util.Nullable;
 import mindustry.ctype.UnlockableContent;
 import mindustry.gen.Building;
+import mindustry.type.UnitType;
+import mindustry.world.Block;
 import mindustry.world.blocks.payloads.*;
 
 public class PayDuctRouter extends PayloadDuct{
 
     public PayDuctRouter(String name){
         super(name);
+
+        outputsPayload = true;
+        outputFacing = false;
+        configurable = true;
+        clearOnDoubleTap = true;
+
+        config(Block.class, (PayloadRouter.PayloadRouterBuild tile, Block item) -> tile.sorted = item);
+        config(UnitType.class, (PayloadRouter.PayloadRouterBuild tile, UnitType item) -> tile.sorted = item);
+        configClear((PayloadRouter.PayloadRouterBuild tile) -> tile.sorted = null);
     }
 
     public class PayDuctRouterBuild extends PayDuctBuild{
