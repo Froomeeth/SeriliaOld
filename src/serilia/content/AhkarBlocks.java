@@ -26,7 +26,6 @@ import serilia.world.blocks.distribution.RotRouter;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
-import serilia.world.blocks.power.LaserNode;
 import serilia.world.blocks.power.PowerWire;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
