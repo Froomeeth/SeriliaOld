@@ -6,14 +6,19 @@ import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
+import arc.math.geom.Geometry;
 import arc.math.geom.Vec2;
 import arc.struct.Seq;
+import mindustry.content.Fx;
 import mindustry.core.UI;
+import mindustry.gen.Building;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.ShieldWall;
 import mindustry.world.blocks.defense.Wall;
+import mindustry.world.blocks.power.BeamNode;
+import mindustry.world.blocks.power.PowerGraph;
 
 public class SeUtil{
     public static Color[] spectrum = {Color.red, Color.coral, Color.yellow, Color.lime, Color.green, Color.teal, Color.blue, Color.purple, Color.magenta};
@@ -140,16 +145,24 @@ public class SeUtil{
     }
 
 
-    /*public int checkTiling4(Building build){
-        int tiling = 0;
+    public static PowerGraph getGraphWithin(Building caster, int range, int dir){
+        return getGraphWithin(caster, dir, range, -1);
+    }
 
-        for(int i = 0; i < 4; i++){
-            Building b = build.nearby(Geometry.d4(i + 2 % 4).x * build.block.size + 1, Geometry.d4(i + 2 % 4).y * build.block.size + 1);
-            if(b != null && ((BitmaskTiler)build).blends(b.block)){
-                tiling |= (1 << i);
+    public static PowerGraph getGraphWithin(Building caster, int range, int dir, int rot){
+        for(int r = 1; r <= range; r++){
+            //get block on current side at increasing distance "r"
+            Building the = caster.nearby(Geometry.d4(dir).x * r, Geometry.d4(dir).y * r);
+
+            Fx.electrified.at(caster.x + (Geometry.d4(dir).x * r * 8), caster.y + (Geometry.d4(dir).y * r * 8));
+
+            if(the instanceof BeamNode.BeamNodeBuild && (rot < 0 || the.rotation == rot)){ //todo lasernode
+                //found, break current loop and return it
+                Fx.landShock.at(the);
+                return the.power.graph;
             }
         }
-
-        return tiling;
-    }*/
+        //did not find
+        return null;
+    }
 }

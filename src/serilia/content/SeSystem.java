@@ -5,7 +5,10 @@ import mindustry.content.Planets;
 import mindustry.game.Team;
 import mindustry.graphics.Pal;
 import mindustry.graphics.g3d.HexMesh;
+import mindustry.graphics.g3d.HexSkyMesh;
+import mindustry.graphics.g3d.MultiMesh;
 import mindustry.graphics.g3d.SunMesh;
+import mindustry.maps.planet.AsteroidGenerator;
 import mindustry.maps.planet.SerpuloPlanetGenerator;
 import mindustry.type.Planet;
 import mindustry.world.meta.Env;
@@ -14,7 +17,7 @@ import serilia.AhkarPlanetGenerator;
 import static mindustry.content.Blocks.*;
 
 public class SeSystem {
-    public static Planet serilia, caliterra, ahkar, rogueParent, rogue; //TODO asteroids
+    public static Planet serilia, caliterra, ahkar, maelstrom; //TODO asteroids
 
     /**Due to skybox issues, keep orbit radii below 150, or some of the system may disappear when not focussed.*/
     public static void load(){
@@ -49,8 +52,16 @@ public class SeSystem {
             generator = new SerpuloPlanetGenerator();
             meshLoader = () -> new HexMesh(this, 5);
             alwaysUnlocked = true;
+            accessible = true;
             solarSystem = serilia;
+            startSector = 1;
             orbitRadius = /*You have been in relaxation for:*/ 99.9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999f;
+
+            //copy paste erekir clouds
+            cloudMeshLoader = () -> new MultiMesh(
+                    new HexSkyMesh(this, 2, 0.15f, 0.14f, 5, Color.valueOf("eba768").a(0.75f), 2, 0.42f, 1f, 0.43f),
+                    new HexSkyMesh(this, 3, 0.6f, 0.15f, 5, Color.valueOf("eea293").a(0.75f), 2, 0.42f, 1.2f, 0.45f)
+            );
         }};
 
         ahkar = new Planet("ahkar", serilia, 0.6f, 1){{
@@ -58,6 +69,7 @@ public class SeSystem {
             generator = new AhkarPlanetGenerator();
             meshLoader = () -> new HexMesh(this, 5);
             alwaysUnlocked = true;
+            accessible = true;
             landCloudColor = Pal.darkishGray.cpy().a(0f);
             hasAtmosphere = false;
             defaultEnv = Env.terrestrial;
@@ -91,60 +103,18 @@ public class SeSystem {
             unlockedOnLand.add(coreBastion);
         }};
 
+        maelstrom = new Planet("maelstrom", caliterra, 2, 1){{
+            alwaysUnlocked = true;
+            accessible = true;
+            generator = new AsteroidGenerator();
+            meshLoader = () -> new HexMesh(this, 0);
 
-        //rogue planet for underice underwater dark levels
-        /*rogueParent = new Planet("rogue-parent", Planets.sun, 33f, 3){{
-            bloom = true;
-            accessible = false;
-            drawOrbit = false;
-            orbitRadius = 1000f;
-            lightColor = Color.valueOf("00000000");
-
-            meshLoader = () -> new SunMesh(
-                    this, 7,
-                    5, 0.3, 1.7, 1.2, 1,
-                    1.1f,
-                    Color.valueOf("ff5738")
+            cloudMeshLoader = () -> new MultiMesh(
+                    new HexSkyMesh(this, 2, 0.15f, 1f, 5, Color.valueOf("425f73"), 1, 1f, 1f, 1f),
+                    new HexSkyMesh(this, 3, 0.6f, 1.05f, 5, Color.valueOf("4f83ae"), 2, 0.42f, 1.2f, 0.45f)/*,
+                    new HexSkyMesh(this, 4, 1f, 1.4f, 5, Color.valueOf("eea293"), 2, 0.42f, 1.4f, 0.47f),
+                    new HexSkyMesh(this, 5, 1.4f, 1.6f, 5, Color.valueOf("eea293"), 2, 0.42f, 1.6f, 0.49f)*/
             );
         }};
-
-        rogue = new Planet("rogue", rogueParent, 1.5f, 1){{
-            orbitRadius = 1000f;
-            generator = new AhkarPlanetGenerator();
-            meshLoader = () -> new HexMesh(this, 5);
-            alwaysUnlocked = true;
-            landCloudColor = Pal.darkishGray.cpy().a(0f);
-            hasAtmosphere = false;
-            defaultEnv = Env.terrestrial;
-            startSector = 1;
-            atmosphereRadIn = 0f;
-            atmosphereRadOut = 0f;
-            tidalLock = false;
-            totalRadius = 0.65f;
-            lightSrcTo = 0.5f;
-            lightDstFrom = 0.2f;
-            solarSystem = rogueParent;
-            clearSectorOnLose = true;
-            defaultCore = coreAcropolis;
-            drawOrbit = false;
-            iconColor = beryllicStone.mapColor;
-            //hiddenItems.addAll(Items.serpuloItems).addAll(Items.erekirItems).removeAll(HResources.ahkarItems);
-
-            ruleSetter = r -> {
-                r.waveTeam = Team.green;
-                r.placeRangeCheck = false;
-                //r.attributes.set(Attribute.heat, 0.8f);
-                r.showSpawns = true;
-                //r.fog = true;
-                //r.staticFog = true;
-                r.lighting = false;
-                r.coreDestroyClear = true;
-                r.onlyDepositCore = true;
-                r.infiniteResources = true;
-                r.unitAmmo = true;
-            };
-
-            unlockedOnLand.add(coreBastion);
-        }};*/
     }
 }

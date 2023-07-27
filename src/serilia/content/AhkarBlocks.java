@@ -1,7 +1,6 @@
 package serilia.content;
 
 import arc.graphics.Blending;
-import arc.graphics.Color;
 import arc.struct.Seq;
 import mindustry.content.UnitTypes;
 import mindustry.graphics.Layer;
@@ -26,6 +25,7 @@ import serilia.world.blocks.distribution.RotRouter;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
+import serilia.world.blocks.power.LaserEaterOrDivider;
 import serilia.world.blocks.power.PowerWire;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
@@ -57,7 +57,7 @@ public class AhkarBlocks {
         channel, valve, pistonPump,
 
         //power
-        solarCollector, wire, laserEmitter, laserRelay, laserReceiver,
+        solarCollector, wire, laserEmitter, laserRelay, laserReceiver, laserDivider,
 
         //defense
         barrierProjector,
@@ -70,11 +70,12 @@ public class AhkarBlocks {
         //unit
 
         //effect
-        caliAccelerator, ahkarDropPod, coreFramework,
+        caliAccelerator, ahkarDropPod, coreFramework;
         //payloads
 
         //misc
-        stickyFingers;
+
+        //prop
 
     public static void load() {
         //drill
@@ -140,18 +141,13 @@ public class AhkarBlocks {
 
 
         //power
-        solarCollector = new SolarCollector("solar-collector"){{ //todo remove
-            requirements(power, sandboxOnly, with());
-            size = 6;
-            powerProduction = 2f;
 
-            drawer = new DrawMulti(
-                    new DrawDefault(),
-                    new DrawProgressFrames(7){{
-                        region = "cracks-6-";
-                        color = Color.brown;
-                    }}
-            );
+        laserReceiver = new LaserEaterOrDivider("laser-receiver"){{
+            requirements(power, sandboxOnly, with());
+        }};
+        laserDivider = new LaserEaterOrDivider("laser-divider"){{
+            requirements(power, sandboxOnly, with());
+            eat = false;
         }};
 
         wire = new PowerWire("wire"){{
@@ -273,6 +269,12 @@ public class AhkarBlocks {
 
         //misc
 
+
+        //prop
+        solarCollector = new SolarCollector("solar-collector"){{
+            requirements(effect, editorOnly, with());
+            size = 5;
+        }};
 
 
         Seq<Block> ahkarBlocks = Seq.with(
