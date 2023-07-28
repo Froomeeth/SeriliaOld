@@ -113,22 +113,45 @@ public class CaliBlocks {
 
            shootSound = Sounds.blaster;
            shootEffect = Fx.colorSparkBig;
-           shootType = new BasicBulletType(10, 100){{
+           shootType = new BasicBulletType(10, 150){{
                sprite = "serilia-arrow-bullet";
-               height = 20;
+               width = 4.5f;
+               height = 24;
                shrinkX = 0;
                shrinkY = 0;
-               hitColor = backColor = Color.valueOf("87ceeb");
                trailColor = Color.valueOf("6586b0");
-               trailWidth = 1f;
+               trailWidth = 1.2f;
                trailLength = 20;
 
                lifetime = 21;
                pierce = true;
 
+               hitColor = backColor = Color.valueOf("87ceeb");
                hitEffect = despawnEffect = Fx.hitBulletColor;
            }};
+            drawer = new DrawTurret(){{
+                parts.add(
+                        new RegionPart("-wing") {{
+                            x = 16/4f;
+                            y = 14/4f;
+                            progress = PartProgress.warmup;
+                            mirror = true;
+                            under = true;
+                            moveX = -4/4f;
+                            moveY = -2/4f;
+                            moveRot = 30;
+                            moves.add(new PartMove(PartProgress.recoil, 0f, 0f, -7f));
+                        }},
+                        new RegionPart("-front") {{
+                            progress = PartProgress.warmup;
+                            mirror = false;
+                            under = true;
+                            moveX = 0f;
+                            moveY = 1f;
+                        }});
+            }};
 
+            outlineColor = Color.valueOf("313a3b");
         }};
         scourge = new ItemTurret("scourge"){{
             scaledHealth = 140;
