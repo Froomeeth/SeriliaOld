@@ -36,12 +36,11 @@ import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.blocks.units.UnitFactory;
 import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
-import serilia.types.DrawWeaveColor;
+import serilia.world.draw.drawblock.DrawWeaveColor;
 import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.DuctNode;
 import serilia.world.blocks.distribution.HeavyDuct;
 import serilia.world.blocks.liquid.ShadedConduit;
-import serilia.world.blocks.misc.DrawTest;
 import serilia.world.blocks.misc.DrillTurret;
 import serilia.world.blocks.storage.DrawerCore;
 import serilia.world.draw.drawblock.DrawTeam;
@@ -634,10 +633,6 @@ public class CaliBlocks {
         }};
 
         //misc
-        drawTest = new DrawTest("draw-test"){{
-            requirements(effect, sandboxOnly, with());
-        }};
-
         drillTurret = new DrillTurret("drill-turret"){{
             requirements(effect, shown, with(nickel, 80000, tarnide, 2, carbide, 12));
             size = 2;
