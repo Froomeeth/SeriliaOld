@@ -7,10 +7,7 @@ import mindustry.content.Items;
 import mindustry.content.Liquids;
 import mindustry.content.UnitTypes;
 import mindustry.entities.abilities.EnergyFieldAbility;
-import mindustry.entities.bullet.ArtilleryBulletType;
-import mindustry.entities.bullet.BasicBulletType;
-import mindustry.entities.bullet.ExplosionBulletType;
-import mindustry.entities.bullet.FlakBulletType;
+import mindustry.entities.bullet.*;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.entities.part.RegionPart;
 import mindustry.entities.pattern.ShootAlternate;
@@ -62,20 +59,20 @@ public class CaliBlocks {
     public static Block
 
         //turret
-        quiver, scourge, quail,
+            quail, scourge, quiver,
         ballista, overturn,
 
         //drill
-        methaneExtractor, combustionDrill, largeCombustionDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
+        methaneExtractor, sandBore, combustionDrill, largeCombustionDrill, ignitionDrill, radiatorBore, bulkDrill, bulkQuarry,
 
         //distribution (payload too)
-        heavyDuct, ductNode, ductJunction, heavyDuctRouter,
+        heavyDuct, ductNode, ductJunction, ductDustributor,
 
         //liquid
         fluidDuct, fluidRouter, fluidBridge,
 
         //power
-        galvaniumNode, combustionReactor,
+        galvaniumNode, combustionChamber,
 
         //defense
         iridiumWall, fragisteelWall,
@@ -98,6 +95,42 @@ public class CaliBlocks {
 
     public static void load() {
         //turret
+        quail = new PowerTurret("quail"){{
+           health = 500;
+           size = 2;
+           requirements (turret, with(iridium, 50, fragisteel, 50));
+
+           consumePower(100/60f);
+
+           hasLiquids = false;
+
+           range = 200;
+           inaccuracy = 0;
+           reload = 80;
+           targetAir = true;
+           targetGround = false;
+
+           shootY = 0;
+
+           shootSound = Sounds.blaster;
+           shootEffect = Fx.colorSparkBig;
+           shootType = new BasicBulletType(10, 100){{
+               sprite = "serilia-arrow-bullet";
+               height = 20;
+               shrinkX = 0;
+               shrinkY = 0;
+               hitColor = backColor = Color.valueOf("87ceeb");
+               trailColor = Color.valueOf("6586b0");
+               trailWidth = 1f;
+               trailLength = 20;
+
+               lifetime = 21;
+               pierce = true;
+
+               hitEffect = despawnEffect = Fx.hitBulletColor;
+           }};
+
+        }};
         scourge = new ItemTurret("scourge"){{
             scaledHealth = 140;
             size = 2;
@@ -316,8 +349,9 @@ public class CaliBlocks {
             capacity = 2;
             ((HeavyDuct) heavyDuct).junctionReplacement = this;
         }};
-        heavyDuctRouter = new Router("heavy-duct-router"){{
+        ductDustributor = new Router("duct-distributor"){{
             health = 75;
+            size = 2;
             requirements(Category.distribution, with(iridium, 10));
         }};
         //liquid
@@ -339,14 +373,14 @@ public class CaliBlocks {
         }};
         //power
         galvaniumNode = new BeamNode("galvanium-node"){{
-            requirements(Category.power, with(galvanium,10));
+            requirements(Category.power, with(fragisteel, 5, galvanium,10));
             consumesPower = outputsPower = true;
             health = 90;
             range = 10;
 
             consumePowerBuffered(500f);
         }};
-        combustionReactor = new ConsumeGenerator("combustion-reactor"){{
+        combustionChamber = new ConsumeGenerator("combustion-reactor"){{
             scaledHealth = 45;
             size = 2;
             requirements(Category.power, with(iridium,65,galvanium,35));

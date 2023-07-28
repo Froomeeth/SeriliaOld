@@ -137,6 +137,7 @@ public class SeUnits{
 
                     homingDelay = 20;
                     homingRange = 60;
+                    buildingDamageMultiplier = 0;
                 }};
             }});
 

@@ -36,8 +36,8 @@ public class SeWaveUnits {
                 y = 0f;
                 shootX = 3;
                 shootY = 2;
-                bullet = new BasicBulletType(3f, 15){{
-                    lifetime = 60f;
+                bullet = new BasicBulletType(3f, 12){{
+                    lifetime = 50f;
                     despawnEffect = Fx.none;
 
                     width = 7f;
