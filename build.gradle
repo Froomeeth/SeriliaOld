@@ -26,6 +26,7 @@ tasks.withType(JavaCompile).configureEach{
 
 dependencies{
     compileOnly "com.github.Anuken.Arc:arc-core:$arcVersion"
+    compileOnly "com.github.Anuken.Arc:flabel:$arcVersion"
     compileOnly "com.github.Anuken.MindustryJitpack:core:$mindustryVersion"
 
     annotationProcessor "com.github.GlennFolker.EntityAnno:downgrader:$entVersion"

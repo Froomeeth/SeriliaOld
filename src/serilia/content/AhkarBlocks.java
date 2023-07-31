@@ -26,6 +26,7 @@ import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
 import serilia.world.blocks.power.LaserEaterOrDivider;
+import serilia.world.blocks.power.LaserNode;
 import serilia.world.blocks.power.PowerWire;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
@@ -57,7 +58,7 @@ public class AhkarBlocks {
         channel, valve, pistonPump,
 
         //power
-        solarCollector, wire, laserEmitter, laserRelay, laserReceiver, laserDivider,
+        solarCollector, wire, laserNode, laserEmitter, laserRelay, laserReceiver, laserDivider,
 
         //defense
         barrierProjector,
@@ -141,6 +142,9 @@ public class AhkarBlocks {
 
 
         //power
+        laserNode = new LaserNode("laser-node"){{
+            requirements(power, sandboxOnly, with());
+        }};
 
         laserReceiver = new LaserEaterOrDivider("laser-receiver"){{
             requirements(power, sandboxOnly, with());

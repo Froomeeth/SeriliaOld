@@ -43,13 +43,13 @@ public class LaserEaterOrDivider extends Block{
             graphIn = graphOut = graphLeft = graphRight = null;
 
             //in
-            //graphIn = getGraphWithin(this, laserRange, rotation + 2, rotation);
+            graphIn = getGraphWithin(this, laserRange, rotation + 2, rotation);
             //out
             if(eat){
-                if(front() instanceof PowerWire.PowerWireBuild) graphOut = front().power.graph;
+                if(front() != null && front().block.hasPower) graphOut = front().power.graph;
             }else{
-                graphLeft = getGraphWithin(this, laserRange, rotation + 3 % 4);
-                graphRight = getGraphWithin(this, laserRange, rotation + 1 % 4);
+                graphLeft = getGraphWithin(this, laserRange, rotation + 3);
+                graphRight = getGraphWithin(this, laserRange, rotation + 1);
             }
         }
     }
