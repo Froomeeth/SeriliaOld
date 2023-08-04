@@ -17,13 +17,7 @@ import mindustry.graphics.Pal;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
 import mindustry.type.unit.TankUnitType;
-import serilia.gen.entities.EntityRegistry;
-import serilia.gen.entities.TractorBeam;
 import serilia.types.SeriliaUnitType;
-import serilia.types.StatusFieldBulletType;
-import serilia.world.draw.part.RangeCirclePart;
-
-import static mindustry.Vars.tilesize;
 
 public class SeUnits{
     //@Annotations.EntityDef({Posc.class, Rotc.class, Hitboxc.class, Unitc.class, Payloadc.class, TractorBeamc.class}) Object tractorUnit;
@@ -40,54 +34,6 @@ public class SeUnits{
      nephila, lobata, coelestis;
 
     public static void load(){
-
-        glow = EntityRegistry.content("glow", TractorBeam.class, name -> new SeriliaUnitType(name){{
-            homeWorld = 1;
-
-            coreUnitDock = true;
-            controller = u -> new BuilderAI(true, 60);
-            isEnemy = false;
-            envDisabled = 0;
-
-            targetPriority = -2;
-            lowAltitude = false;
-            mineWalls = true;
-            mineFloor = false;
-            mineHardnessScaling = false;
-            flying = true;
-            mineSpeed = 9f;
-            mineTier = 3;
-            buildSpeed = 1.5f;
-            drag = 0.08f;
-            speed = 7.5f;
-            rotateSpeed = 8f;
-            accel = 0.08f;
-            itemCapacity = 110;
-            health = 700f;
-            armor = 3f;
-            hitSize = 12f;
-            buildBeamOffset = 8f;
-            payloadCapacity = 2f * 2f * tilesize * tilesize;
-            pickupUnits = false;
-            vulnerableWithPayloads = true;
-
-            fogRadius = 0f;
-            targetable = false;
-            hittable = false;
-
-            engineOffset = 7.5f;
-            engineSize = 3.4f;
-
-            weapons.add(
-                new Weapon(){{
-                    bullet = new StatusFieldBulletType(){{
-                        parts.add(new RangeCirclePart(50f, 0.5f, 101f, 99, Pal.orangeSpark, Pal.orangeSpark.cpy().a(0f)));
-                    }};
-                }}
-            );
-        }});
-
-
         scion = new SeriliaUnitType("scion"){{
             aiController = BuilderAI::new;
             isEnemy = false;

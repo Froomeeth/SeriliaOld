@@ -1,41 +1,28 @@
-package serilia.entities.comp;
+package serilia.entities;
 
 import arc.Events;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
-import arc.struct.Seq;
 import arc.util.Time;
-import ent.anno.Annotations;
-import ent.anno.Annotations.*;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.core.World;
 import mindustry.game.EventType;
-import mindustry.game.Team;
-import mindustry.gen.*;
-import mindustry.type.UnitType;
+import mindustry.gen.Building;
+import mindustry.gen.PayloadUnit;
+import mindustry.gen.Unit;
 import mindustry.world.Build;
 import mindustry.world.Tile;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
 import mindustry.world.blocks.payloads.UnitPayload;
-import serilia.gen.entities.TractorBeamc;
 
-@EntityComponent
-@EntityDef({Posc.class, Rotc.class, Hitboxc.class, Unitc.class, Payloadc.class, TractorBeamc.class})
-public abstract class TractorBeamComp implements Posc, Rotc, Hitboxc, Unitc, Payloadc{
-
+public class TractorBeamUnit extends PayloadUnit{
     public Payload beamHeld;
     public Vec2 mouse = new Vec2(), payPos = new Vec2(), unitPos = new Vec2();
     public int mouseTileX, mouseTileY;
     public boolean movingIn = false;
     public float beamRange = 8f * 8f;
-
-    @Import float x, y, rotation;
-    @Import Team team;
-    @Import UnitType type;
-    @Import Seq<Payload> payloads = new Seq<>();
-    @Import float aimX, aimY;
 
     public void moveIn(){
         if (beamHeld != null && canPickupPayload(beamHeld)){
@@ -58,8 +45,11 @@ public abstract class TractorBeamComp implements Posc, Rotc, Hitboxc, Unitc, Pay
             }
         }
     }
-    @Insert("update()")
-    public void updateHeld(){
+
+    @Override
+    public void update(){
+        super.update();
+
         if(beamHeld == null || Vars.state.isPaused()) return;
         mouse.set(Mathf.clamp(aimX, 0, Vars.world.height() * 8f), Mathf.clamp(aimY, 0f, Vars.world.width() * 8f));
 
@@ -81,7 +71,7 @@ public abstract class TractorBeamComp implements Posc, Rotc, Hitboxc, Unitc, Pay
         if(movingIn && payPos.dst(unitPos) < 3f) moveIn();
     }
 
-    @Annotations.Replace(value = 1)
+    @Override
     public void pickup(Unit unit){
         if(beamHeld == null){
             unit.remove();
@@ -94,7 +84,7 @@ public abstract class TractorBeamComp implements Posc, Rotc, Hitboxc, Unitc, Pay
         }
     }
 
-    @Annotations.Replace(value = 1)
+    @Override
     public void pickup(Building build){
         if(beamHeld == null){
             payPos.set(build.x, build.y);
@@ -107,7 +97,7 @@ public abstract class TractorBeamComp implements Posc, Rotc, Hitboxc, Unitc, Pay
         }
     }
 
-    @Annotations.Replace(value = 1)
+    @Override
     public boolean dropLastPayload(){
         if(beamHeld == null) return false;
 
@@ -118,7 +108,7 @@ public abstract class TractorBeamComp implements Posc, Rotc, Hitboxc, Unitc, Pay
         return false;
     }
 
-    @Annotations.Replace(value = 1)
+    @Override
     public boolean tryDropPayload(Payload payload){
         if(beamHeld == null || movingIn || payPos.dst(mouse) > 8f) return false;
 
@@ -144,7 +134,7 @@ public abstract class TractorBeamComp implements Posc, Rotc, Hitboxc, Unitc, Pay
     }
 
     /** @return whether the tile has been successfully placed. */
-    @Annotations.Replace(value = 1)
+    @Override
     public boolean dropBlock(BuildPayload payload){
         Building payBuild = payload.build;
         Tile on = Vars.world.tile(mouseTileX, mouseTileY);

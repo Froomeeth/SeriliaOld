@@ -2,6 +2,8 @@ package serilia.content;
 
 import arc.graphics.Blending;
 import arc.struct.Seq;
+import mindustry.content.Blocks;
+import mindustry.content.Liquids;
 import mindustry.content.UnitTypes;
 import mindustry.graphics.Layer;
 import mindustry.type.Category;
@@ -25,6 +27,7 @@ import serilia.world.blocks.distribution.RotRouter;
 import serilia.world.blocks.payload.MoreGenericCrafter;
 import serilia.world.blocks.payload.PayDuctRouter;
 import serilia.world.blocks.payload.PayloadDuct;
+import serilia.world.blocks.payload.UniversalCrafter;
 import serilia.world.blocks.power.LaserEaterOrDivider;
 import serilia.world.blocks.power.LaserNode;
 import serilia.world.blocks.power.PowerWire;
@@ -71,10 +74,11 @@ public class AhkarBlocks {
         //unit
 
         //effect
-        caliAccelerator, ahkarDropPod, coreFramework;
+        caliAccelerator, ahkarDropPod, coreFramework,
         //payloads
 
         //misc
+        multiCraft;
 
         //prop
 
@@ -228,8 +232,6 @@ public class AhkarBlocks {
             consumePower(20);
             results = with(thorium, 4, fissileMatter, 1);
             craftTime = 320f;
-
-
         }};
 
 
@@ -272,14 +274,37 @@ public class AhkarBlocks {
 
 
         //misc
+        multiCraft = new UniversalCrafter("multi-craft"){{
+            requirements(liquid, sandboxOnly, with());
+            size = 5;
+            rotate = true;
+            outputsPayload = true;
+            itemCapacity = 50;
+            liquidCapacity = 5000000000f;
 
+            recipes = Seq.with(
+                    new Recipe("wall-to-stell", UnitTypes.stell,1){{
+                        req(silicon, 5, Blocks.tungstenWallLarge, 3);
+                        out(UnitTypes.stell, 3);
+                    }},
+                    new Recipe("wall-deconstruct", Blocks.smallDeconstructor, 10){{
+                        req(Blocks.tungstenWallLarge, 3);
+                        out(tungsten, 24, Liquids.water, 500);
+                    }},
+                    new Recipe("serpulo-if-it-was-good", Blocks.exponentialReconstructor, 120){{
+                        req(UnitTypes.flare, 15);
+                        out(UnitTypes.eclipse, 1);
+                        powerReq = 1f;
+                    }},
+                    new Recipe("ghghghg", null, 1)
+            );
+        }};
 
         //prop
         solarCollector = new SolarCollector("solar-collector"){{
             requirements(effect, editorOnly, with());
             size = 5;
         }};
-
 
         Seq<Block> ahkarBlocks = Seq.with(
                 sealedBore,
