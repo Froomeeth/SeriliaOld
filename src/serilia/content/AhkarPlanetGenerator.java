@@ -1,4 +1,4 @@
-package serilia;
+package serilia.content;
 
 import arc.graphics.Color;
 import arc.math.Mathf;

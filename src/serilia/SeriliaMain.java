@@ -15,7 +15,6 @@ import mindustry.ui.fragments.MenuFragment;
 import rhino.ImporterTopLevel;
 import rhino.NativeJavaPackage;
 import serilia.content.*;
-import serilia.gen.entities.EntityRegistry;
 import serilia.util.Parallax;
 import serilia.graphics.SeGraphics;
 import serilia.graphics.SeMenuRenderer;
@@ -30,7 +29,6 @@ public class SeriliaMain extends Mod{
     public void loadContent(){
         SeSounds.load();
         SeResources.load();
-        EntityRegistry.register();
         SeUnits.load();
         SeWaveUnits.load();
         SeEnvBlocks.load();

@@ -1,7 +1,7 @@
 
 plugins{
     id 'java'
-    id 'com.github.GlennFolker.EntityAnno' version "$entVersion"
+    //id 'com.github.GlennFolker.EntityAnno' version "$entVersion"
 }
 
 sourceSets.main.java.srcDirs = ["src"]
@@ -26,29 +26,30 @@ tasks.withType(JavaCompile).configureEach{
 
 dependencies{
     compileOnly "com.github.Anuken.Arc:arc-core:$arcVersion"
+    compileOnly "com.github.Anuken.Arc:flabel:$arcVersion"
     compileOnly "com.github.Anuken.MindustryJitpack:core:$mindustryVersion"
 
     annotationProcessor "com.github.GlennFolker.EntityAnno:downgrader:$entVersion"
 
-    compileOnly "com.github.GlennFolker.EntityAnno:entity:$entVersion"
+//    compileOnly "com.github.GlennFolker.EntityAnno:entity:$entVersion"
 
-    kapt "com.github.GlennFolker.EntityAnno:entity:$entVersion"
+//    kapt "com.github.GlennFolker.EntityAnno:entity:$entVersion"
 }
 
-entityAnno{
-    // Mod internal name, corresponds to the "name" field in `mod.json`.
-    modName = 'serilia'
-    // [Optional] Mindustry version entity component source version override. Defaults to what EntityAnno uses as classpath.
-    mindustryVersion = project['mindustryVersion']
-    // Directory to store entity IO revisions.
-    revisionDir = file("$rootDir/revisions/")
-    // Package name for fetched vanilla entity components.
-    fetchPackage = 'serilia.entities.comp.vanilla'
-    // Modded entity component source files package; these will be excluded from the JAR.
-    genSrcPackage = 'serilia.entities.comp'
-    // Root generated entity classes package.
-    rootPackage = 'serilia.gen'
-}
+//entityAnno{
+//    // Mod internal name, corresponds to the "name" field in `mod.json`.
+//    modName = 'serilia'
+//    // [Optional] Mindustry version entity component source version override. Defaults to what EntityAnno uses as classpath.
+//    mindustryVersion = project['mindustryVersion']
+//    // Directory to store entity IO revisions.
+//    revisionDir = file("$rootDir/revisions/")
+//    // Package name for fetched vanilla entity components.
+//    fetchPackage = 'serilia.entities.comp.vanilla'
+//    // Modded entity component source files package; these will be excluded from the JAR.
+//    genSrcPackage = 'serilia.entities.comp'
+//    // Root generated entity classes package.
+//    rootPackage = 'serilia.gen'
+//}
 
 task jarAndroid{
     dependsOn "jar"

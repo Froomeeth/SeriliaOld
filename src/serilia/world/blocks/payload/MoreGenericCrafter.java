@@ -122,7 +122,7 @@ public class MoreGenericCrafter extends PayloadBlock{
     public void init(){
         if(outputLiquids != null) outputsLiquid = true;
         if(outputPayload != null) outputsPayload = true;
-        if(outputItems != null) hasItems = true;
+        if(outputItems != null)   hasItems = true;
         if(outputLiquids != null) hasLiquids = true;
 
         super.init();

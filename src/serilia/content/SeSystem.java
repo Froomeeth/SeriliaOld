@@ -12,7 +12,6 @@ import mindustry.maps.planet.AsteroidGenerator;
 import mindustry.maps.planet.SerpuloPlanetGenerator;
 import mindustry.type.Planet;
 import mindustry.world.meta.Env;
-import serilia.AhkarPlanetGenerator;
 
 import static mindustry.content.Blocks.*;
 

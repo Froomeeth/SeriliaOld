@@ -6,8 +6,9 @@ import arc.util.Log;
 import mindustry.Vars;
 import mindustry.entities.Units;
 import mindustry.gen.*;
-import mindustry.input.*;
-import serilia.gen.entities.TractorBeamc;
+import mindustry.input.Binding;
+import mindustry.input.DesktopInput;
+import serilia.entities.TractorBeamUnit;
 
 public class SeInput extends DesktopInput{
 
@@ -52,10 +53,10 @@ public class SeInput extends DesktopInput{
     @Override
     public void tryDropPayload() {
         Unit unit = Vars.player.unit();
-        if (unit instanceof TractorBeamc) {
-            if(((TractorBeamc)unit).beamHeld() != null) {
+        if (unit instanceof TractorBeamUnit pay) {
+            if(pay.beamHeld != null) {
                 Call.requestDropPayload(Vars.player, Vars.player.x, Vars.player.y);
-            } else ((TractorBeamc)unit).moveOut();
+            } else pay.moveOut();
         } else if (unit instanceof Payloadc) {
             Call.requestDropPayload(Vars.player, Vars.player.x, Vars.player.y);
         }
@@ -64,12 +65,11 @@ public class SeInput extends DesktopInput{
     @Override
     public void tryPickupPayload() {
         Unit unit = Vars.player.unit();
-        if (unit instanceof TractorBeamc) {
-            TractorBeamc pay = (TractorBeamc)unit;
+        if (unit instanceof TractorBeamUnit pay) {
             Unit target = Units.closest(Vars.player.team(), pay.x(), pay.y(), unit.type.hitSize * 2.0F, (u) -> {
                 return u.isAI() && u.isGrounded() && pay.canPickup(u) && u.within(unit, u.hitSize + unit.hitSize);
             });
-            if(pay.beamHeld() == null) {
+            if(pay.beamHeld == null) {
                 if (target != null) {
                     Call.requestUnitPayload(Vars.player, target);
                 } else {
@@ -78,7 +78,7 @@ public class SeInput extends DesktopInput{
                         Call.requestBuildPayload(Vars.player, build);
                     }
                 }
-            } else pay.movingIn(true);
+            } else pay.movingIn = true;
         } else if (unit instanceof Payloadc) {
             Payloadc pay = (Payloadc)unit;
             Unit target = Units.closest(Vars.player.team(), pay.x(), pay.y(), unit.type.hitSize * 2.0F, (u) -> {

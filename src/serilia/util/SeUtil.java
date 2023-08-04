@@ -17,8 +17,8 @@ import mindustry.type.ItemStack;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.ShieldWall;
 import mindustry.world.blocks.defense.Wall;
-import mindustry.world.blocks.power.BeamNode;
 import mindustry.world.blocks.power.PowerGraph;
+import serilia.world.blocks.power.LaserNode;
 
 public class SeUtil{
     public static Color[] spectrum = {Color.red, Color.coral, Color.yellow, Color.lime, Color.green, Color.teal, Color.blue, Color.purple, Color.magenta};
@@ -146,7 +146,7 @@ public class SeUtil{
 
 
     public static PowerGraph getGraphWithin(Building caster, int range, int dir){
-        return getGraphWithin(caster, dir, range, -1);
+        return getGraphWithin(caster, range, dir, -1);
     }
 
     public static PowerGraph getGraphWithin(Building caster, int range, int dir, int rot){
@@ -156,7 +156,7 @@ public class SeUtil{
 
             Fx.electrified.at(caster.x + (Geometry.d4(dir).x * r * 8), caster.y + (Geometry.d4(dir).y * r * 8));
 
-            if(the instanceof BeamNode.BeamNodeBuild && (rot < 0 || the.rotation == rot)){ //todo lasernode
+            if(the instanceof LaserNode.LaserNodeBuild && (rot < 0 || the.rotation == rot)){ //todo lasernode
                 //found, break current loop and return it
                 Fx.landShock.at(the);
                 return the.power.graph;

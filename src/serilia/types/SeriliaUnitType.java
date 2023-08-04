@@ -22,12 +22,12 @@ public class SeriliaUnitType extends UnitType {
 
     public void worldParams(){
         switch (homeWorld) {
-            case 1 -> {
+            case 1: {
                 outlineColor = SeFxPal.ahkarOutline;
                 glowCell = glowEngine = true;
                 lowAltitude = false;
             }
-            default -> outlineColor = SeFxPal.caliOutline;
+            default: outlineColor = SeFxPal.caliOutline;
         }
     }
     
