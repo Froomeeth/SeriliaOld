@@ -16,10 +16,9 @@ public class SeEnvBlocks {
         //cali
         oreIridium, oreGraphite, oreTarnide,
 
-
+        dauricSoil,
         //ahkar
         quartz,
-
         ashRock,     blooRock    , rockRock    ,
         ashRockWall, blooRockWall, rockRockWall;
 
@@ -32,6 +31,10 @@ public class SeEnvBlocks {
         oreIridium = new OreBlock(iridium); //variants are 3 by default
         oreGraphite = new OreBlock(graphite);
         oreTarnide = new OreBlock(tarnide);
+
+        dauricSoil = new Floor("dauric-soil"){{
+            variants = 3;
+        }};
 
         //ahkar
         quartz = new OreBlock(metaglass);

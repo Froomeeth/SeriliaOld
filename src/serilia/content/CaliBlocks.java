@@ -7,11 +7,15 @@ import mindustry.content.Items;
 import mindustry.content.Liquids;
 import mindustry.content.UnitTypes;
 import mindustry.entities.abilities.EnergyFieldAbility;
-import mindustry.entities.bullet.*;
+import mindustry.entities.bullet.ArtilleryBulletType;
+import mindustry.entities.bullet.BasicBulletType;
+import mindustry.entities.bullet.ExplosionBulletType;
+import mindustry.entities.bullet.FlakBulletType;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.entities.part.RegionPart;
 import mindustry.entities.pattern.ShootAlternate;
 import mindustry.gen.Sounds;
+import mindustry.gen.UnitEntity;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.Category;
@@ -36,14 +40,15 @@ import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.blocks.units.UnitFactory;
 import mindustry.world.draw.*;
 import mindustry.world.meta.Attribute;
-import serilia.world.draw.drawblock.DrawWeaveColor;
 import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.DuctNode;
 import serilia.world.blocks.distribution.HeavyDuct;
+import serilia.world.blocks.liquid.BurstPump;
 import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrillTurret;
 import serilia.world.blocks.storage.DrawerCore;
 import serilia.world.draw.drawblock.DrawTeam;
+import serilia.world.draw.drawblock.DrawWeaveColor;
 
 import static mindustry.content.Items.*;
 import static mindustry.gen.Sounds.plasmaboom;
@@ -68,7 +73,7 @@ public class CaliBlocks {
         heavyDuct, ductNode, ductJunction, ductDustributor,
 
         //liquid
-        fluidDuct, fluidRouter, fluidBridge,
+        burstPump, fluidDuct, fluidRouter, fluidBridge,
 
         //power
         galvaniumNode, combustionChamber,
@@ -106,6 +111,8 @@ public class CaliBlocks {
            range = 200;
            inaccuracy = 0;
            reload = 80;
+           minWarmup = 0.9f;
+           warmupMaintainTime = 30f;
            targetAir = true;
            targetGround = false;
 
@@ -119,14 +126,17 @@ public class CaliBlocks {
                height = 24;
                shrinkX = 0;
                shrinkY = 0;
+               frontColor = Color.valueOf("c0ecff");
+               backColor = Color.valueOf("87ceeb");
                trailColor = Color.valueOf("6586b0");
                trailWidth = 1.2f;
                trailLength = 20;
 
                lifetime = 21;
                pierce = true;
+               collidesGround = false;
 
-               hitColor = backColor = Color.valueOf("87ceeb");
+               hitColor = Color.valueOf("87ceeb");
                hitEffect = despawnEffect = Fx.hitBulletColor;
            }};
             drawer = new DrawTurret(){{
@@ -148,6 +158,7 @@ public class CaliBlocks {
                             under = true;
                             moveX = 0f;
                             moveY = 1f;
+                            moves.add(new PartMove(PartProgress.recoil, 0f, -1f, 0f));
                         }});
             }};
 
@@ -205,6 +216,7 @@ public class CaliBlocks {
                             bullet = new ExplosionBulletType(130f, 25f){{
                                 shootEffect = Fx.massiveExplosion;
                                 collidesAir = false;
+                                shootSound = Sounds.none;
                             }};
                         }});
                     }};
@@ -229,6 +241,7 @@ public class CaliBlocks {
            inaccuracy = 7;
            velocityRnd = 0.4f;
            minWarmup = 0.99f;
+           warmupMaintainTime = 30f;
            reload = 20;
            targetAir = true;
            targetGround = false;
@@ -357,7 +370,7 @@ public class CaliBlocks {
             speed = 5.5f;
         }};
         ductNode = new DuctNode("duct-node"){{
-            requirements(Category.distribution, with(iridium, 10));
+            requirements(Category.distribution, with(iridium, 5));
             health = 75;
             buildCostMultiplier = 6f;
             speed = 5.5f;
@@ -377,6 +390,16 @@ public class CaliBlocks {
             requirements(Category.distribution, with(iridium, 10));
         }};
         //liquid
+        burstPump = new BurstPump("burst-pump"){{
+            requirements(liquid, with(iridium, 100));
+            size = 2;
+
+            liquidCapacity = 100f;
+            pumpTime = 360;
+            outputAmount = 100;
+
+            consumePower(150/60f);
+        }};
         fluidDuct = new ShadedConduit("fluid-duct"){{
             requirements(liquid, with(iridium, 1));
         }};
@@ -389,6 +412,8 @@ public class CaliBlocks {
         fluidBridge = new LiquidBridge("fluid-bridge"){{
             health = 80;
             requirements(Category.liquid, with(iridium, 5));
+
+            hasPower = false;
 
             range = 4;
             ((ShadedConduit) fluidDuct).bridgeReplacement = this;
@@ -465,6 +490,7 @@ public class CaliBlocks {
                     despawnUnitCount = 1;
                     collides = false;
                     despawnUnit = new MissileUnitType("allay-field") {{
+                                constructor = UnitEntity::create;
                                 targetAir = false;
                                 targetGround = false;
                                 speed = 0;
@@ -507,7 +533,7 @@ public class CaliBlocks {
             consumeItem(iridium, 2);
             consumeLiquid(methane, 1f/60);
 
-            drawer = new DrawMulti(new DrawRegion("-bottom"),new DrawDefault(), new DrawFlame(Color.valueOf("feb380")));
+            drawer = new DrawMulti(new DrawRegion("-bottom"),new DrawCrucibleFlame(), new DrawDefault());
         }};
         galvaniumPrinter = new GenericCrafter("galvanium-printer"){{
             requirements(crafting, with(iridium, 70, fragisteel, 30));
