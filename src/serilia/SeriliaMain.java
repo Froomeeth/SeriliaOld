@@ -40,7 +40,7 @@ public class SeriliaMain extends Mod{
         Events.on(EventType.ClientLoadEvent.class, (e) -> {
 
            if(!Vars.mobile) {
-               //Vars.control.setInput(new SeInput());
+               Vars.control.setInput(new SeInput());
            }
 
             Vars.renderer.addEnvRenderer(1024 * 2, () ->

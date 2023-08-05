@@ -10,7 +10,7 @@ import mindustry.world.Block;
 import mindustry.world.consumers.Consume;
 
 //Requires setting your block's liquidFilter at init.
-public class ConsumeLiquidsDynamic extends Consume{
+public class ConsumeLiquidsDynamic extends Consume{ //todo switch to now vanilla one
     public final Func<Building, LiquidStack[]> liquids;
 
     @SuppressWarnings("unchecked")

@@ -24,10 +24,7 @@ import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.DuctNode;
 import serilia.world.blocks.distribution.HeavyDuct;
 import serilia.world.blocks.distribution.RotRouter;
-import serilia.world.blocks.payload.MoreGenericCrafter;
-import serilia.world.blocks.payload.PayDuctRouter;
-import serilia.world.blocks.payload.PayloadDuct;
-import serilia.world.blocks.payload.UniversalCrafter;
+import serilia.world.blocks.payload.*;
 import serilia.world.blocks.power.LaserEaterOrDivider;
 import serilia.world.blocks.power.LaserNode;
 import serilia.world.blocks.power.PowerWire;
@@ -78,7 +75,7 @@ public class AhkarBlocks {
         //payloads
 
         //misc
-        multiCraft;
+        multiCraft, buffer;
 
         //prop
 
@@ -276,16 +273,16 @@ public class AhkarBlocks {
         //misc
         multiCraft = new UniversalCrafter("multi-craft"){{
             requirements(liquid, sandboxOnly, with());
-            size = 5;
+            size = 4;
             rotate = true;
             outputsPayload = true;
             itemCapacity = 50;
-            liquidCapacity = 5000000000f;
 
             recipes = Seq.with(
                     new Recipe("wall-to-stell", UnitTypes.stell,1){{
-                        req(silicon, 5, Blocks.tungstenWallLarge, 3);
+                        req(silicon, 5, Blocks.tungstenWallLarge, 3, Liquids.cyanogen, 1);
                         out(UnitTypes.stell, 3);
+                        isUnit = true;
                     }},
                     new Recipe("wall-deconstruct", Blocks.smallDeconstructor, 10){{
                         req(Blocks.tungstenWallLarge, 3);
@@ -298,6 +295,11 @@ public class AhkarBlocks {
                     }},
                     new Recipe("ghghghg", null, 1)
             );
+        }};
+
+        buffer = new PayloadBuffer("buffer"){{
+            requirements(liquid, sandboxOnly, with());
+            size = 4;
         }};
 
         //prop

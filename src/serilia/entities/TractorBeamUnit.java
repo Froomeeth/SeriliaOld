@@ -1,9 +1,15 @@
 package serilia.entities;
 
 import arc.Events;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.Fill;
+import arc.graphics.g2d.Lines;
+import arc.math.Angles;
 import arc.math.Mathf;
 import arc.math.geom.Vec2;
 import arc.util.Time;
+import arc.util.io.Reads;
+import arc.util.io.Writes;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.core.World;
@@ -11,11 +17,16 @@ import mindustry.game.EventType;
 import mindustry.gen.Building;
 import mindustry.gen.PayloadUnit;
 import mindustry.gen.Unit;
+import mindustry.graphics.Drawf;
+import mindustry.graphics.Pal;
+import mindustry.io.TypeIO;
 import mindustry.world.Build;
 import mindustry.world.Tile;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
 import mindustry.world.blocks.payloads.UnitPayload;
+import serilia.content.SeUnits;
+import serilia.types.SeriliaUnitType;
 
 public class TractorBeamUnit extends PayloadUnit{
     public Payload beamHeld;
@@ -46,10 +57,7 @@ public class TractorBeamUnit extends PayloadUnit{
         }
     }
 
-    @Override
-    public void update(){
-        super.update();
-
+    public void updateHeld(){
         if(beamHeld == null || Vars.state.isPaused()) return;
         mouse.set(Mathf.clamp(aimX, 0, Vars.world.height() * 8f), Mathf.clamp(aimY, 0f, Vars.world.width() * 8f));
 
@@ -69,6 +77,11 @@ public class TractorBeamUnit extends PayloadUnit{
         }
 
         if(movingIn && payPos.dst(unitPos) < 3f) moveIn();
+    }
+
+    @Override
+    public void updateLastPosition(){
+        super.updateLastPosition();
     }
 
     @Override
@@ -152,5 +165,79 @@ public class TractorBeamUnit extends PayloadUnit{
         }
 
         return false;
+    }
+
+    public static TractorBeamUnit create(){
+        return new TractorBeamUnit();
+    }
+
+    @Override
+    public int classId(){
+        return SeUnits.classID(TractorBeamUnit.class);
+    }
+
+    @Override
+    public void update(){
+        super.update();
+
+        unitPos.set(x, y);
+        updateHeld();
+    }
+
+    @Override
+    public void draw(){
+        super.draw();
+
+        if(beamHeld != null){
+            float focusLen = type.buildBeamOffset + Mathf.absin(Time.time, 3.0F, 0.6F);
+            float px = x + Angles.trnsx(rotation, focusLen);
+            float py = y + Angles.trnsy(rotation, focusLen);
+
+            Draw.z(35f);
+            beamHeld.draw();
+
+            if(beamHeld instanceof BuildPayload){
+                Building b = ((BuildPayload) beamHeld).build;
+                float size = b.block.size;
+
+                Draw.z(29f);
+                Lines.stroke(1.0f, Pal.techBlue);
+
+                //place preview
+                if(Build.validPlace(b.block, b.team, mouseTileX, mouseTileY, b.rotation, false)){
+                    Draw.alpha(1f - (payPos.dst(mouse) * 0.1f));
+                    Drawf.dashRectBasic(
+                            ((mouseTileX - (size / 2f)) + (size % 2 == 0 ? 0.5f : 0f)) * 8f,
+                            ((mouseTileY - (size / 2f)) + (size % 2 == 0 ? 0.5f : 0f)) * 8f,
+                            size * 8f, size * 8f
+                    );
+                    Draw.alpha(1f);
+                }
+
+                Draw.z(122f);
+                Drawf.buildBeam(px, py, beamHeld.x(), beamHeld.y(), size * 4f);
+                Fill.square(px, py, 1.8F + Mathf.absin(Time.time, 2.2F, 1.1F), rotation + 45.0F);
+                Draw.reset();
+                Draw.z(115f);
+            }
+        }
+    }
+
+    @Override
+    public void add(){
+        super.add();
+        if(type instanceof SeriliaUnitType) beamRange = ((SeriliaUnitType)type).tractorBeamRange;
+    }
+
+    @Override
+    public void write(Writes write){
+        super.write(write);
+        TypeIO.writePayload(write, beamHeld);
+    }
+
+    @Override
+    public void read(Reads read){
+        super.read(read);
+        beamHeld = TypeIO.readPayload(read);
     }
 }

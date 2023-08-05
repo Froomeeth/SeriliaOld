@@ -1,26 +1,62 @@
 package serilia.content;
 
+import arc.func.Prov;
 import arc.graphics.Color;
 import arc.math.geom.Rect;
+import arc.struct.ObjectIntMap;
+import arc.struct.ObjectMap.Entry;
 import mindustry.ai.types.BuilderAI;
 import mindustry.content.Fx;
+import mindustry.content.UnitTypes;
 import mindustry.entities.bullet.MissileBulletType;
 import mindustry.entities.bullet.PointBulletType;
 import mindustry.entities.effect.ExplosionEffect;
 import mindustry.entities.pattern.ShootPattern;
-import mindustry.gen.LegsUnit;
-import mindustry.gen.Sounds;
-import mindustry.gen.TankUnit;
-import mindustry.gen.UnitEntity;
+import mindustry.gen.*;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
 import mindustry.type.unit.TankUnitType;
+import serilia.entities.TractorBeamUnit;
 import serilia.types.SeriliaUnitType;
 
+@SuppressWarnings("unchecked")
 public class SeUnits{
-    //@Annotations.EntityDef({Posc.class, Rotc.class, Hitboxc.class, Unitc.class, Payloadc.class, TractorBeamc.class}) Object tractorUnit;
+    //Steal from Progressed Materials which stole from Endless Rusting which stole from Progressed Materials in the past which stole from BetaMindy
+    private static final Entry<Class<? extends Entityc>, Prov<? extends Entityc>>[] types = new Entry[]{
+            prov(TractorBeamUnit.class, TractorBeamUnit::new),
+    };
+
+    private static final ObjectIntMap<Class<? extends Entityc>> idMap = new ObjectIntMap<>();
+
+    /** Internal function to flatmap {@code Class -> Prov} into an {@link Entry}.
+     @author GlennFolker */
+    private static <T extends Entityc> Entry<Class<T>, Prov<T>> prov(Class<T> type, Prov<T> prov){
+        Entry<Class<T>, Prov<T>> entry = new Entry<>();
+        entry.key = type;
+        entry.value = prov;
+        return entry;
+    }
+
+    /** Setups all entity IDs and maps them into {@link EntityMapping}.
+     @author GlennFolker */
+    private static void setupID(){
+        for(int i = 0, j = 0, len = EntityMapping.idMap.length; i < len; i++){
+            if(EntityMapping.idMap[i] == null){
+                idMap.put(types[j].key, i);
+                EntityMapping.idMap[i] = types[j].value;
+
+                if(++j >= types.length) break;
+            }
+        }
+    }
+
+    /** Retrieves the class ID for a certain entity type.
+     @author GlennFolker */
+    public static <T extends Entityc> int classID(Class<T> type){
+        return idMap.get(type, -1);
+    }
 
     public static UnitType
             glow,
@@ -159,14 +195,17 @@ public class SeUnits{
     //tanks
 
         lobata = new TankUnitType("lobata"){{
-                constructor = TankUnit::create;
-                hitSize = 28f;
-                treadPullOffset = 4;
-                speed = 0.63f;
-                health = 11000;
-                armor = 20f;
-                itemCapacity = 0;
-                crushDamage = 13f / 5f;
-                treadRects = new Rect[]{new Rect(22 - 154f / 2f, 16 - 154f / 2f, 28, 130)};
-            }};
-        }}
+            constructor = TankUnit::create;
+            hitSize = 28f;
+            treadPullOffset = 4;
+            speed = 0.63f;
+            health = 11000;
+            armor = 20f;
+            itemCapacity = 0;
+            crushDamage = 13f / 5f;
+            treadRects = new Rect[]{new Rect(22 - 154f / 2f, 16 - 154f / 2f, 28, 130)};
+        }};
+
+        UnitTypes.emanate.constructor = TractorBeamUnit::create;
+    }
+}

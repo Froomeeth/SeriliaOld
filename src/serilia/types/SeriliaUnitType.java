@@ -14,6 +14,7 @@ public class SeriliaUnitType extends UnitType {
     public int homeWorld = 0; //0 cal, 1 ahk,
     public boolean glowCell = false, glowEngine = false;
     public TextureRegion cellGlow;
+    public float tractorBeamRange = 100;
 
 
     public SeriliaUnitType(String name) {

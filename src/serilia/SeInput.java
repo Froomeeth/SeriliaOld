@@ -53,10 +53,10 @@ public class SeInput extends DesktopInput{
     @Override
     public void tryDropPayload() {
         Unit unit = Vars.player.unit();
-        if (unit instanceof TractorBeamUnit pay) {
-            if(pay.beamHeld != null) {
+        if (unit instanceof TractorBeamUnit) {
+            if(((TractorBeamUnit)unit).beamHeld != null) {
                 Call.requestDropPayload(Vars.player, Vars.player.x, Vars.player.y);
-            } else pay.moveOut();
+            } else ((TractorBeamUnit)unit).moveOut();
         } else if (unit instanceof Payloadc) {
             Call.requestDropPayload(Vars.player, Vars.player.x, Vars.player.y);
         }
@@ -65,7 +65,8 @@ public class SeInput extends DesktopInput{
     @Override
     public void tryPickupPayload() {
         Unit unit = Vars.player.unit();
-        if (unit instanceof TractorBeamUnit pay) {
+        if (unit instanceof TractorBeamUnit) {
+            TractorBeamUnit pay = (TractorBeamUnit)unit;
             Unit target = Units.closest(Vars.player.team(), pay.x(), pay.y(), unit.type.hitSize * 2.0F, (u) -> {
                 return u.isAI() && u.isGrounded() && pay.canPickup(u) && u.within(unit, u.hitSize + unit.hitSize);
             });
