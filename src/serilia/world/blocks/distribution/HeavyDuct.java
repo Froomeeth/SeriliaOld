@@ -18,8 +18,6 @@ import mindustry.type.Item;
 import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
 import mindustry.world.blocks.distribution.Junction;
-import serilia.content.AhkarBlocks;
-import serilia.content.CaliBlocks;
 import serilia.util.SeUtil;
 
 import static mindustry.Vars.itemSize;
@@ -27,6 +25,7 @@ import static mindustry.Vars.tilesize;
 
 public class HeavyDuct extends Duct{
     public TextureRegion[] regions;
+    public Seq<Block> acceptFrom = new Seq<>(4);
 
     public HeavyDuct(String name){
         super(name);
@@ -95,11 +94,8 @@ public class HeavyDuct extends Duct{
         }
 
 
-        public boolean acceptFrom(Building build){ //TODO fix ends capping at block inputs
-            return build != null && (build == last || build == next) && ((block == build.block && build.rotation == rotation) || build.block == Blocks.itemSource || (
-                    block == CaliBlocks.heavyDuct && (CaliBlocks.ductJunction == build.block || CaliBlocks.ductNode == build.block) ||
-                    block == AhkarBlocks.heavyDuct && (AhkarBlocks.ductJunction == build.block || AhkarBlocks.ductInserter == build.block)
-            ));
+        public boolean acceptFrom(Building build){
+            return build != null && (build == last || build == next) && (block == build.block && build.rotation == rotation);
         }
 
         @Override
@@ -110,17 +106,30 @@ public class HeavyDuct extends Duct{
             nextc = next instanceof DuctBuild d ? d : null;
 
             state = 0;
-            if(acceptFrom(next)){
-                state += 1;
-                if(acceptFrom(last))
-                    state += 1;
-            } else if(acceptFrom(last))
-                state = 4;
+            if(acceptFrom(next)){ //check whether to add 1 to get front open state
+                state += 1; //  []#
+
+                if(acceptFrom(last)) //if yes from front, check whether to also add 1 for both open state
+                    state += 1; // #[]#
+
+            } else if(acceptFrom(last)) //if no from front, check whether to set to the special back open state
+                    state = 4; // #[]
         }
 
         @Override
         public boolean acceptItem(Building source, Item item){
-            return current == null && items.total() == 0 && source != next && acceptFrom(source);
+            boolean m = source.block == Blocks.itemSource;
+
+            if(!(acceptFrom.size == 0 || m)){
+                for(int i = 0; i < acceptFrom.size; i++){
+                    if(source.block == acceptFrom.get(i)){
+                        m = true;
+                        break;
+                    }
+                }
+            }
+
+            return current == null && items.total() == 0 && source == last && (block == source.block && source.rotation == rotation) && m;
         }
     }
 }

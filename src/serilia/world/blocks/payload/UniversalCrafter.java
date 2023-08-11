@@ -58,7 +58,8 @@ import static mindustry.Vars.tilesize;
 * [ ] stats
 * [ ] ports
 * [ ] logic?
-* [ } unit cost mul
+* [X] unit cost mul
+* [ ] drawing
 */
 
 public class UniversalCrafter extends PayloadBlock{
@@ -104,6 +105,7 @@ public class UniversalCrafter extends PayloadBlock{
             }
         });
 
+
         if(hasPayloads)
             consume(new ConsumePayloadDynamic((UniversalBuild b) -> b.currentRecipe != null && b.currentRecipe.payReq.size != 0 ? b.currentRecipe.payReq : Seq.with()));
         if(hasItems)
@@ -113,7 +115,7 @@ public class UniversalCrafter extends PayloadBlock{
         if(liquidIn)
             consume(new ConsumeLiquidsDynamic((UniversalBuild b) -> b.currentRecipe != null && b.currentRecipe.liquidReqArray != null ? b.currentRecipe.liquidReqArray : LiquidStack.empty));
 
-        //consumeBuilder.each(c -> c.multiplier = b -> state.rules.unitCost(b.team)); todo?
+        consumeBuilder.each(c -> c.multiplier = b -> ((UniversalBuild)b).currentRecipe.isUnit ? state.rules.unitCost(b.team) : 1);
 
         if(recipes.size == 1){
             configurable = false;
