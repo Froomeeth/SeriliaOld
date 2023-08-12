@@ -66,7 +66,7 @@ import static mindustry.Vars.*;
 * [ ] heat
 * [ ] attributes
 * [ ] UI
-* [ ] stats
+* [X] stats
 * [ ] ports
 * [ ] logic?
 * [X] unit cost mul
@@ -78,6 +78,7 @@ public class UniversalCrafter extends PayloadBlock{
 
     //behavior
     public float warmupSpeed = 0.019f;
+
     public boolean instantInput = true, instantOutput = false;
 
     public boolean dumpExtraLiquid = false;
@@ -303,7 +304,7 @@ public class UniversalCrafter extends PayloadBlock{
             if(flip) t.image(requirement.liquid.fullIcon).size(iconMed).left();
 
             t.table(req -> {
-                req.add(Strings.autoFixed(requirement.amount / (time / 60f), 2) + "/s").color(Color.lightGray).pad(4f);
+                req.add(Strings.autoFixed(requirement.amount / 60f, 2) + "/s").color(Color.lightGray).pad(4f);
             });
             if(!flip) t.image(requirement.liquid.fullIcon).size(iconMed).right();
             t.row();
@@ -450,6 +451,7 @@ public class UniversalCrafter extends PayloadBlock{
                 if(commandPos != null && diarrhea.isCommandable()){
                     diarrhea.command().commandPosition(commandPos);
                 }
+                diarrhea.rotation = rotdeg();
                 var unit = new UnitPayload(diarrhea);
                 Events.fire(new EventType.UnitCreateEvent(unit.unit, this));
 
@@ -677,10 +679,10 @@ public class UniversalCrafter extends PayloadBlock{
         public int index;
         public float time;
         private UnlockableContent iconContent;
-        private final Seq<ItemStack> itemReq = new Seq<>(ItemStack.class), itemOut = new Seq<>();
-        private final Seq<LiquidStack> liqReq = new Seq<>(LiquidStack.class), liqOut = new Seq<>();
-        private final Seq<PayloadStack> payReq = new Seq<>(), payOut = new Seq<>();
-        private float powerReq = -555f, powerOut = -12f, heatReq = -42f, heatOut = -99999999999999999999999999999999999999f;
+        public final Seq<ItemStack> itemReq = new Seq<>(ItemStack.class), itemOut = new Seq<>();
+        public final Seq<LiquidStack> liqReq = new Seq<>(LiquidStack.class), liqOut = new Seq<>();
+        public final Seq<PayloadStack> payReq = new Seq<>(), payOut = new Seq<>();
+        public float powerReq = -555f, powerOut = -12f, heatReq = -42f, heatOut = -99999999999999999999999999999999999999f;
         private ItemStack[] itemReqArray;
         private LiquidStack[] liqReqArray;
 

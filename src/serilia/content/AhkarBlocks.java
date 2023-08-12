@@ -4,6 +4,7 @@ import arc.graphics.Blending;
 import arc.graphics.g2d.Draw;
 import arc.struct.Seq;
 import mindustry.content.Blocks;
+import mindustry.content.Fx;
 import mindustry.content.Liquids;
 import mindustry.content.UnitTypes;
 import mindustry.gen.Building;
@@ -75,7 +76,7 @@ public class AhkarBlocks {
         //payloads
 
         //misc
-        multiCraft, buffer, dispenserHere;
+        multiCraft, buffer, largeTankRefabricator;
 
         //prop
 
@@ -310,28 +311,29 @@ public class AhkarBlocks {
             size = 4;
         }};
 
-        dispenserHere = new UniversalCrafter("large-tank-refabricator"){{
+        largeTankRefabricator = new UniversalCrafter("large-tank-refabricator"){{
             requirements(liquid, sandboxOnly, with());
             size = 5;
             rotate = true;
             outputsPayload = true;
-            itemCapacity = 50;
+
             solid = false;
             vanillaIO = true;
             regionSuffix = "-dark";
 
+            //for a 1:1 reconstructor, you want...
+            instantInput = false; //...the payload to move in before despawning.
+            instantOutput = true; //...the created payload to appear immediately, without an effect.
+
+            payDespawnEffect = Fx.none; //removing the despawn effect here because it might look weird
+
             recipes = Seq.with(
                     new Recipe("m", Blocks.tankRefabricator,50){{
-                        req(silicon, 5, UnitTypes.stell, 3, Liquids.cyanogen, 1);
-                        out(UnitTypes.conquer, 752);
-                        isUnit = true;
+                        req(silicon, 150, Blocks.tungstenWallLarge, 1, Liquids.cyanogen, 1, "power", 1f);
+                        out(UnitTypes.precept, 1);
+                        isUnit = true; //makes unit related map rules apply to the recipe
 
-                        /*drawer = new DrawBlock(){
-                            @Override public void draw(Building build){
-                                Draw.draw(Layer.blockOver, () -> Drawf.construct(build, UnitTypes.locus, build.rotdeg() - 90f, ((UniversalBuild)build).progress, build.warmup(), build.totalProgress()));
-                            }
-                        };*/
-
+                        drawer = new DrawConstructUniversal(true){}; //reconstruct makes it draw the last payload it received by default.
                     }}
             );
         }};
