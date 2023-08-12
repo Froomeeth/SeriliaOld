@@ -1,10 +1,13 @@
 package serilia.content;
 
 import arc.graphics.Blending;
+import arc.graphics.g2d.Draw;
 import arc.struct.Seq;
 import mindustry.content.Blocks;
 import mindustry.content.Liquids;
 import mindustry.content.UnitTypes;
+import mindustry.gen.Building;
+import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
@@ -16,10 +19,7 @@ import mindustry.world.blocks.distribution.Junction;
 import mindustry.world.blocks.liquid.Conduit;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.production.Separator;
-import mindustry.world.draw.DrawDefault;
-import mindustry.world.draw.DrawGlowRegion;
-import mindustry.world.draw.DrawMulti;
-import mindustry.world.draw.DrawRegion;
+import mindustry.world.draw.*;
 import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.DuctNode;
 import serilia.world.blocks.distribution.HeavyDuct;
@@ -75,7 +75,7 @@ public class AhkarBlocks {
         //payloads
 
         //misc
-        multiCraft, buffer;
+        multiCraft, buffer, dispenserHere;
 
         //prop
 
@@ -277,29 +277,63 @@ public class AhkarBlocks {
             rotate = true;
             outputsPayload = true;
             itemCapacity = 50;
+            solid = false;
+            //drawerTop = new DrawZSet(100f);
 
             recipes = Seq.with(
-                    new Recipe("wall-to-stell", UnitTypes.stell,1){{
-                        req(silicon, 5, Blocks.tungstenWallLarge, 3, Liquids.cyanogen, 1);
-                        out(UnitTypes.stell, 3);
+                    new Recipe("wall-to-locus", UnitTypes.locus,140){{
+                        req(silicon, 50, Blocks.berylliumWallLarge, 2, Blocks.tungstenWallLarge, 3, Liquids.cyanogen, 1, "power", 1f, "heat", 15f);
+                        out(UnitTypes.locus, 1);
                         isUnit = true;
+
+                        drawer = new DrawBlock(){
+                            @Override public void draw(Building build){
+                                Draw.draw(Layer.blockOver, () -> Drawf.construct(build, UnitTypes.locus, build.rotdeg() - 90f, ((UniversalBuild)build).progress, build.warmup(), build.totalProgress()));
+                            }
+                        };
+
                     }},
                     new Recipe("wall-deconstruct", Blocks.smallDeconstructor, 10){{
                         req(Blocks.tungstenWallLarge, 3);
                         out(tungsten, 24, Liquids.water, 500);
                     }},
                     new Recipe("serpulo-if-it-was-good", Blocks.exponentialReconstructor, 120){{
-                        req(UnitTypes.flare, 15);
+                        req(UnitTypes.flare, 15, "power", 8888888888f);
                         out(UnitTypes.eclipse, 1);
-                        powerReq = 1f;
                     }},
-                    new Recipe("ghghghg", null, 1)
+                    new Recipe("ghghghg", 1)
             );
         }};
 
         buffer = new PayloadBuffer("buffer"){{
             requirements(liquid, sandboxOnly, with());
             size = 4;
+        }};
+
+        dispenserHere = new UniversalCrafter("large-tank-refabricator"){{
+            requirements(liquid, sandboxOnly, with());
+            size = 5;
+            rotate = true;
+            outputsPayload = true;
+            itemCapacity = 50;
+            solid = false;
+            vanillaIO = true;
+            regionSuffix = "-dark";
+
+            recipes = Seq.with(
+                    new Recipe("m", Blocks.tankRefabricator,50){{
+                        req(silicon, 5, UnitTypes.stell, 3, Liquids.cyanogen, 1);
+                        out(UnitTypes.conquer, 752);
+                        isUnit = true;
+
+                        /*drawer = new DrawBlock(){
+                            @Override public void draw(Building build){
+                                Draw.draw(Layer.blockOver, () -> Drawf.construct(build, UnitTypes.locus, build.rotdeg() - 90f, ((UniversalBuild)build).progress, build.warmup(), build.totalProgress()));
+                            }
+                        };*/
+
+                    }}
+            );
         }};
 
         //prop

@@ -3,8 +3,10 @@ package serilia.world.blocks.payload;
 import arc.Core;
 import arc.Events;
 import arc.graphics.Color;
+import arc.graphics.g2d.Draw;
 import arc.math.Angles;
 import arc.math.Mathf;
+import arc.math.geom.Position;
 import arc.math.geom.Vec2;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
@@ -12,15 +14,20 @@ import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
+import mindustry.content.Fx;
 import mindustry.ctype.ContentType;
 import mindustry.ctype.UnlockableContent;
+import mindustry.entities.Effect;
 import mindustry.game.EventType;
 import mindustry.gen.Building;
+import mindustry.gen.Icon;
+import mindustry.gen.Iconc;
 import mindustry.gen.Unit;
 import mindustry.graphics.Pal;
 import mindustry.io.TypeIO;
 import mindustry.type.*;
 import mindustry.ui.Bar;
+import mindustry.ui.ItemImage;
 import mindustry.ui.Styles;
 import mindustry.world.Block;
 import mindustry.world.blocks.ItemSelection;
@@ -32,10 +39,13 @@ import mindustry.world.consumers.ConsumeItemDynamic;
 import mindustry.world.consumers.ConsumePayloadDynamic;
 import mindustry.world.consumers.ConsumePowerDynamic;
 import mindustry.world.draw.DrawBlock;
+import mindustry.world.draw.DrawDefault;
+import mindustry.world.draw.DrawRegion;
+import mindustry.world.meta.Stat;
+import serilia.content.SeFxPal;
 import serilia.types.ConsumeLiquidsDynamic;
 
-import static mindustry.Vars.state;
-import static mindustry.Vars.tilesize;
+import static mindustry.Vars.*;
 
 /**A multicrafter that should support all in- and output types.
  * @author nullevoy */
@@ -44,6 +54,7 @@ import static mindustry.Vars.tilesize;
 * [X] produce items
 * [ ] produce liquids //needs support for multiple
 * [X] produce payloads
+* [ ] produce power
 * [X] consume items
 * [X] consume liquids
 * [X] consume payloads
@@ -59,26 +70,39 @@ import static mindustry.Vars.tilesize;
 * [ ] ports
 * [ ] logic?
 * [X] unit cost mul
-* [ ] drawing
+* [X] drawing
 */
 
 public class UniversalCrafter extends PayloadBlock{
     public Seq<Recipe> recipes;
+
+    //behavior
     public float warmupSpeed = 0.019f;
+    public boolean instantInput = true, instantOutput = false;
 
     public boolean dumpExtraLiquid = false;
     public boolean ignoreLiquidFullness = false;
     public int[] liquidOutputDirections = {- 1};
 
-    /*--- Set automatically ---*/
-    private boolean hasPayloads, liquidIn;
-    private int[] capacities = {};
+    //visuals
+    /**Recipe drawers are drawn between these.*/
+    public DrawBlock drawerBottom = new DrawDefault(), drawerTop = new DrawRegion("-top");
+    public boolean vanillaIO = false;
+
+    //effects
+    public Effect payDespawnEffect = SeFxPal.payInstantDespawn, paySpawnEffect = SeFxPal.payRespawn;
+    public boolean waitForSpawnEffect = true;
+
 
     public UniversalCrafter(String name){
         super(name);
         configurable = true;
         solid = true;
     }
+
+    /*--- Set automatically ---*/
+    private boolean hasPayloads, liquidIn;
+    private int[] capacities = {};
 
     @Override
     public void init(){
@@ -87,7 +111,7 @@ public class UniversalCrafter extends PayloadBlock{
 
         recipes.each(recipe -> {
             hasItems |= recipe.itemReq.size != 0 || recipe.itemOut.size != 0;
-            hasLiquids |= (liquidIn |= recipe.liquidReq.size != 0) || (outputsLiquid |= recipe.liquidOut.size != 0);
+            hasLiquids |= (liquidIn |= recipe.liqReq.size != 0) || (outputsLiquid |= recipe.liqOut.size != 0);
             hasPayloads |= (acceptsPayload |= recipe.payReq.size != 0) || (outputsPayload |= recipe.payOut.size != 0);
             rotate |= outputsPayload;
             commandable |= recipe.isUnit;
@@ -100,8 +124,8 @@ public class UniversalCrafter extends PayloadBlock{
                     itemCapacity = Math.max(itemCapacity, stack.amount * 2);
                 }
             }
-            if(recipe.liquidReq.size != 0){
-                recipe.liquidReqArray = recipe.liquidReq.toArray(LiquidStack.class);
+            if(recipe.liqReq.size != 0){
+                recipe.liqReqArray = recipe.liqReq.toArray(LiquidStack.class);
             }
         });
 
@@ -113,9 +137,9 @@ public class UniversalCrafter extends PayloadBlock{
         if(consumesPower)
             consume(new ConsumePowerDynamic((Building b) -> ((UniversalBuild) b).currentRecipe != null && ((UniversalBuild) b).currentRecipe.powerReq > - 1 ? ((UniversalBuild) b).currentRecipe.powerReq : 0f));
         if(liquidIn)
-            consume(new ConsumeLiquidsDynamic((UniversalBuild b) -> b.currentRecipe != null && b.currentRecipe.liquidReqArray != null ? b.currentRecipe.liquidReqArray : LiquidStack.empty));
+            consume(new ConsumeLiquidsDynamic((UniversalBuild b) -> b.currentRecipe != null && b.currentRecipe.liqReqArray != null ? b.currentRecipe.liqReqArray : LiquidStack.empty));
 
-        consumeBuilder.each(c -> c.multiplier = b -> ((UniversalBuild)b).currentRecipe.isUnit ? state.rules.unitCost(b.team) : 1);
+        consumeBuilder.each(c -> c.multiplier = b -> ((UniversalBuild)b).currentRecipe != null && ((UniversalBuild)b).currentRecipe.isUnit ? state.rules.unitCost(b.team) : 1);
 
         if(recipes.size == 1){
             configurable = false;
@@ -126,10 +150,10 @@ public class UniversalCrafter extends PayloadBlock{
 
             tile.currentRecipe = val;
             tile.progress = 0;
-            tile.currentRecipe.liquidReq.each(bar ->
+            tile.currentRecipe.liqReq.each(bar ->
                     addLiquidBar(bar.liquid)
             );
-            tile.currentRecipe.liquidOut.each(bar ->
+            tile.currentRecipe.liqOut.each(bar ->
                     addLiquidBar(bar.liquid)
             );
         });
@@ -137,12 +161,12 @@ public class UniversalCrafter extends PayloadBlock{
         super.init();
 
         recipes.each(recipe -> {
-            if(recipe.liquidReq.size != 0){
-                recipe.liquidReq.each(req -> {
+            if(recipe.liqReq.size != 0){
+                recipe.liqReq.each(req -> {
                     liquidFilter[req.liquid.id] = true;
                     liquidCapacity = Math.max(liquidCapacity, req.amount * 2);
                 });
-                recipe.liquidOut.each(out -> {
+                recipe.liqOut.each(out -> {
                     liquidFilter[out.liquid.id] = true;
                     liquidCapacity = Math.max(liquidCapacity, out.amount * 2);
                 });
@@ -155,8 +179,14 @@ public class UniversalCrafter extends PayloadBlock{
     }
 
     @Override
-    public boolean outputsItems(){
-        return true;
+    public void load(){
+        super.load();
+
+        drawerTop.load(this);
+        drawerBottom.load(this);
+        recipes.each(recipe -> {
+            if(recipe.drawer != null) recipe.drawer.load(this);
+        });
     }
 
     @Override
@@ -167,35 +197,148 @@ public class UniversalCrafter extends PayloadBlock{
         addBar("progress", (UniversalBuild entity) -> new Bar("bar.progress", Pal.ammo, () -> entity.progress));
     }
 
-    public class UniversalBuild extends PayloadBlockBuild<Payload>{ //todo saving IO
-        public @Nullable Vec2 commandPos;
-        public Recipe currentRecipe;
-        public PayloadSeq mmmDelish = new PayloadSeq();
-        public Seq<UnlockableContent> shitQueue = new Seq<>();
-        public float progress, warmup, totalProgress;
-        public boolean shitting;
+    @Override
+    public void setStats(){
+        super.setStats();
 
-        //works consistently
+        stats.remove(Stat.itemCapacity);
+        stats.remove(Stat.powerUse);
+
+        stats.add(Stat.output, table -> {
+            table.row();
+            recipes.each(recipe -> {
+                table.table(Styles.grayPanel, display -> {
+                    display.add(recipeTopTable(recipe)).pad(10f);
+
+                    display.row();
+
+                    display.table(io -> {
+                        io.table(Styles.black5, input ->
+                            input.add(contentListTable(recipe.payReq, recipe.itemReq, recipe.liqReq, recipe.time, false)).pad(5f) //not adding directly for outline
+                        ).pad(5f).padTop(0f).grow();
+
+
+                        io.add(recipePowerTable(recipe)).padBottom(5f);
+
+
+                        io.table(Styles.black5, output ->
+                            output.add(contentListTable(recipe.payOut, recipe.itemOut, recipe.liqOut, recipe.time, true)).pad(5f)
+                        ).pad(5f).padTop(0f).grow();
+                    });
+
+                    display.row();
+
+                    display.add(recipeBottomTable(recipe)).left();
+                }).pad(5f).top();
+            });
+        });
+    }
+
+    public Table recipeTopTable(Recipe recipe){
+        Table t = new Table();
+
+        t.add(recipe.localizedName); //todo unit
+        t.row();
+        t.image(recipe.uiIcon).size(60).scaling(Scaling.fit);
+
+        return t;
+    }
+    public Table recipePowerTable(Recipe recipe){
+        Table t = new Table();
+
+        if(recipe.powerReq > 0){
+            t.table(power -> {
+                power.add("[accent]" + Iconc.power + "[]");
+                power.row();
+                power.add(Strings.autoFixed(recipe.powerReq  * 60f, 1));
+            }).pad(5f).bottom();
+            t.row();
+        }
+
+        t.image(Icon.play).pad(5f).padTop(10f).padBottom(10f).center();
+
+        if(recipe.heatReq > 0){
+            t.row();
+            t.table(heat -> {
+                heat.add("[red]" + Iconc.waves + "[]");
+                heat.row();
+                heat.add(Strings.autoFixed(recipe.heatReq, 1));
+            }).pad(5f).top();
+            t.row();
+        }
+
+        return t;
+    }
+    public Table recipeBottomTable(Recipe recipe){
+        Table t = new Table();
+
+        if(recipe.description != null) t.label(() -> recipe.description).color(Color.lightGray).wrap().pad(10f).left();
+
+        return t;
+    }
+
+    public Table contentListTable(Seq<PayloadStack> pay, Seq<ItemStack> item, Seq<LiquidStack> liq, float time, boolean flip){
+        Table t = new Table();
+
+        pay.each(requirement -> {
+            if(flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).left();
+
+            t.table(req -> {
+                req.add(Strings.autoFixed(requirement.amount / (time / 60f), 2) + "/s").color(Color.lightGray).pad(4f);
+            });
+
+            if(!flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).right();
+            t.row();
+        });
+        item.each(requirement -> {
+            if(flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).left();
+
+            t.table(req -> {
+                req.add(Strings.autoFixed(requirement.amount / (time / 60f), 2) + "/s").color(Color.lightGray).pad(4f);
+            });
+            if(!flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).right();
+            t.row();
+        });
+        liq.each(requirement -> {
+            if(flip) t.image(requirement.liquid.fullIcon).size(iconMed).left();
+
+            t.table(req -> {
+                req.add(Strings.autoFixed(requirement.amount / (time / 60f), 2) + "/s").color(Color.lightGray).pad(4f);
+            });
+            if(!flip) t.image(requirement.liquid.fullIcon).size(iconMed).right();
+            t.row();
+        });
+
+        return t;
+    }
+
+
+    public class UniversalBuild extends PayloadBlockBuild<Payload>{
+        public @Nullable Vec2 commandPos;
+        public Recipe currentRecipe = recipes.get(0);
+        public PayloadSeq mmmDelish = new PayloadSeq();
+        public Seq<Payload> outQueue = new Seq<>();
+        public float progress, warmup, totalProgress, spawnTime;
+        public boolean outputting;
+        public UnlockableContent lastPayload;
+
         @Override
         public void updateTile(){
-            if(! configurable){
-                currentRecipe = recipes.get(0);
-            }
-
             if(currentRecipe != null){
-                boolean yum = isTasty();
+                boolean yum = wants();
 
                 if(hasPayloads){
-                    if(! yum){
+                    if(!yum){
                         if(payload == null){
-                            attemptShitting();
+                            outputPayload();
                         }else{
                             moveOutPayload();
                         }
                     }
 
-                    if(yum && moveInPayload()){
+                    if(yum && (moveInPayload() || instantInput)){
                         mmmDelish.add(payload.content());
+                        payDespawnEffect.at(x, y, drawrot(), new YootData(payload, this));
                         payload = null;
                     }
                 }
@@ -203,16 +346,19 @@ public class UniversalCrafter extends PayloadBlock{
                 if(efficiency > 0){
                     progress += getProgressIncrease(currentRecipe.time) * (currentRecipe.isUnit ? state.rules.unitBuildSpeed(team) : 1f);
                     warmup = Mathf.approachDelta(warmup, 1, warmupSpeed);
+
+                    if(wasVisible && Mathf.chanceDelta(currentRecipe.updateEffectChance)){
+                        currentRecipe.updateEffect.at(this);
+                    }
+                }else{
+                    warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
                 }
                 dumpOutputs();
-            }else{
-                warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
             }
 
             if(progress >= 1f){
                 craft();
             }
-
 
             totalProgress += warmup * Time.delta;
         }
@@ -228,8 +374,8 @@ public class UniversalCrafter extends PayloadBlock{
                 });
             }
 
-            if(currentRecipe.liquidOut.size != 0){
-                currentRecipe.liquidOut.each(output -> {
+            if(currentRecipe.liqOut.size != 0){
+                currentRecipe.liqOut.each(output -> {
                     for(int i = 0; i < output.amount; i++){
                         handleLiquid(this, output.liquid, Math.min(output.amount, liquidCapacity - liquids.get(output.liquid)));
                     }
@@ -239,29 +385,77 @@ public class UniversalCrafter extends PayloadBlock{
             if(currentRecipe.payOut.size != 0){
                 currentRecipe.payOut.each(output -> {
                     for(int i = 0; i < output.amount; i++){
-                        shitQueue.add(output.item);
+                        outQueue.add(
+                            createPayload(output.item)
+                        );
                     }
                 });
+
+                if(instantOutput){
+                    payVector.setZero();
+                    payload = outQueue.pop();
+                }
             }
 
             if(wasVisible){
-                //todo craft effect
+                currentRecipe.craftEffect.at(this);
             }
 
             progress %= 1f;
         }
-
 
         public void dumpOutputs(){
             if(currentRecipe.itemOut.size != 0 && timer(timerDump, dumpTime / timeScale)){
                 currentRecipe.itemOut.each(output -> dump(output.item));
             }
 
-            if(currentRecipe.liquidOut.size != 0 && timer(timerDump, dumpTime / timeScale)){
-                for(int i = 0; i < currentRecipe.liquidOut.size; i++){
+            if(currentRecipe.liqOut.size != 0 && timer(timerDump, dumpTime / timeScale)){
+                for(int i = 0; i < currentRecipe.liqOut.size; i++){
                     int dir = liquidOutputDirections.length > i ? liquidOutputDirections[i] : - 1;
-                    dumpLiquid(currentRecipe.liquidOut.get(i).liquid, 2f, dir);
+                    dumpLiquid(currentRecipe.liqOut.get(i).liquid, 2f, dir);
                 }
+            }
+        }
+
+        public boolean wants(){
+            return payload != null && currentRecipe != null && currentRecipe.payReq.size != 0 && currentRecipe.payReq.contains(b -> b.item == payload.content());
+        }
+
+        public boolean wants(Payload pay){
+            return pay != null && currentRecipe != null && currentRecipe.payReq.size != 0 && currentRecipe.payReq.contains(b ->
+                    b.item == pay.content() && mmmDelish.get(pay.content()) < Mathf.round(b.amount * team.rules().unitCostMultiplier));
+        }
+
+        public void outputPayload(){
+            if(outQueue.isEmpty()) return;
+
+            if(!outputting){
+                spawnTime = paySpawnEffect.lifetime;
+                outputting = true;
+
+                paySpawnEffect.at(x, y, drawrot(), new YootData(outQueue.peek(), this));
+            }
+
+            spawnTime = Mathf.approachDelta(spawnTime, -1f, 1f);
+
+            if(!waitForSpawnEffect || spawnTime < 0f){
+                payVector.setZero();
+                payload = outQueue.pop();
+            }
+        }
+
+        public Payload createPayload(UnlockableContent content){
+            if(content instanceof UnitType e){
+                Unit diarrhea = e.create(team);
+                if(commandPos != null && diarrhea.isCommandable()){
+                    diarrhea.command().commandPosition(commandPos);
+                }
+                var unit = new UnitPayload(diarrhea);
+                Events.fire(new EventType.UnitCreateEvent(unit.unit, this));
+
+                return unit;
+            }else{
+                return new BuildPayload((Block) content, team);
             }
         }
 
@@ -276,10 +470,10 @@ public class UniversalCrafter extends PayloadBlock{
                     }
                 }
 
-                if(currentRecipe.liquidOut.size != 0 && ! ignoreLiquidFullness){
+                if(currentRecipe.liqOut.size != 0 && ! ignoreLiquidFullness){
                     boolean allFull = true;
-                    for(int i = 0; i < currentRecipe.liquidOut.size; i++){
-                        if(liquids.get(currentRecipe.liquidOut.get(i).liquid) + currentRecipe.liquidOut.get(i).amount > liquidCapacity){
+                    for(int i = 0; i < currentRecipe.liqOut.size; i++){
+                        if(liquids.get(currentRecipe.liqOut.get(i).liquid) + currentRecipe.liqOut.get(i).amount > liquidCapacity){
                             if(! dumpExtraLiquid){
                                 return false;
                             }
@@ -294,49 +488,14 @@ public class UniversalCrafter extends PayloadBlock{
                     }
                 }
 
-                return enabled && ! shitting;
+                return enabled && !outputting;
             }
             return false;
         }
 
-        public boolean isTasty(){
-            return payload != null && currentRecipe != null && currentRecipe.payReq.size != 0 && currentRecipe.payReq.contains(b -> b.item == payload.content());
-        }
-
-        public boolean isTasty(Payload pay){
-            return pay != null && currentRecipe != null && currentRecipe.payReq.size != 0 && currentRecipe.payReq.contains(b ->
-                    b.item == pay.content() &&
-                            mmmDelish.get(pay.content()) < b.amount /*Mathf.round(b.amount * team.rules().unitCostMultiplier todo*/
-            );
-        }
-
-        public float fraction(){
-            return currentRecipe == null ? 0 : progress / currentRecipe.time;
-        }
-
-        public void attemptShitting(){
-            if(shitQueue.isEmpty()) return;
-
-            shitting = true;
-            UnlockableContent m = shitQueue.pop();
-
-            if(m instanceof Block b){
-                payload = new BuildPayload(b, team);
-            }else{
-                Unit diarrhea = ((UnitType) m).create(team);
-                if(commandPos != null && diarrhea.isCommandable()){
-                    diarrhea.command().commandPosition(commandPos);
-                }
-                payload = new UnitPayload(diarrhea);
-                payVector.setZero();
-                Events.fire(new EventType.UnitCreateEvent(((UnitPayload) payload).unit, this));
-            }
-        }
-
         @Override
         public boolean acceptPayload(Building source, Payload payload){
-            Log.info("e"+(this.payload == null) + (currentRecipe != null) + (shitQueue.isEmpty()) + (!shitting) + (isTasty(payload)));
-            return this.payload == null && currentRecipe != null && shitQueue.isEmpty() && !shitting && isTasty(payload);
+            return this.payload == null && currentRecipe != null && outQueue.isEmpty() && !outputting && wants(payload);
         }
 
         @Override
@@ -365,11 +524,6 @@ public class UniversalCrafter extends PayloadBlock{
         }
 
         @Override
-        public void draw(){
-            drawPayload();
-        }
-
-        @Override
         public void moveOutPayload(){
             if(payload == null) return;
 
@@ -394,13 +548,40 @@ public class UniversalCrafter extends PayloadBlock{
                 if(canMove){
                     if(movePayload(payload)){
                         payload = null;
-                        shitting = false;
+                        outputting = false;
                     }
                 }else if(canDump){
                     dumpPayload();
-                    shitting = false;
+                    outputting = false;
                 }
             }
+        }
+
+        @Override
+        public void draw(){
+            drawerBottom.draw(this);
+
+            if(vanillaIO){
+                for(int i = 0; i < 4; i++){
+                    if(blends(i) && i != rotation){
+                        Draw.rect(inRegion, x, y, (i * 90) - 180);
+                    }
+                }
+
+                Draw.rect(outRegion, x, y, rotdeg());
+            }
+
+            drawPayload();
+            Draw.z(35.1f);
+
+            if(currentRecipe != null && currentRecipe.drawer != null) currentRecipe.drawer.draw(this);
+            drawerTop.draw(this);
+        }
+
+        @Override
+        public void handlePayload(Building source, Payload payload){
+            super.handlePayload(source, payload);
+            lastPayload = payload.content();
         }
 
         @Override
@@ -442,7 +623,6 @@ public class UniversalCrafter extends PayloadBlock{
         public void write(Writes write){
             super.write(write);
             write.f(progress);
-            write.bool(shitting);
             write.i(currentRecipe.index);
             mmmDelish.write(write);
             TypeIO.writeVecNullable(write, commandPos);
@@ -452,43 +632,57 @@ public class UniversalCrafter extends PayloadBlock{
         public void read(Reads read, byte revision){
             super.read(read, revision);
             progress = read.f();
-            shitting = read.bool();
             currentRecipe = recipes.get(read.i());
             mmmDelish.read(read);
             commandPos = TypeIO.readVecNullable(read);
         }
     }
 
+    /** gwgejgabhjrewgbh */
+    public static class YootData{
+        public Payload pay;
+        public Position pos;
+
+        public YootData(Payload payload, Position position){
+            pay = payload;
+            pos = position;
+        }
+    }
+
     public static class Recipe extends UnlockableContent{
         public DrawBlock drawer;
-        public float powerReq = - 555;
         public boolean isUnit = false;
 
-        /*--- Set automatically ---*/
-        public int index;
-        private final float time;
-        private final UnlockableContent iconContent;
-        private final Seq<ItemStack> itemReq = new Seq<>(ItemStack.class);
-        private final Seq<ItemStack> itemOut = new Seq<>();
-        private final Seq<LiquidStack> liquidReq = new Seq<>(LiquidStack.class);
-        private final Seq<LiquidStack> liquidOut = new Seq<>();
-        private final Seq<PayloadStack> payReq = new Seq<>();
-        private final Seq<PayloadStack> payOut = new Seq<>();
-        private ItemStack[] itemReqArray;
-        private LiquidStack[] liquidReqArray;
+        public Effect craftEffect = Fx.none, updateEffect = Fx.none;
+        public double updateEffectChance = 0.02;
 
-        /**Use a null for iconContent to add an icon yourself.*/
+        /**iconContent copies the content's icon for this recipe. Use the other constructor for a custom one.*/
         public Recipe(String name, UnlockableContent iconContent, float time){
-            super(name);
+            this(name, time);
+            this.iconContent = iconContent;
+        }
 
+        public Recipe(String name, float time){
+            super(name);
             localizedName = Core.bundle.get("recipe." + this.name + ".name", this.name);
             description = Core.bundle.getOrNull("recipe." + this.name + ".description");
             details = Core.bundle.getOrNull("recipe." + this.name + ".details");
             unlocked = Core.settings != null && Core.settings.getBool(this.name + "-unlocked", false);
 
-            this.iconContent = iconContent;
             this.time = time;
         }
+
+
+        /*--- Set automatically ---*/
+        public int index;
+        public float time;
+        private UnlockableContent iconContent;
+        private final Seq<ItemStack> itemReq = new Seq<>(ItemStack.class), itemOut = new Seq<>();
+        private final Seq<LiquidStack> liqReq = new Seq<>(LiquidStack.class), liqOut = new Seq<>();
+        private final Seq<PayloadStack> payReq = new Seq<>(), payOut = new Seq<>();
+        private float powerReq = -555f, powerOut = -12f, heatReq = -42f, heatOut = -99999999999999999999999999999999999999f;
+        private ItemStack[] itemReqArray;
+        private LiquidStack[] liqReqArray;
 
         @Override
         public ContentType getContentType(){
@@ -505,9 +699,14 @@ public class UniversalCrafter extends PayloadBlock{
                 if(items[i] instanceof Item)
                     itemReq.add(new ItemStack((Item) items[i], ((Number) items[i + 1]).intValue()));
                 else if(items[i] instanceof Liquid)
-                    liquidReq.add(new LiquidStack((Liquid) items[i], ((Number) items[i + 1]).floatValue()));
-                else
+                    liqReq.add(new LiquidStack((Liquid) items[i], ((Number) items[i + 1]).floatValue()));
+                else if(items[i] instanceof UnlockableContent)
                     payReq.add(new PayloadStack((UnlockableContent) items[i], ((Number) items[i + 1]).intValue()));
+                else if(items[i] instanceof String)
+                    if(items[i] == "power")
+                        powerReq = ((Number) items[i + 1]).floatValue();
+                    else if(items[i] == "heat")
+                        heatReq = ((Number) items[i + 1]).floatValue();
             }
         }
 
@@ -516,9 +715,14 @@ public class UniversalCrafter extends PayloadBlock{
                 if(items[i] instanceof Item)
                     itemOut.add(new ItemStack((Item) items[i], ((Number) items[i + 1]).intValue()));
                 else if(items[i] instanceof Liquid)
-                    liquidOut.add(new LiquidStack((Liquid) items[i], ((Number) items[i + 1]).floatValue()));
-                else
+                    liqOut.add(new LiquidStack((Liquid) items[i], ((Number) items[i + 1]).floatValue()));
+                else if(items[i] instanceof UnlockableContent)
                     payOut.add(new PayloadStack((UnlockableContent) items[i], ((Number) items[i + 1]).intValue()));
+                else if(items[i] instanceof String)
+                    if(items[i] == "power")
+                        powerOut = ((Number) items[i + 1]).floatValue();
+                    else if(items[i] == "heat")
+                        heatOut = ((Number) items[i + 1]).floatValue();
             }
         }
     }
