@@ -11,7 +11,6 @@ public class ChanceRecipe extends Recipe{
     public ChanceRecipe(String name, UnlockableContent iconContent, float time){
         super(name, iconContent, time);
     }
-
     public ChanceRecipe(String name, float time){
         super(name, time);
     }

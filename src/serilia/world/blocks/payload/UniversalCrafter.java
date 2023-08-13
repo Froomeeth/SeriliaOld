@@ -14,6 +14,7 @@ import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
+import mindustry.content.Blocks;
 import mindustry.content.Fx;
 import mindustry.ctype.ContentType;
 import mindustry.ctype.UnlockableContent;
@@ -65,6 +66,7 @@ import static mindustry.Vars.*;
 * [X] drawing
 * [X] separator recipe class
 * [X] Call/etc. for unit spawns
+*
 * [?] heat
 * [ ] produce liquids //needs support for multiple
 * [ ] produce power
@@ -86,7 +88,10 @@ public class UniversalCrafter extends PayloadBlock{
     public float warmupSpeed = 0.019f;
     public boolean loseProgressOnIdle = false;
     public float progressLoseSpeed = 0.019f;
+    public boolean hasHeat = false;
     public float heatIncreaseSpeed = 0.15f;
+
+    public Block[] acceptedContainers = {Blocks.reinforcedContainer, Blocks.reinforcedLiquidContainer};
 
     //io
     /**instantInput will consume a payload as soon as it enters. Best used with SeFxPal.payInstantDespawn.*/
@@ -116,7 +121,7 @@ public class UniversalCrafter extends PayloadBlock{
     }
 
     /*--- Set automatically ---*/
-    private boolean hasPayloads, liquidIn, hasHeat, hasAttribute;
+    private boolean hasPayloads, liquidIn, hasAttribute;
     private int[] capacities = {};
 
     @Override
@@ -164,7 +169,7 @@ public class UniversalCrafter extends PayloadBlock{
         }
 
         config(Recipe.class, (UniversalBuild tile, Recipe val) -> {
-            if(! configurable || tile.currentRecipe == val) return;
+            if(!configurable || tile.currentRecipe == val) return;
 
             tile.currentRecipe = val;
             tile.progress = 0;
