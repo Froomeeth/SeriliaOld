@@ -282,7 +282,7 @@ public class AhkarBlocks {
             //drawerTop = new DrawZSet(100f);
 
             recipes = Seq.with(
-                    new Recipe("wall-to-locus", UnitTypes.locus,140){{
+                    new Recipe("wall-to-locus", UnitTypes.locus,140f){{
                         req(silicon, 50, Blocks.berylliumWallLarge, 2, Blocks.tungstenWallLarge, 3, Liquids.cyanogen, 1, "power", 1f, "heat", 15f);
                         out(UnitTypes.locus, 1);
                         isUnit = true;
@@ -294,15 +294,18 @@ public class AhkarBlocks {
                         };
 
                     }},
-                    new Recipe("wall-deconstruct", Blocks.smallDeconstructor, 10){{
+                    new Recipe("wall-deconstruct", Blocks.smallDeconstructor, 10f){{
                         req(Blocks.tungstenWallLarge, 3);
                         out(tungsten, 24, Liquids.water, 500);
                     }},
-                    new Recipe("serpulo-if-it-was-good", Blocks.exponentialReconstructor, 120){{
-                        req(UnitTypes.flare, 15, "power", 8888888888f);
+                    new Recipe("hell", Blocks.exponentialReconstructor, 120){{
+                        req(UnitTypes.flare, 15, "power", 888f);
                         out(UnitTypes.eclipse, 1);
                     }},
-                    new Recipe("ghghghg", 1)
+                    new Recipe("ghghghg", 120f){{
+                        req(coal, 1);
+                        out("power", 1f);
+                    }}
             );
         }};
 
@@ -323,7 +326,7 @@ public class AhkarBlocks {
 
             //for a 1:1 reconstructor, you want...
             instantInput = false; //...the payload to move in before despawning.
-            instantOutput = true; //...the created payload to appear immediately, without an effect.
+            instantFirstOutput = true; //...the created payload to appear immediately, without an effect.
 
             payDespawnEffect = Fx.none; //removing the despawn effect here because it might look weird
 

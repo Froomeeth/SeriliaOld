@@ -31,6 +31,8 @@ import mindustry.ui.ItemImage;
 import mindustry.ui.Styles;
 import mindustry.world.Block;
 import mindustry.world.blocks.ItemSelection;
+import mindustry.world.blocks.heat.HeatBlock;
+import mindustry.world.blocks.heat.HeatConsumer;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
 import mindustry.world.blocks.payloads.PayloadBlock;
@@ -41,6 +43,7 @@ import mindustry.world.consumers.ConsumePowerDynamic;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.draw.DrawRegion;
+import mindustry.world.meta.Attribute;
 import mindustry.world.meta.Stat;
 import serilia.content.SeFxPal;
 import serilia.types.ConsumeLiquidsDynamic;
@@ -52,25 +55,28 @@ import static mindustry.Vars.*;
 
 /* the list
 * [X] produce items
-* [ ] produce liquids //needs support for multiple
 * [X] produce payloads
-* [ ] produce power
 * [X] consume items
 * [X] consume liquids
 * [X] consume payloads
 * [X] consume power
 * [X] switch configs
-* [#] deconfig
-* [-] gradual liquid
 * [X] outDirs
-* [ ] heat
-* [ ] attributes
-* [ ] UI
+* [X] UI
 * [X] stats
-* [ ] ports
-* [ ] logic?
 * [X] unit cost mul
 * [X] drawing
+* [ ] produce liquids //needs support for multiple
+* [ ] produce power
+* [?] heat
+* [ ] attributes
+* [ ] ports
+* [ ] logic?
+* [ ] schematic compat
+* [ ] Call/etc. for unit spawns
+* [ ] container IO
+* [ ] add heat/attributes to recipe ui
+* [ ] separator recipe class
 */
 
 public class UniversalCrafter extends PayloadBlock{
@@ -78,8 +84,21 @@ public class UniversalCrafter extends PayloadBlock{
 
     //behavior
     public float warmupSpeed = 0.019f;
+    public boolean loseProgressOnIdle = false;
+    public float progressLoseSpeed = 0.019f;
+    public float heatIncreaseSpeed = 0.15f;
 
-    public boolean instantInput = true, instantOutput = false;
+    //io
+    /**instantInput will consume a payload as soon as it enters. Best used with SeFxPal.payInstantDespawn.*/
+    public boolean instantInput = true;
+    /**Outputs the first payload without an effect, for if you need the payload to look like it was already there.*/
+    public boolean instantFirstOutput = false;
+    /**The block waits for the spawn effect to finish before outputting again, use Fx.none to get instant output.*/
+    public Effect paySpawnEffect = SeFxPal.payRespawn;
+    /**Enables the above behavior.*/
+    public boolean waitForSpawnEffect = true;
+    /**Use SeFxPal.payDespawn instead for unspecial non-instant ones*/
+    public Effect payDespawnEffect = SeFxPal.payInstantDespawn;
 
     public boolean dumpExtraLiquid = false;
     public boolean ignoreLiquidFullness = false;
@@ -90,11 +109,6 @@ public class UniversalCrafter extends PayloadBlock{
     public DrawBlock drawerBottom = new DrawDefault(), drawerTop = new DrawRegion("-top");
     public boolean vanillaIO = false;
 
-    //effects
-    public Effect payDespawnEffect = SeFxPal.payInstantDespawn, paySpawnEffect = SeFxPal.payRespawn;
-    public boolean waitForSpawnEffect = true;
-
-
     public UniversalCrafter(String name){
         super(name);
         configurable = true;
@@ -102,7 +116,7 @@ public class UniversalCrafter extends PayloadBlock{
     }
 
     /*--- Set automatically ---*/
-    private boolean hasPayloads, liquidIn;
+    private boolean hasPayloads, liquidIn, hasHeat, hasAttribute;
     private int[] capacities = {};
 
     @Override
@@ -116,7 +130,10 @@ public class UniversalCrafter extends PayloadBlock{
             hasPayloads |= (acceptsPayload |= recipe.payReq.size != 0) || (outputsPayload |= recipe.payOut.size != 0);
             rotate |= outputsPayload;
             commandable |= recipe.isUnit;
-            consumesPower |= recipe.powerReq > - 1;
+            consumesPower |= recipe.powerReq > -1f;
+            outputsPower |= recipe.powerOut > -1f;
+            hasHeat |= recipe.heatOut > -1f;
+            hasAttribute |= recipe.attribute != null;
 
             if(recipe.itemReq.size != 0){
                 recipe.itemReqArray = recipe.itemReq.toArray(ItemStack.class);
@@ -151,6 +168,8 @@ public class UniversalCrafter extends PayloadBlock{
 
             tile.currentRecipe = val;
             tile.progress = 0;
+            tile.attributeSum = 0f;
+            if(((UniversalCrafter)tile.block).hasAttribute && tile.currentRecipe.attribute != null) tile.attributeSum = sumAttribute(val.attribute, tile.tile.x, tile.tile.y);
             tile.currentRecipe.liqReq.each(bar ->
                     addLiquidBar(bar.liquid)
             );
@@ -208,29 +227,31 @@ public class UniversalCrafter extends PayloadBlock{
         stats.add(Stat.output, table -> {
             table.row();
             recipes.each(recipe -> {
+                if(recipe.index % 2 == 0) table.row();
+
                 table.table(Styles.grayPanel, display -> {
-                    display.add(recipeTopTable(recipe)).pad(10f);
+                    display.add(recipeTopTable(recipe)).pad(10f); //recipe identifiers
 
                     display.row();
 
-                    display.table(io -> {
-                        io.table(Styles.black5, input ->
-                            input.add(contentListTable(recipe.payReq, recipe.itemReq, recipe.liqReq, recipe.time, false)).pad(5f) //not adding directly for outline
+                    display.table(io -> { //encompasses input/output
+                        io.table(Styles.black5, input -> //input
+                            input.add(contentListTable(recipe.payReq, recipe.itemReq, recipe.liqReq, recipe.time, false)).pad(5f).grow() //not adding directly for outline
                         ).pad(5f).padTop(0f).grow();
 
 
-                        io.add(recipePowerTable(recipe)).padBottom(5f);
+                        io.add(recipeArrowTable(recipe)).padBottom(5f); //arrow
 
 
-                        io.table(Styles.black5, output ->
-                            output.add(contentListTable(recipe.payOut, recipe.itemOut, recipe.liqOut, recipe.time, true)).pad(5f)
+                        io.table(Styles.black5, output -> //output
+                            output.add(contentListTable(recipe.payOut, recipe.itemOut, recipe.liqOut, recipe.powerOut, recipe.heatOut, recipe.time, true)).pad(5f).grow()
                         ).pad(5f).padTop(0f).grow();
                     });
 
                     display.row();
 
                     display.add(recipeBottomTable(recipe)).left();
-                }).pad(5f).top();
+                }).pad(5f).top().growX();
             });
         });
     }
@@ -244,7 +265,7 @@ public class UniversalCrafter extends PayloadBlock{
 
         return t;
     }
-    public Table recipePowerTable(Recipe recipe){
+    public Table recipeArrowTable(Recipe recipe){
         Table t = new Table();
 
         if(recipe.powerReq > 0){
@@ -273,12 +294,15 @@ public class UniversalCrafter extends PayloadBlock{
     public Table recipeBottomTable(Recipe recipe){
         Table t = new Table();
 
-        if(recipe.description != null) t.label(() -> recipe.description).color(Color.lightGray).wrap().pad(10f).left();
+        //if(recipe.description != null) t.label(() -> recipe.description).color(Color.lightGray).wrap().pad(10f).left();
 
         return t;
-    }
+    }//todo add the attributes in here
 
     public Table contentListTable(Seq<PayloadStack> pay, Seq<ItemStack> item, Seq<LiquidStack> liq, float time, boolean flip){
+        return contentListTable(pay, item, liq, -20f, -20f, time, flip);
+    }
+    public Table contentListTable(Seq<PayloadStack> pay, Seq<ItemStack> item, Seq<LiquidStack> liq, float power, float heat, float time, boolean flip){
         Table t = new Table();
 
         pay.each(requirement -> {
@@ -304,27 +328,32 @@ public class UniversalCrafter extends PayloadBlock{
             if(flip) t.image(requirement.liquid.fullIcon).size(iconMed).left();
 
             t.table(req -> {
-                req.add(Strings.autoFixed(requirement.amount / 60f, 2) + "/s").color(Color.lightGray).pad(4f);
+                req.add(Strings.autoFixed(requirement.amount * 60f, 2) + "/s").color(Color.lightGray).pad(4f);
             });
-            if(!flip) t.image(requirement.liquid.fullIcon).size(iconMed).right();
+            if(!flip) t.image(requirement.liquid.fullIcon).size(iconMed).right().scaling(Scaling.fit);
             t.row();
         });
+        t.row();
+        if(power > 0f) t.add("[accent]" + Iconc.power + "[] " + Strings.autoFixed(power * 60f, 2)).pad(4f);
+        if(heat > 0f) t.add("[red]" + Iconc.waves + "[] " + Strings.autoFixed(heat, 2)).pad(4f);
 
         return t;
     }
 
-
-    public class UniversalBuild extends PayloadBlockBuild<Payload>{
+    public class UniversalBuild extends PayloadBlockBuild<Payload> implements HeatBlock, HeatConsumer{
         public @Nullable Vec2 commandPos;
         public Recipe currentRecipe = recipes.get(0);
         public PayloadSeq mmmDelish = new PayloadSeq();
         public Seq<Payload> outQueue = new Seq<>();
-        public float progress, warmup, totalProgress, spawnTime;
+        public float progress, warmup, totalProgress, spawnTime, heat = 0f, attributeSum;
+        public float[] sideHeat = new float[4];
         public boolean outputting;
         public UnlockableContent lastPayload;
 
         @Override
         public void updateTile(){
+            if(hasHeat) heat = Math.max(calculateHeat(sideHeat), Mathf.approachDelta(heat, currentRecipe.heatOut * efficiency, heatIncreaseSpeed * delta()));
+
             if(currentRecipe != null){
                 boolean yum = wants();
 
@@ -346,13 +375,14 @@ public class UniversalCrafter extends PayloadBlock{
 
                 if(efficiency > 0){
                     progress += getProgressIncrease(currentRecipe.time) * (currentRecipe.isUnit ? state.rules.unitBuildSpeed(team) : 1f);
-                    warmup = Mathf.approachDelta(warmup, 1, warmupSpeed);
+                    warmup = Mathf.approachDelta(warmup, warmupTarget(), warmupSpeed);
 
                     if(wasVisible && Mathf.chanceDelta(currentRecipe.updateEffectChance)){
                         currentRecipe.updateEffect.at(this);
                     }
                 }else{
                     warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
+                    if(loseProgressOnIdle) progress = Mathf.approachDelta(progress, 0f, progressLoseSpeed);
                 }
                 dumpOutputs();
             }
@@ -392,7 +422,7 @@ public class UniversalCrafter extends PayloadBlock{
                     }
                 });
 
-                if(instantOutput){
+                if(instantFirstOutput){
                     payVector.setZero();
                     payload = outQueue.pop();
                 }
@@ -461,6 +491,29 @@ public class UniversalCrafter extends PayloadBlock{
             }
         }
 
+        public float warmupTarget(){
+            return currentRecipe == null ? 0f : currentRecipe.heatReq > 0f ? Mathf.clamp(heat / currentRecipe.heatReq) : 1f;
+        }
+
+        @Override
+        public float getProgressIncrease(float baseTime){
+            return super.getProgressIncrease(baseTime) * currentRecipe.baseAttributeEfficiency + Math.min(currentRecipe.maxAttributeEfficiency, currentRecipe.attributeBoostScale * attributeSum) + currentRecipe.attribute.env();
+        }
+
+        @Override
+        public float efficiencyScale(){
+            if(!hasHeat || currentRecipe == null || currentRecipe.heatReq <= 0) return 1f;
+
+            float over = Math.max(heat - currentRecipe.heatReq, 0f);
+            return Math.min(Mathf.clamp(heat / currentRecipe.heatReq) + over / currentRecipe.heatReq * currentRecipe.overheatScale, currentRecipe.maxHeatEfficiency);
+        }
+
+        @Override
+        public void pickedUp(){
+            attributeSum = 0f;
+            warmup = 0f;
+        }
+
         @Override
         public boolean shouldConsume(){
             if(currentRecipe != null){
@@ -496,6 +549,12 @@ public class UniversalCrafter extends PayloadBlock{
         }
 
         @Override
+        public void onProximityUpdate(){
+            super.onProximityUpdate();
+            if(((UniversalCrafter)block).hasAttribute && currentRecipe.attribute != null) attributeSum = sumAttribute(currentRecipe.attribute, tile.x, tile.y);
+        }
+
+        @Override
         public boolean acceptPayload(Building source, Payload payload){
             return this.payload == null && currentRecipe != null && outQueue.isEmpty() && !outputting && wants(payload);
         }
@@ -504,6 +563,26 @@ public class UniversalCrafter extends PayloadBlock{
         public boolean acceptItem(Building source, Item item){
             return currentRecipe != null && currentRecipe.itemReqArray != null && items.get(item) < getMaximumAccepted(item) &&
                     Structs.contains(currentRecipe.itemReqArray, stack -> stack.item == item);
+        }
+
+        @Override
+        public float heatFrac(){
+            return currentRecipe != null && currentRecipe.heatOut > 0f ? heat / currentRecipe.heatOut : 0f;
+        }
+
+        @Override
+        public float heat(){
+            return currentRecipe != null && currentRecipe.heatOut > 0f ? heat : 0f;
+        }
+
+        @Override
+        public float heatRequirement(){
+            return currentRecipe != null && currentRecipe.heatReq > 0f ? currentRecipe.heatReq : 0f;
+        }
+
+        @Override
+        public float[] sideHeat(){
+            return sideHeat;
         }
 
         @Override
@@ -528,6 +607,8 @@ public class UniversalCrafter extends PayloadBlock{
         @Override
         public void moveOutPayload(){
             if(payload == null) return;
+
+            if(payload instanceof UnitPayload && currentRecipe != null && currentRecipe.outputUnitToTop && payload.dump()) payload = null;
 
             updatePayload();
 
@@ -570,7 +651,7 @@ public class UniversalCrafter extends PayloadBlock{
                     }
                 }
 
-                Draw.rect(outRegion, x, y, rotdeg());
+                if(currentRecipe.showPayOutput) Draw.rect(outRegion, x, y, rotdeg());
             }
 
             drawPayload();
@@ -581,9 +662,26 @@ public class UniversalCrafter extends PayloadBlock{
         }
 
         @Override
+        public void display(Table table){
+            super.display(table);
+            if(team != player.team()) return;
+
+            table.row();
+            table.table(t -> {
+                t.image(currentRecipe.fullIcon).size(iconMed).scaling(Scaling.fit).padBottom(-4f).padRight(2f).padTop(2f);
+                t.label(() -> currentRecipe.name).color(Color.lightGray);
+            });
+        }
+
+        @Override
         public void handlePayload(Building source, Payload payload){
             super.handlePayload(source, payload);
             lastPayload = payload.content();
+        }
+
+        @Override
+        public float getPowerProduction(){
+            return currentRecipe != null ? currentRecipe.powerOut * efficiency : 0f;
         }
 
         @Override
@@ -625,6 +723,7 @@ public class UniversalCrafter extends PayloadBlock{
         public void write(Writes write){
             super.write(write);
             write.f(progress);
+            write.f(heat);
             write.i(currentRecipe.index);
             mmmDelish.write(write);
             TypeIO.writeVecNullable(write, commandPos);
@@ -634,6 +733,7 @@ public class UniversalCrafter extends PayloadBlock{
         public void read(Reads read, byte revision){
             super.read(read, revision);
             progress = read.f();
+            heat = read.f();
             currentRecipe = recipes.get(read.i());
             mmmDelish.read(read);
             commandPos = TypeIO.readVecNullable(read);
@@ -653,7 +753,16 @@ public class UniversalCrafter extends PayloadBlock{
 
     public static class Recipe extends UnlockableContent{
         public DrawBlock drawer;
-        public boolean isUnit = false;
+        public boolean isUnit = false, outputUnitToTop = false, showPayOutput = true;
+
+        public Attribute attribute = null;
+        public float baseAttributeEfficiency = 1f;
+        public float attributeBoostScale = 1f;
+        public float maxAttributeEfficiency = 4f;
+        public float minAttributeEfficiency = -1f;
+
+        public float overheatScale = 1f;
+        public float maxHeatEfficiency = 4f;
 
         public Effect craftEffect = Fx.none, updateEffect = Fx.none;
         public double updateEffectChance = 0.02;
@@ -682,7 +791,7 @@ public class UniversalCrafter extends PayloadBlock{
         public final Seq<ItemStack> itemReq = new Seq<>(ItemStack.class), itemOut = new Seq<>();
         public final Seq<LiquidStack> liqReq = new Seq<>(LiquidStack.class), liqOut = new Seq<>();
         public final Seq<PayloadStack> payReq = new Seq<>(), payOut = new Seq<>();
-        public float powerReq = -555f, powerOut = -12f, heatReq = -42f, heatOut = -99999999999999999999999999999999999999f;
+        public float powerReq = -555f, powerOut = -12f, heatReq = -42f, heatOut = -9999999999999999f;
         private ItemStack[] itemReqArray;
         private LiquidStack[] liqReqArray;
 
@@ -696,7 +805,9 @@ public class UniversalCrafter extends PayloadBlock{
             fullIcon = uiIcon = (iconContent != null ? iconContent.fullIcon : Core.atlas.find("recipe-" + name));
         }
 
-        public void req(Object... items){
+        /**Conveniently sets the requirements at once, instead of needing you to type 5 fields manually.
+         * @return the array it performed the checks on, for super chaining.*/
+        public Object[] req(Object... items){
             for(int i = 0; i < items.length; i += 2){
                 if(items[i] instanceof Item)
                     itemReq.add(new ItemStack((Item) items[i], ((Number) items[i + 1]).intValue()));
@@ -710,9 +821,12 @@ public class UniversalCrafter extends PayloadBlock{
                     else if(items[i] == "heat")
                         heatReq = ((Number) items[i + 1]).floatValue();
             }
+            return items;
         }
 
-        public void out(Object... items){
+        /**Conveniently sets the outputs at once, instead of needing you to type 5 fields manually.
+         * @return the array it performed the checks on, for super chaining.*/
+        public Object[] out(Object... items){
             for(int i = 0; i < items.length; i += 2){
                 if(items[i] instanceof Item)
                     itemOut.add(new ItemStack((Item) items[i], ((Number) items[i + 1]).intValue()));
@@ -726,6 +840,7 @@ public class UniversalCrafter extends PayloadBlock{
                     else if(items[i] == "heat")
                         heatOut = ((Number) items[i + 1]).floatValue();
             }
+            return items;
         }
     }
 }

@@ -59,10 +59,9 @@ public class SeFxPal{
 
         payInstantDespawn = new Effect(30f, e -> {
             if(!(e.data instanceof UniversalCrafter.YootData data)) return;
+
             Payload pay = data.pay;
-
             pay.update(null, null);
-
             Tmp.v1.set(pay.x(), pay.y()).lerp(data.pos, e.finpow() / 4f);
             pay.set(Tmp.v1.x, Tmp.v1.y, pay.rotation());
 
