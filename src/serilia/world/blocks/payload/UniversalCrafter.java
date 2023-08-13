@@ -69,13 +69,14 @@ import static mindustry.Vars.*;
 * [ ] produce liquids //needs support for multiple
 * [ ] produce power
 * [-] attributes (floor + side)
-* [ ] ports
-* [ ] logic?
 * [ ] schematic compat
 * [ ] container IO
 * [ ] add heat/attributes/...
 * [ ] ...separator to recipe ui
 * [ ] add missing bars
+*
+* [ ] logic?
+* [ ] aqueduct/etc. ports
 */
 
 public class UniversalCrafter extends PayloadBlock{
@@ -504,7 +505,7 @@ public class UniversalCrafter extends PayloadBlock{
 
         @Override
         public float efficiencyScale(){
-            if(!hasHeat || currentRecipe == null || currentRecipe.heatReq <= 0) return 1f;
+            if(currentRecipe == null || currentRecipe.heatReq < 0) return 1f;
 
             float over = Math.max(heat - currentRecipe.heatReq, 0f);
             return Math.min(Mathf.clamp(heat / currentRecipe.heatReq) + over / currentRecipe.heatReq * currentRecipe.overheatScale, currentRecipe.maxHeatEfficiency);
