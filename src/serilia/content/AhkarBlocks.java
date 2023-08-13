@@ -333,7 +333,7 @@ public class AhkarBlocks {
                         out(UnitTypes.precept, 1);
                         isUnit = true; //makes unit related map rules apply to the recipe
 
-                        drawer = new DrawConstructUniversal(true){}; //reconstruct makes it draw the last payload it received by default.
+                        drawer = new DrawConstructUniversal(true){}; //reconstruct makes it draw the last payload it received, only for 1:1 recons
                     }}
             );
         }};
