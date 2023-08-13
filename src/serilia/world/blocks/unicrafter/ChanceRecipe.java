@@ -92,7 +92,7 @@ public class ChanceRecipe extends Recipe{
             out.add("100%").color(Color.white);
             out.row();
 
-            super.addRecipeOutputTable(table);
+            super.addRecipeOutputTable(out);
 
             outs.each(chanceOut -> {
                 out.row();
