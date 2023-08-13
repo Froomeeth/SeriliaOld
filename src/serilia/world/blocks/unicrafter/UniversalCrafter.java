@@ -13,11 +13,12 @@ import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
-import mindustry.content.Blocks;
 import mindustry.ctype.UnlockableContent;
 import mindustry.entities.Effect;
 import mindustry.game.EventType;
-import mindustry.gen.*;
+import mindustry.gen.Building;
+import mindustry.gen.Call;
+import mindustry.gen.Unit;
 import mindustry.graphics.Pal;
 import mindustry.io.TypeIO;
 import mindustry.type.*;
@@ -70,7 +71,7 @@ import static mindustry.Vars.*;
 * [ ] container IO
 * [ ] liquid container IO
 * [ ] add heat/attributes/...
-* [ ] ...separator to recipe ui
+* [X] ...separator to recipe ui
 * [ ] add missing bars
 *
 * [L] heat //fat fucking L
@@ -87,28 +88,16 @@ public class UniversalCrafter extends PayloadBlock{
     public float progressLoseSpeed = 0.019f;
     public float heatIncreaseSpeed = 0.15f;
 
-    public Block[] acceptedContainers = {Blocks.reinforcedContainer, Blocks.reinforcedLiquidContainer};
-
     //io
-    /**
-     * instantInput will consume a payload as soon as it enters. Best used with SeFxPal.payInstantDespawn.
-     */
+    /**instantInput will consume a payload as soon as it enters. Best used with SeFxPal.payInstantDespawn.*/
     public boolean instantInput = true;
-    /**
-     * Outputs the first payload without an effect, for if you need the payload to look like it was already there.
-     */
+    /**Outputs the first payload without an effect, for if you need the payload to look like it was already there.*/
     public boolean instantFirstOutput = false;
-    /**
-     * The block waits for the spawn effect to finish before outputting again, use Fx.none to get instant output.
-     */
+    /**The block waits for the spawn effect to finish before outputting again, use Fx.none to get instant output.*/
     public Effect paySpawnEffect = SeFxPal.payRespawn;
-    /**
-     * Enables the above behavior.
-     */
+    /**Enables the above behavior.*/
     public boolean waitForSpawnEffect = true;
-    /**
-     * Use SeFxPal.payDespawn instead for unspecial non-instant ones
-     */
+    /**Use SeFxPal.payDespawn instead for unspecial non-instant ones*/
     public Effect payDespawnEffect = SeFxPal.payInstantDespawn;
 
     public boolean dumpExtraLiquid = false;
@@ -116,9 +105,7 @@ public class UniversalCrafter extends PayloadBlock{
     public int[] liquidOutputDirections = {-1};
 
     //visuals
-    /**
-     * Recipe drawers are drawn between these.
-     */
+    /**Recipe drawers are drawn between these.*/
     public DrawBlock drawerBottom = new DrawDefault(), drawerTop = new DrawRegion("-top");
     public boolean vanillaIO = false;
 
@@ -240,21 +227,23 @@ public class UniversalCrafter extends PayloadBlock{
             table.row();
             recipes.each(recipe -> {
                 if(recipe.index % 2 == 0) table.row();
-
                 table.add(recipe.recipeTable(true)).top();
             });
         });
     }
 
     public class UniversalBuild extends PayloadBlockBuild<Payload> implements HeatBlock, HeatConsumer{
-        public @Nullable Vec2 commandPos;
         public Recipe currentRecipe = recipes.get(0);
+
         public PayloadSeq mmmDelish = new PayloadSeq();
         public Seq<Payload> outQueue = new Seq<>();
+        public BuildPayload container; //TODO contain
+
         public float progress, warmup, totalProgress, spawnTime, heat = 0f, attributeSum;
         public float[] sideHeat = new float[4];
         public boolean outputting;
         public UnlockableContent lastPayload;
+        public @Nullable Vec2 commandPos;
 
         @Override
         public void updateTile(){
@@ -363,7 +352,7 @@ public class UniversalCrafter extends PayloadBlock{
         public boolean wants(){
             return payload != null && currentRecipe != null &&
                     (currentRecipe.payReq.size != 0 && currentRecipe.payReq.contains(b -> b.item == payload.content()) ||
-                            currentRecipe instanceof ContainerRecipe && payload instanceof BuildPayload b && Structs.contains(acceptedContainers, b.block()));
+                    currentRecipe instanceof ContainerRecipe && payload instanceof BuildPayload && payload.content() instanceof StorageBlock);
         }
 
         public boolean wants(Payload pay){
@@ -477,7 +466,7 @@ public class UniversalCrafter extends PayloadBlock{
         @Override
         public boolean acceptPayload(Building source, Payload payload){
             return this.payload == null && currentRecipe != null && outQueue.isEmpty() && !outputting && wants(payload) &&
-                    !(currentRecipe instanceof ContainerRecipe && payload.content() instanceof StorageBlock && consPay.efficiency(this) < 0.9f);
+                    !(currentRecipe instanceof ContainerRecipe && payload.content() instanceof StorageBlock);
         }
 
         @Override
@@ -676,9 +665,7 @@ public class UniversalCrafter extends PayloadBlock{
         }
     }
 
-    /**
-     * gwgejgabhjrewgbh
-     */
+    /**gwgejgabhjrewgbh*/
     public static class YootData{
         public Payload pay;
         public Position pos;

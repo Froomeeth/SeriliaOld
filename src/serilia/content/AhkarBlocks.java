@@ -39,6 +39,7 @@ import serilia.world.blocks.unicrafter.ChanceRecipe;
 import serilia.world.blocks.unicrafter.ContainerRecipe;
 import serilia.world.blocks.unicrafter.Recipe;
 import serilia.world.blocks.unicrafter.UniversalCrafter;
+import serilia.world.blocks.unicrafter.draw.DrawConstruction;
 import serilia.world.draw.drawblock.*;
 
 import static mindustry.content.Items.*;
@@ -275,7 +276,7 @@ public class AhkarBlocks {
                         out(UnitTypes.locus, 1);
                         isUnit = true;
 
-                        drawer = new DrawConstructUniversal(false);
+                        drawer = new DrawConstruction(false);
 
                     }},
                     new ChanceRecipe("wall-deconstruct", Blocks.smallDeconstructor, 10f){{
@@ -326,7 +327,7 @@ public class AhkarBlocks {
 
                         isUnit = true; //makes unit related map rules apply to the recipe
 
-                        drawer = new DrawConstructUniversal(true); //reconstruct makes it draw the last payload it received, only for 1:1 recons
+                        drawer = new DrawConstruction(true); //reconstruct makes it draw the last payload it received, only for 1:1 recons
                     }}
             );
         }};

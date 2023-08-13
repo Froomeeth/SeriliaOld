@@ -128,21 +128,17 @@ public class Recipe extends UnlockableContent{
 
         var cell = t.table(Styles.grayPanel, display -> {
             if(list){
-                display.add(recipeTopTable()).pad(10f).padBottom(0f); //recipe identifiers
+                display.add(recipeTopTable()).pad(10f).padBottom(0f);
                 display.row();
             }
-
             display.table(io -> { //encompasses input/output
                 addRecipeInputTable(io);
-
-                io.add(recipeArrowTable()).padBottom(5f).padTop(5f); //arrow
-
+                io.add(recipeArrowTable()).padBottom(5f).padTop(5f);
                 addRecipeOutputTable(io);
             });
-
             display.row();
+            display.add(recipeBottomTable()).left();
 
-            display.add(recipeBottomTable()).left(); //todo attributes, max boost, etc.
         }).pad(5f).top();
 
         if(list) cell.growX();
@@ -158,7 +154,7 @@ public class Recipe extends UnlockableContent{
         t.image(uiIcon).size(60).scaling(Scaling.fit);
 
         return t;
-    }
+    } //TODO add info button next to text or rearrange and add to side?
     public Table recipeArrowTable(){
         Table t = new Table();
 
@@ -191,7 +187,7 @@ public class Recipe extends UnlockableContent{
         //if(recipe.description != null) t.label(() -> recipe.description).color(Color.lightGray).wrap().pad(10f).left();
 
         return t;
-    }
+    } //todo attributes, max boost, etc.
 
     public void addRecipeInputTable(Table table){
         table.table(Styles.black5, input -> input.add(contentListTable(payReq, itemReq, liqReq, time, false)).pad(5f).grow() //not adding directly to get an easy outline

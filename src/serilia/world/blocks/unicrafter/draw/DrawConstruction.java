@@ -1,4 +1,4 @@
-package serilia.world.draw.drawblock;
+package serilia.world.blocks.unicrafter.draw;
 
 import arc.graphics.g2d.Draw;
 import mindustry.ctype.UnlockableContent;
@@ -9,10 +9,10 @@ import mindustry.world.blocks.payloads.UnitPayload;
 import mindustry.world.draw.DrawBlock;
 import serilia.world.blocks.unicrafter.UniversalCrafter.UniversalBuild;
 
-public class DrawConstructUniversal extends DrawBlock{
+public class DrawConstruction extends DrawBlock{
     public boolean reconstruct;
 
-    public DrawConstructUniversal(boolean reconstruct){
+    public DrawConstruction(boolean reconstruct){
         this.reconstruct = reconstruct;
     }
 
@@ -28,8 +28,8 @@ public class DrawConstructUniversal extends DrawBlock{
         });
     }
 
-    /**Override in the "new DrawConstructUniversal(){{}}" if you want something other than payloads.
-     * I know you have no idea how, so just ask me or check an example if you want that.*/
+    /**Override in the instances if you want something other than these exact payloads.
+     * I have no real way of knowing what you want this to do without having you manually set fields per recipe.*/
     public UnlockableContent fromContent(Building build){
         return ((UniversalBuild)build).lastPayload != null && ((UniversalBuild)build).mmmDelish.get(((UniversalBuild)build).lastPayload) > 0 ? ((UniversalBuild)build).lastPayload : null;
     }
