@@ -90,23 +90,35 @@ public class UniversalCrafter extends PayloadBlock{
     public Block[] acceptedContainers = {Blocks.reinforcedContainer, Blocks.reinforcedLiquidContainer};
 
     //io
-    /**instantInput will consume a payload as soon as it enters. Best used with SeFxPal.payInstantDespawn.*/
+    /**
+     * instantInput will consume a payload as soon as it enters. Best used with SeFxPal.payInstantDespawn.
+     */
     public boolean instantInput = true;
-    /**Outputs the first payload without an effect, for if you need the payload to look like it was already there.*/
+    /**
+     * Outputs the first payload without an effect, for if you need the payload to look like it was already there.
+     */
     public boolean instantFirstOutput = false;
-    /**The block waits for the spawn effect to finish before outputting again, use Fx.none to get instant output.*/
+    /**
+     * The block waits for the spawn effect to finish before outputting again, use Fx.none to get instant output.
+     */
     public Effect paySpawnEffect = SeFxPal.payRespawn;
-    /**Enables the above behavior.*/
+    /**
+     * Enables the above behavior.
+     */
     public boolean waitForSpawnEffect = true;
-    /**Use SeFxPal.payDespawn instead for unspecial non-instant ones*/
+    /**
+     * Use SeFxPal.payDespawn instead for unspecial non-instant ones
+     */
     public Effect payDespawnEffect = SeFxPal.payInstantDespawn;
 
     public boolean dumpExtraLiquid = false;
     public boolean ignoreLiquidFullness = false;
-    public int[] liquidOutputDirections = {- 1};
+    public int[] liquidOutputDirections = {-1};
 
     //visuals
-    /**Recipe drawers are drawn between these.*/
+    /**
+     * Recipe drawers are drawn between these.
+     */
     public DrawBlock drawerBottom = new DrawDefault(), drawerTop = new DrawRegion("-top");
     public boolean vanillaIO = false;
 
@@ -155,11 +167,11 @@ public class UniversalCrafter extends PayloadBlock{
         if(hasItems)
             consume(new ConsumeItemDynamic((UniversalBuild b) -> b.currentRecipe != null && b.currentRecipe.itemReqArray != null ? b.currentRecipe.itemReqArray : ItemStack.empty));
         if(consumesPower)
-            consume(new ConsumePowerDynamic((Building b) -> ((UniversalBuild) b).currentRecipe != null && ((UniversalBuild) b).currentRecipe.powerReq > - 1 ? ((UniversalBuild) b).currentRecipe.powerReq : 0f));
+            consume(new ConsumePowerDynamic((Building b) -> ((UniversalBuild) b).currentRecipe != null && ((UniversalBuild) b).currentRecipe.powerReq > -1 ? ((UniversalBuild) b).currentRecipe.powerReq : 0f));
         if(liquidIn)
             consume(new ConsumeLiquidsDynamic((UniversalBuild b) -> b.currentRecipe != null && b.currentRecipe.liqReqArray != null ? b.currentRecipe.liqReqArray : LiquidStack.empty));
 
-        consumeBuilder.each(c -> c.multiplier = b -> ((UniversalBuild)b).currentRecipe != null && ((UniversalBuild)b).currentRecipe.isUnit ? state.rules.unitCost(b.team) : 1);
+        consumeBuilder.each(c -> c.multiplier = b -> ((UniversalBuild) b).currentRecipe != null && ((UniversalBuild) b).currentRecipe.isUnit ? state.rules.unitCost(b.team) : 1);
 
         if(recipes.size == 1){
             configurable = false;
@@ -172,7 +184,8 @@ public class UniversalCrafter extends PayloadBlock{
             tile.currentRecipe = val;
             tile.progress = 0;
             tile.attributeSum = 0f;
-            if(((UniversalCrafter)tile.block).hasAttribute && tile.currentRecipe.attribute != null) tile.attributeSum = sumAttribute(val.attribute, tile.tile.x, tile.tile.y);
+            if(((UniversalCrafter) tile.block).hasAttribute && tile.currentRecipe.attribute != null)
+                tile.attributeSum = sumAttribute(val.attribute, tile.tile.x, tile.tile.y);
             tile.currentRecipe.liqReq.each(bar -> addLiquidBar(bar.liquid));
             tile.currentRecipe.liqOut.each(bar -> addLiquidBar(bar.liquid));
         });
@@ -245,7 +258,8 @@ public class UniversalCrafter extends PayloadBlock{
 
         @Override
         public void updateTile(){
-            if(hasHeat) heat = Math.max(calculateHeat(sideHeat), Mathf.approachDelta(heat, currentRecipe.heatOut * efficiency, heatIncreaseSpeed * delta()));
+            if(hasHeat)
+                heat = Math.max(calculateHeat(sideHeat), Mathf.approachDelta(heat, currentRecipe.heatOut * efficiency, heatIncreaseSpeed * delta()));
 
             if(currentRecipe != null){
                 boolean yum = wants();
@@ -340,7 +354,7 @@ public class UniversalCrafter extends PayloadBlock{
 
             if(currentRecipe.liqOut.size != 0 && timer(timerDump, dumpTime / timeScale)){
                 for(int i = 0; i < currentRecipe.liqOut.size; i++){
-                    int dir = liquidOutputDirections.length > i ? liquidOutputDirections[i] : - 1;
+                    int dir = liquidOutputDirections.length > i ? liquidOutputDirections[i] : -1;
                     dumpLiquid(currentRecipe.liqOut.get(i).liquid, 2f, dir);
                 }
             }
@@ -349,14 +363,14 @@ public class UniversalCrafter extends PayloadBlock{
         public boolean wants(){
             return payload != null && currentRecipe != null &&
                     (currentRecipe.payReq.size != 0 && currentRecipe.payReq.contains(b -> b.item == payload.content()) ||
-                    currentRecipe instanceof ContainerRecipe && payload instanceof BuildPayload b && Structs.contains(acceptedContainers, b.block()));
+                            currentRecipe instanceof ContainerRecipe && payload instanceof BuildPayload b && Structs.contains(acceptedContainers, b.block()));
         }
 
         public boolean wants(Payload pay){
             return pay != null && currentRecipe != null &&
                     (currentRecipe.payReq.size != 0 && currentRecipe.payReq.contains(b ->
-                        b.item == pay.content() && mmmDelish.get(pay.content()) < Mathf.round(b.amount * team.rules().unitCostMultiplier)) ||
-                    currentRecipe instanceof ContainerRecipe && pay instanceof BuildPayload && pay.content() instanceof StorageBlock);
+                            b.item == pay.content() && mmmDelish.get(pay.content()) < Mathf.round(b.amount * team.rules().unitCostMultiplier)) ||
+                            currentRecipe instanceof ContainerRecipe && pay instanceof BuildPayload && pay.content() instanceof StorageBlock);
         }
 
         public void outputPayload(){
@@ -422,8 +436,6 @@ public class UniversalCrafter extends PayloadBlock{
                 if(currentRecipe instanceof ContainerRecipe) return false;
 
 
-
-
                 if(currentRecipe.itemOut.size != 0){
                     for(int i = 0; i < currentRecipe.itemOut.size; i++){
                         if(items.get(currentRecipe.itemOut.get(i).item) + currentRecipe.itemOut.get(i).amount > itemCapacity){
@@ -432,11 +444,11 @@ public class UniversalCrafter extends PayloadBlock{
                     }
                 }
 
-                if(currentRecipe.liqOut.size != 0 && ! ignoreLiquidFullness){
+                if(currentRecipe.liqOut.size != 0 && !ignoreLiquidFullness){
                     boolean allFull = true;
                     for(int i = 0; i < currentRecipe.liqOut.size; i++){
                         if(liquids.get(currentRecipe.liqOut.get(i).liquid) + currentRecipe.liqOut.get(i).amount > liquidCapacity){
-                            if(! dumpExtraLiquid){
+                            if(!dumpExtraLiquid){
                                 return false;
                             }
                         }else{
@@ -458,7 +470,8 @@ public class UniversalCrafter extends PayloadBlock{
         @Override
         public void onProximityUpdate(){
             super.onProximityUpdate();
-            if(((UniversalCrafter)block).hasAttribute && currentRecipe.attribute != null) attributeSum = sumAttribute(currentRecipe.attribute, tile.x, tile.y);
+            if(((UniversalCrafter) block).hasAttribute && currentRecipe.attribute != null)
+                attributeSum = sumAttribute(currentRecipe.attribute, tile.x, tile.y);
         }
 
         @Override
@@ -498,8 +511,8 @@ public class UniversalCrafter extends PayloadBlock{
             Seq<Recipe> bRecipes = Seq.with(recipes).filter(r -> {
                 if(r.payOut.size != 0){
                     for(int i = 0; i < r.payOut.size; i++){
-                        if(r.payOut.get(i).item instanceof Block b) return ! state.rules.isBanned(b);
-                        if(r.payOut.get(i).item instanceof UnitType u) return ! u.isBanned();
+                        if(r.payOut.get(i).item instanceof Block b) return !state.rules.isBanned(b);
+                        if(r.payOut.get(i).item instanceof UnitType u) return !u.isBanned();
                     }
                 }
                 return true;
@@ -516,7 +529,8 @@ public class UniversalCrafter extends PayloadBlock{
         public void moveOutPayload(){
             if(payload == null) return;
 
-            if(payload instanceof UnitPayload && currentRecipe != null && currentRecipe.outputUnitToTop && payload.dump()) payload = null;
+            if(payload instanceof UnitPayload && currentRecipe != null && currentRecipe.outputUnitToTop && payload.dump())
+                payload = null;
 
             updatePayload();
 
@@ -526,15 +540,15 @@ public class UniversalCrafter extends PayloadBlock{
             payVector.approach(dest, payloadSpeed * delta());
 
             Building front = front();
-            boolean canDump = front == null || ! front.tile().solid();
+            boolean canDump = front == null || !front.tile().solid();
             boolean canMove = front != null && (front.block.outputsPayload || front.block.acceptsPayload);
 
-            if(canDump && ! canMove){
+            if(canDump && !canMove){
                 pushOutput(payload, 1f - (payVector.dst(dest) / (size * tilesize / 2f)));
             }
 
             if(payVector.within(dest, 0.001f)){
-                payVector.clamp(- size * tilesize / 2f, - size * tilesize / 2f, size * tilesize / 2f, size * tilesize / 2f);
+                payVector.clamp(-size * tilesize / 2f, -size * tilesize / 2f, size * tilesize / 2f, size * tilesize / 2f);
 
                 if(canMove){
                     if(movePayload(payload)){
@@ -662,7 +676,9 @@ public class UniversalCrafter extends PayloadBlock{
         }
     }
 
-    /** gwgejgabhjrewgbh */
+    /**
+     * gwgejgabhjrewgbh
+     */
     public static class YootData{
         public Payload pay;
         public Position pos;
@@ -672,3 +688,4 @@ public class UniversalCrafter extends PayloadBlock{
             pos = position;
         }
     }
+}

@@ -3,7 +3,6 @@ package serilia.world.blocks.unicrafter;
 import arc.struct.Seq;
 import mindustry.ctype.UnlockableContent;
 import mindustry.type.*;
-import serilia.world.blocks.unicrafter.UniversalCrafter.Recipe;
 
 public class ContainerRecipe extends Recipe{
     public ContainerRecipe(String name, UnlockableContent iconContent, float time){

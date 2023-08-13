@@ -101,8 +101,8 @@ public class Recipe extends UnlockableContent{
     public final Seq<LiquidStack> liqReq = new Seq<>(LiquidStack.class), liqOut = new Seq<>();
     public final Seq<PayloadStack> payReq = new Seq<>(), payOut = new Seq<>();
     public float powerReq = -555f, powerOut = -12f, heatReq = -42f, heatOut = -9999999999999999f;
-    private ItemStack[] itemReqArray;
-    private LiquidStack[] liqReqArray;
+    public ItemStack[] itemReqArray;
+    public LiquidStack[] liqReqArray;
 
     @Override
     public ContentType getContentType(){
