@@ -13,7 +13,7 @@ import mindustry.graphics.Pal;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
 import mindustry.world.blocks.payloads.UnitPayload;
-import serilia.world.blocks.payload.UniversalCrafter;
+import serilia.world.blocks.unicrafter.UniversalCrafter;
 
 import static arc.graphics.g2d.Draw.*;
 import static arc.graphics.g2d.Lines.lineAngle;

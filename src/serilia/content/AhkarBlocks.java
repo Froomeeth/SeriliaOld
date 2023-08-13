@@ -1,14 +1,11 @@
 package serilia.content;
 
 import arc.graphics.Blending;
-import arc.graphics.g2d.Draw;
 import arc.struct.Seq;
 import mindustry.content.Blocks;
 import mindustry.content.Fx;
 import mindustry.content.Liquids;
 import mindustry.content.UnitTypes;
-import mindustry.gen.Building;
-import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
@@ -20,7 +17,12 @@ import mindustry.world.blocks.distribution.Junction;
 import mindustry.world.blocks.liquid.Conduit;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.production.Separator;
-import mindustry.world.draw.*;
+import mindustry.world.draw.DrawDefault;
+import mindustry.world.draw.DrawGlowRegion;
+import mindustry.world.draw.DrawMulti;
+import mindustry.world.draw.DrawRegion;
+import serilia.world.blocks.unicrafter.ChanceRecipe;
+import serilia.world.blocks.unicrafter.ContainerRecipe;
 import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.DuctNode;
 import serilia.world.blocks.distribution.HeavyDuct;
@@ -32,6 +34,7 @@ import serilia.world.blocks.power.PowerWire;
 import serilia.world.blocks.power.SolarCollector;
 import serilia.world.blocks.production.DrawerDrill;
 import serilia.world.blocks.storage.DrawerCore;
+import serilia.world.blocks.unicrafter.UniversalCrafter;
 import serilia.world.draw.drawblock.*;
 
 import static mindustry.content.Items.*;
@@ -233,26 +236,7 @@ public class AhkarBlocks {
         }};
 
 
-        /*//effect
-        caliAccelerator = new SeAccelerator("hardened-accelerator"){{
-            requirements(effect, sandboxOnly, with());
-            size = 5;
-        }};*/
-
-
-        ahkarDropPod = new DrawerCore("drop-pod"){{
-            requirements(effect, debugOnly, with());
-            size = 3;
-            scaledHealth = 100f;
-
-            drawer = new DrawMulti(
-                new DrawDefault(),
-                new DrawRegion("-top"),
-                new DrawTeam()
-            );
-        }};
-
-
+        //effect
         coreFramework = new DrawerCore("core-framework"){{
             requirements(effect, shown, with(nickel, 300, tarnide, 200));
             size = 3;
@@ -287,20 +271,18 @@ public class AhkarBlocks {
                         out(UnitTypes.locus, 1);
                         isUnit = true;
 
-                        drawer = new DrawBlock(){
-                            @Override public void draw(Building build){
-                                Draw.draw(Layer.blockOver, () -> Drawf.construct(build, UnitTypes.locus, build.rotdeg() - 90f, ((UniversalBuild)build).progress, build.warmup(), build.totalProgress()));
-                            }
-                        };
+                        drawer = new DrawConstructUniversal(false);
 
                     }},
-                    new Recipe("wall-deconstruct", Blocks.smallDeconstructor, 10f){{
+                    new ChanceRecipe("wall-deconstruct", Blocks.smallDeconstructor, 10f){{
                         req(Blocks.tungstenWallLarge, 3);
                         out(tungsten, 24, Liquids.water, 500);
                     }},
-                    new Recipe("hell", Blocks.exponentialReconstructor, 120){{
+                    new ContainerRecipe("hell", Blocks.exponentialReconstructor, 120){{
                         req(UnitTypes.flare, 15, "power", 888f);
                         out(UnitTypes.eclipse, 1);
+
+                        containerReq(silicon, 1);
                     }},
                     new Recipe("ghghghg", 120f){{
                         req(coal, 1);
@@ -331,12 +313,16 @@ public class AhkarBlocks {
             payDespawnEffect = Fx.none; //removing the despawn effect here because it might look weird
 
             recipes = Seq.with(
-                    new Recipe("m", Blocks.tankRefabricator,50){{
+                    new ChanceRecipe("wall-to-tanks", Blocks.tankRefabricator,50){{
                         req(silicon, 150, Blocks.tungstenWallLarge, 1, Liquids.cyanogen, 1, "power", 1f);
                         out(UnitTypes.precept, 1);
+
+                        addChanceOut(0f, 0.2f, UnitTypes.conquer, 1);
+                        addChanceOut(0.2f, 0.3f, UnitTypes.stell, 3);
+
                         isUnit = true; //makes unit related map rules apply to the recipe
 
-                        drawer = new DrawConstructUniversal(true){}; //reconstruct makes it draw the last payload it received, only for 1:1 recons
+                        drawer = new DrawConstructUniversal(true); //reconstruct makes it draw the last payload it received, only for 1:1 recons
                     }}
             );
         }};

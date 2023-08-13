@@ -1,10 +1,13 @@
-package serilia.types;
+package serilia.world.blocks.unicrafter;
 
+import arc.graphics.Color;
 import arc.math.Mathf;
+import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import mindustry.ctype.UnlockableContent;
+import mindustry.graphics.Pal;
 import mindustry.type.*;
-import serilia.world.blocks.payload.UniversalCrafter.Recipe;
+import mindustry.ui.Styles;
 
 /**Recipe with support for adding chance based outputs.*/
 public class ChanceRecipe extends Recipe{
@@ -31,22 +34,28 @@ public class ChanceRecipe extends Recipe{
             else if(items[i] instanceof UnlockableContent)
                 add.payOutChance.add(new PayloadStack((UnlockableContent) items[i], ((Number) items[i + 1]).intValue()));
         }
+        outs.add(add);
     }
 
-    private final Seq<ChanceOut> outs = new Seq<>();
-    private Seq<ItemStack> itemOutResult;
-    private Seq<LiquidStack> liqOutResult;
-    private Seq<PayloadStack> payOutResult;
+    public final Seq<ChanceOut> outs = new Seq<>();
+
+    private final Seq<ItemStack> itemOutResult = new Seq<>(4);
+    private final Seq<LiquidStack> liqOutResult = new Seq<>(4);
+    private final Seq<PayloadStack> payOutResult = new Seq<>(4);
 
     @Override
     public void craft(){
         float rand = Mathf.random();
 
+        itemOutResult.clear();
+        liqOutResult.clear();
+        payOutResult.clear();
+
         for(int i = 0; i < outs.size; i++){
             if(outs.get(i).rangeMin <= rand && rand <= outs.get(i).rangeMax){
-                itemOutResult = outs.get(i).itemOutChance;
-                liqOutResult = outs.get(i).liqOutChance;
-                payOutResult = outs.get(i).payOutChance;
+                itemOutResult.add(outs.get(i).itemOutChance);
+                liqOutResult.add(outs.get(i).liqOutChance);
+                payOutResult.add(outs.get(i).payOutChance);
             }
         }
     }
@@ -64,15 +73,36 @@ public class ChanceRecipe extends Recipe{
         return payOutResult != null ? payOutResult.add(payOut) : payOut;
     }
 
-    private static class ChanceOut{
+    public static class ChanceOut{
         private ChanceOut(float rangeMin, float rangeMax){
             this.rangeMin = rangeMin;
             this.rangeMax = rangeMax;
         }
 
-        private final float rangeMin, rangeMax;
-        private final Seq<ItemStack> itemOutChance = new Seq<>();
-        private final Seq<LiquidStack> liqOutChance = new Seq<>();
-        private final Seq<PayloadStack> payOutChance = new Seq<>();
+        public final float rangeMin, rangeMax;
+        public final Seq<ItemStack> itemOutChance = new Seq<>(4);
+        public final Seq<LiquidStack> liqOutChance = new Seq<>(4);
+        public final Seq<PayloadStack> payOutChance = new Seq<>(4);
+    }
+
+    @Override
+    public void addRecipeOutputTable(Table table){
+        table.table(out -> { //output
+            out.row();
+            out.add("100%").color(Color.white);
+            out.row();
+
+            super.addRecipeOutputTable(table);
+
+            outs.each(chanceOut -> {
+                out.row();
+                out.add(Mathf.round((chanceOut.rangeMax - chanceOut.rangeMin) * 100f) + "%").color(Pal.accent);
+                out.row();
+
+                out.table(Styles.black5, output -> { //chance
+                    output.add(contentListTable(chanceOut.payOutChance, chanceOut.itemOutChance, chanceOut.liqOutChance, -20f, -20f, time, true, chanceOut.rangeMax - chanceOut.rangeMin)).pad(5f).grow();
+                }).pad(5f).grow();
+            });
+        });
     }
 }

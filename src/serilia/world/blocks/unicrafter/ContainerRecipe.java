@@ -1,9 +1,9 @@
-package serilia.types;
+package serilia.world.blocks.unicrafter;
 
 import arc.struct.Seq;
 import mindustry.ctype.UnlockableContent;
 import mindustry.type.*;
-import serilia.world.blocks.payload.UniversalCrafter.Recipe;
+import serilia.world.blocks.unicrafter.UniversalCrafter.Recipe;
 
 public class ContainerRecipe extends Recipe{
     public ContainerRecipe(String name, UnlockableContent iconContent, float time){
@@ -32,6 +32,6 @@ public class ContainerRecipe extends Recipe{
         return items;
     }
 
-    private final Seq<ItemStack> itemOutContainer = new Seq<>();
-    private final Seq<LiquidStack> liqOutContainer = new Seq<>();
+    private final Seq<ItemStack> itemReqContainer = new Seq<>(), itemOutContainer = new Seq<>();
+    private final Seq<LiquidStack> liqReqContainer = new Seq<>(), liqOutContainer = new Seq<>();
 }

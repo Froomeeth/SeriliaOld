@@ -7,7 +7,7 @@ import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.world.blocks.payloads.UnitPayload;
 import mindustry.world.draw.DrawBlock;
-import serilia.world.blocks.payload.UniversalCrafter.UniversalBuild;
+import serilia.world.blocks.unicrafter.UniversalCrafter.UniversalBuild;
 
 public class DrawConstructUniversal extends DrawBlock{
     public boolean reconstruct;
