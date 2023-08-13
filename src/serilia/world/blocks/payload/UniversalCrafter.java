@@ -19,10 +19,7 @@ import mindustry.ctype.ContentType;
 import mindustry.ctype.UnlockableContent;
 import mindustry.entities.Effect;
 import mindustry.game.EventType;
-import mindustry.gen.Building;
-import mindustry.gen.Icon;
-import mindustry.gen.Iconc;
-import mindustry.gen.Unit;
+import mindustry.gen.*;
 import mindustry.graphics.Pal;
 import mindustry.io.TypeIO;
 import mindustry.type.*;
@@ -66,17 +63,19 @@ import static mindustry.Vars.*;
 * [X] stats
 * [X] unit cost mul
 * [X] drawing
+* [X] separator recipe class
+* [X] Call/etc. for unit spawns
+* [?] heat
 * [ ] produce liquids //needs support for multiple
 * [ ] produce power
-* [?] heat
-* [ ] attributes
+* [-] attributes (floor + side)
 * [ ] ports
 * [ ] logic?
 * [ ] schematic compat
-* [ ] Call/etc. for unit spawns
 * [ ] container IO
-* [ ] add heat/attributes to recipe ui
-* [ ] separator recipe class
+* [ ] add heat/attributes/...
+* [ ] ...separator to recipe ui
+* [ ] add missing bars
 */
 
 public class UniversalCrafter extends PayloadBlock{
@@ -397,28 +396,31 @@ public class UniversalCrafter extends PayloadBlock{
         public void craft(){
             consume();
 
-            if(currentRecipe.itemOut.size != 0){
-                currentRecipe.itemOut.each(output -> {
+            currentRecipe.craft();
+
+            var itemOut = currentRecipe.itemOut();
+            if(itemOut.size != 0){
+                itemOut.each(output -> {
                     for(int i = 0; i < output.amount; i++){
                         offload(output.item);
                     }
                 });
             }
 
-            if(currentRecipe.liqOut.size != 0){
-                currentRecipe.liqOut.each(output -> {
+            var liqOut = currentRecipe.liqOut();
+            if(liqOut.size != 0){
+                liqOut.each(output -> {
                     for(int i = 0; i < output.amount; i++){
                         handleLiquid(this, output.liquid, Math.min(output.amount, liquidCapacity - liquids.get(output.liquid)));
                     }
                 });
             }
 
-            if(currentRecipe.payOut.size != 0){
-                currentRecipe.payOut.each(output -> {
+            var payOut = currentRecipe.payOut();
+            if(payOut.size != 0){
+                payOut.each(output -> {
                     for(int i = 0; i < output.amount; i++){
-                        outQueue.add(
-                            createPayload(output.item)
-                        );
+                        outQueue.add(createPayload(output.item));
                     }
                 });
 
@@ -497,7 +499,7 @@ public class UniversalCrafter extends PayloadBlock{
 
         @Override
         public float getProgressIncrease(float baseTime){
-            return super.getProgressIncrease(baseTime) * currentRecipe.baseAttributeEfficiency + Math.min(currentRecipe.maxAttributeEfficiency, currentRecipe.attributeBoostScale * attributeSum) + currentRecipe.attribute.env();
+            return super.getProgressIncrease(baseTime) * (currentRecipe.attribute != null ? currentRecipe.baseAttributeEfficiency + Math.min(currentRecipe.maxAttributeEfficiency, currentRecipe.attributeBoostScale * attributeSum) + currentRecipe.attribute.env() : 1f);
         }
 
         @Override
@@ -641,6 +643,20 @@ public class UniversalCrafter extends PayloadBlock{
         }
 
         @Override
+        public void dumpPayload(){
+            //translate payload forward slightly
+            float tx = Angles.trnsx(payload.rotation(), 0.1f), ty = Angles.trnsy(payload.rotation(), 0.1f);
+            payload.set(payload.x() + tx, payload.y() + ty, payload.rotation());
+
+            if(payload.dump() && payload instanceof UnitPayload){
+                payload = null;
+                Call.unitBlockSpawn(tile);
+            }else{
+                payload.set(payload.x() - tx, payload.y() - ty, payload.rotation());
+            }
+        }
+
+        @Override
         public void draw(){
             drawerBottom.draw(this);
 
@@ -751,6 +767,7 @@ public class UniversalCrafter extends PayloadBlock{
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class Recipe extends UnlockableContent{
         public DrawBlock drawer;
         public boolean isUnit = false, outputUnitToTop = false, showPayOutput = true;
@@ -783,7 +800,6 @@ public class UniversalCrafter extends PayloadBlock{
             this.time = time;
         }
 
-
         /*--- Set automatically ---*/
         public int index;
         public float time;
@@ -804,6 +820,12 @@ public class UniversalCrafter extends PayloadBlock{
         public void loadIcon(){
             fullIcon = uiIcon = (iconContent != null ? iconContent.fullIcon : Core.atlas.find("recipe-" + name));
         }
+
+        public void craft(){}
+
+        public Seq<ItemStack> itemOut(){return itemOut;}
+        public Seq<LiquidStack> liqOut(){return liqOut;}
+        public Seq<PayloadStack> payOut(){return payOut;}
 
         /**Conveniently sets the requirements at once, instead of needing you to type 5 fields manually.
          * @return the array it performed the checks on, for super chaining.*/
