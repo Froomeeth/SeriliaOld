@@ -2,6 +2,7 @@ package serilia.world.blocks.unicrafter;
 
 import arc.Core;
 import arc.graphics.Color;
+import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import arc.util.Scaling;
@@ -20,22 +21,34 @@ import mindustry.world.meta.Attribute;
 import mindustry.world.meta.Stat;
 
 import static mindustry.Vars.iconMed;
+import static mindustry.Vars.ui;
 
 /**Basic recipe with support for items, liquids and payloads. Can be researched.
  * Use ChanceRecipe for separators and ContainerRecipe for adding container IO for certain stacks.*/
 public class Recipe extends UnlockableContent{
-    public DrawBlock drawer;
-    public boolean isUnit = false, outputUnitToTop = false, showPayOutput = true;
 
+    //general
+    /**Draws between top and bottom drawer of the block.*/
+    public DrawBlock drawer;
+    public int reqItemCapMul = 2, outItemCapMul = 2;
+    public boolean loseProgressOnIdle = false;
+    public float progressLoseSpeed = 0.019f;
+
+    //payload
+    public boolean isUnit = false, outputUnitToTop = false, showVanillaOutput = true;
+
+    //attribute
     public Attribute attribute = null;
     public float baseAttributeEfficiency = 1f;
     public float attributeBoostScale = 1f;
     public float maxAttributeEfficiency = 4f;
     public float minAttributeEfficiency = -1f;
 
+    //heat
     public float overheatScale = 1f;
     public float maxHeatEfficiency = 4f;
 
+    //effect
     public Effect craftEffect = Fx.none, updateEffect = Fx.none;
     public double updateEffectChance = 0.02;
 
@@ -101,8 +114,8 @@ public class Recipe extends UnlockableContent{
     public final Seq<LiquidStack> liqReq = new Seq<>(LiquidStack.class), liqOut = new Seq<>();
     public final Seq<PayloadStack> payReq = new Seq<>(), payOut = new Seq<>();
     public float powerReq = -555f, powerOut = -12f, heatReq = -42f, heatOut = -9999999999999999f;
-    public ItemStack[] itemReqArray;
-    public LiquidStack[] liqReqArray;
+    private ItemStack[] itemReqArray;
+    private LiquidStack[] liqReqArray;
 
     @Override
     public ContentType getContentType(){
@@ -137,7 +150,7 @@ public class Recipe extends UnlockableContent{
                 addRecipeOutputTable(io);
             });
             display.row();
-            display.add(recipeBottomTable()).left();
+            addRecipeBottomTable(display);
 
         }).pad(5f).top();
 
@@ -149,12 +162,15 @@ public class Recipe extends UnlockableContent{
     public Table recipeTopTable(){
         Table t = new Table();
 
-        t.add(localizedName);
+        t.table(name -> {
+            t.add(localizedName);
+            t.button("?", Styles.flatBordert, () -> ui.content.show(this)).size(iconMed).pad(5f).right().grow().visible(this::unlockedNow);
+        });
         t.row();
-        t.image(uiIcon).size(60).scaling(Scaling.fit);
+        t.image(uiIcon).size(48f).scaling(Scaling.fit);
 
         return t;
-    } //TODO add info button next to text or rearrange and add to side?
+    }
     public Table recipeArrowTable(){
         Table t = new Table();
 
@@ -181,13 +197,6 @@ public class Recipe extends UnlockableContent{
 
         return t;
     }
-    public Table recipeBottomTable(){
-        Table t = new Table();
-
-        //if(recipe.description != null) t.label(() -> recipe.description).color(Color.lightGray).wrap().pad(10f).left();
-
-        return t;
-    } //todo attributes, max boost, etc.
 
     public void addRecipeInputTable(Table table){
         table.table(Styles.black5, input -> input.add(contentListTable(payReq, itemReq, liqReq, time, false)).pad(5f).grow() //not adding directly to get an easy outline
@@ -196,6 +205,13 @@ public class Recipe extends UnlockableContent{
     public void addRecipeOutputTable(Table table){
         table.table(Styles.black5, output -> output.add(contentListTable(payOut, itemOut, liqOut, time, true)).pad(5f).grow() //not adding directly to get an easy outline
         ).pad(5f).grow();
+    }
+    public void addRecipeBottomTable(Table table){
+        if(heatReq > 0f){
+            table.add("[red]" + Iconc.waves + "[lightgray] Max %: " + Mathf.round(maxHeatEfficiency * 100f) + "%").pad(5f).padLeft(10f).left();
+            table.row();
+        }
+        //if(attribute != null) todo attributes
     }
 
     public Table contentListTable(Seq<PayloadStack> pay, Seq<ItemStack> item, Seq<LiquidStack> liq, float time, boolean flip){
@@ -239,11 +255,62 @@ public class Recipe extends UnlockableContent{
         return t;
     }
 
+    public void init(UniversalCrafter b){
+        b.hasLiquids |= (b.hasLiquidIn |= liqReq.size != 0) || (b.outputsLiquid |= liqOut.size != 0);
+        b.hasPayloads |= (b.acceptsPayload |= payReq.size != 0) || (b.outputsPayload |= payOut.size != 0);
+        b.rotate |= b.outputsPayload; //doesn't set?
+        b.commandable |= isUnit;
+        b.consumesPower |= powerReq > -1f;
+        b.outputsPower |= powerOut > -1f;
+        b.hasHeat |= heatOut > -1f;
+
+        if(itemReq.size != 0){
+            itemReqArray = itemReq.toArray(ItemStack.class);
+            for(ItemStack stack : itemReqArray){
+                b.capacities[stack.item.id] = Math.max(b.capacities[stack.item.id], stack.amount * reqItemCapMul);
+                b.itemCapacity = Math.max(b.itemCapacity, stack.amount * outItemCapMul);
+            }
+        }
+
+        if(liqReq.size != 0){
+            liqReqArray = liqReq.toArray(LiquidStack.class);
+        }
+
+        if(liqReq.size != 0){
+            liqReq.each(req -> {
+                b.liquidFilter[req.liquid.id] = true;
+                b.liquidCapacity = Math.max(b.liquidCapacity, req.amount * 2);
+            });
+            liqOut.each(out -> {
+                b.liquidFilter[out.liquid.id] = true;
+                b.liquidCapacity = Math.max(b.liquidCapacity, out.amount * 2);
+            });
+        }
+    }
+
+    public void configTo(UniversalCrafter.UniversalBuild build){
+        build.currentRecipe.liqReq().each(bar -> build.block.addLiquidBar(bar.liquid)); //this is really stupid. I don't want to make dynamic bars.
+        build.currentRecipe.liqOut().each(bar -> build.block.addLiquidBar(bar.liquid));
+    }
+
     public void craft(){}
+
+    public Seq<ItemStack> itemReq(){return itemReq;}
+    public Seq<LiquidStack> liqReq(){return liqReq;}
+    public Seq<PayloadStack> payReq(){return payReq;}
 
     public Seq<ItemStack> itemOut(){return itemOut;}
     public Seq<LiquidStack> liqOut(){return liqOut;}
     public Seq<PayloadStack> payOut(){return payOut;}
+    //dynamic consumers need these. really wish they didn't.
+    public ItemStack[] itemReqArray(){return itemReqArray;}
+    public LiquidStack[] liqReqArray(){return liqReqArray;}
+
+    public Seq<ItemStack> itemReqContainer(){return null;}
+    public Seq<LiquidStack> liqReqContainer(){return null;}
     public Seq<ItemStack> itemOutContainer(){return null;}
     public Seq<LiquidStack> liqOutContainer(){return null;}
+
+
+
 }
