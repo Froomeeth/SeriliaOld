@@ -211,7 +211,7 @@ public class UniversalCrafter extends PayloadBlock{
 
         public PayloadSeq mmmDelish = new PayloadSeq();
         public Seq<Payload> outQueue = new Seq<>();
-        public BuildPayload container; //TODO contain
+        public BuildPayload container;
 
         public float progress, warmup, totalProgress, spawnTime, heat = 0f, attributeSum;
         public float[] sideHeat = new float[4];
@@ -320,7 +320,7 @@ public class UniversalCrafter extends PayloadBlock{
         @Override
         public boolean shouldConsume(){
             if(currentRecipe != null){
-                if(!wantsContainer()) return false; //todo
+                if(!wantsContainer()) return false;
 
                 if(currentRecipe.itemOut().size != 0){
                     for(int i = 0; i < currentRecipe.itemOut().size; i++){
@@ -547,7 +547,7 @@ public class UniversalCrafter extends PayloadBlock{
         public boolean acceptPayload(Building source, Payload payload){
             return this.payload == null && currentRecipe != null && outQueue.isEmpty() && !outputting && wants(payload) &&
                     !(currentRecipe instanceof ContainerRecipe && payload.content() instanceof StorageBlock);
-        }
+        } //todo doesn't accept container
 
         @Override
         public boolean acceptItem(Building source, Item item){
