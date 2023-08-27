@@ -28,28 +28,10 @@ dependencies{
     compileOnly "com.github.Anuken.Arc:arc-core:$arcVersion"
     compileOnly "com.github.Anuken.Arc:flabel:$arcVersion"
     compileOnly "com.github.Anuken.MindustryJitpack:core:$mindustryVersion"
+    //implementation 'com.github.stacktrace-error:unicrafter:v0.8'
 
     annotationProcessor "com.github.GlennFolker.EntityAnno:downgrader:$entVersion"
-
-//    compileOnly "com.github.GlennFolker.EntityAnno:entity:$entVersion"
-
-//    kapt "com.github.GlennFolker.EntityAnno:entity:$entVersion"
 }
-
-//entityAnno{
-//    // Mod internal name, corresponds to the "name" field in `mod.json`.
-//    modName = 'serilia'
-//    // [Optional] Mindustry version entity component source version override. Defaults to what EntityAnno uses as classpath.
-//    mindustryVersion = project['mindustryVersion']
-//    // Directory to store entity IO revisions.
-//    revisionDir = file("$rootDir/revisions/")
-//    // Package name for fetched vanilla entity components.
-//    fetchPackage = 'serilia.entities.comp.vanilla'
-//    // Modded entity component source files package; these will be excluded from the JAR.
-//    genSrcPackage = 'serilia.entities.comp'
-//    // Root generated entity classes package.
-//    rootPackage = 'serilia.gen'
-//}
 
 task jarAndroid{
     dependsOn "jar"

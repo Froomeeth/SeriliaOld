@@ -1,4 +1,4 @@
-package serilia.world.blocks.unicrafter;
+package unicrafter;
 
 import arc.math.Interp;
 import arc.util.Tmp;
@@ -8,6 +8,7 @@ import mindustry.graphics.Pal;
 import mindustry.world.blocks.payloads.BuildPayload;
 import mindustry.world.blocks.payloads.Payload;
 import mindustry.world.blocks.payloads.UnitPayload;
+import unicrafter.world.UniversalCrafter;
 
 import static arc.graphics.g2d.Draw.*;
 

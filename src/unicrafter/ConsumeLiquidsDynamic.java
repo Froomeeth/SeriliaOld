@@ -1,4 +1,4 @@
-package serilia.types;
+package unicrafter;
 
 import arc.func.Func;
 import arc.scene.ui.layout.Table;

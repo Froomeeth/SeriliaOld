@@ -1,4 +1,4 @@
-package serilia.world.blocks.unicrafter.draw;
+package unicrafter.world.draw;
 
 import arc.graphics.g2d.Draw;
 import mindustry.ctype.UnlockableContent;
@@ -7,7 +7,7 @@ import mindustry.graphics.Drawf;
 import mindustry.graphics.Layer;
 import mindustry.world.blocks.payloads.UnitPayload;
 import mindustry.world.draw.DrawBlock;
-import serilia.world.blocks.unicrafter.UniversalCrafter.UniversalBuild;
+import unicrafter.world.UniversalCrafter.UniversalBuild;
 
 public class DrawConstruction extends DrawBlock{
     public boolean reconstruct;

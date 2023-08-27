@@ -1,41 +1,48 @@
-package serilia.world.blocks.unicrafter;
+package unicrafter.recipes;
 
 import arc.Core;
-import arc.graphics.Color;
 import arc.math.Mathf;
-import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
-import arc.util.Scaling;
-import arc.util.Strings;
+import arc.util.Structs;
 import mindustry.content.Fx;
 import mindustry.ctype.ContentType;
 import mindustry.ctype.UnlockableContent;
 import mindustry.entities.Effect;
-import mindustry.gen.Icon;
-import mindustry.gen.Iconc;
+import mindustry.gen.Building;
 import mindustry.type.*;
-import mindustry.ui.ItemImage;
-import mindustry.ui.Styles;
+import mindustry.world.blocks.payloads.Payload;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.meta.Attribute;
 import mindustry.world.meta.Stat;
+import unicrafter.recipes.style.RecipeStyle;
+import unicrafter.recipes.style.RecipeStyles;
+import unicrafter.world.UniversalCrafter;
+import unicrafter.world.UniversalCrafter.UniversalBuild;
 
-import static mindustry.Vars.iconMed;
-import static mindustry.Vars.ui;
+import static mindustry.Vars.*;
 
 /**Basic recipe with support for items, liquids and payloads. Can be researched.
- * Use ChanceRecipe for separators and ContainerRecipe for adding container IO for certain stacks.*/
+ * Use ChanceRecipe for separators/other chances and todo ContainerRecipe for adding container IO for certain stacks.*/
 public class Recipe extends UnlockableContent{
 
     //general
     /**Draws between top and bottom drawer of the block.*/
     public DrawBlock drawer;
+    /**Lets you choose different layouts for your recipe.*/
+    public RecipeStyle style = RecipeStyles.normal;
     public int reqItemCapMul = 2, outItemCapMul = 2;
     public boolean loseProgressOnIdle = false;
     public float progressLoseSpeed = 0.019f;
 
+    //liquid
+    public boolean dumpExtraLiquid = false;
+    public boolean ignoreLiquidFullness = false;
+    public int[] liquidOutputDirections = {-1};
+
     //payload
-    public boolean isUnit = false, outputUnitToTop = false, showVanillaOutput = true;
+    public boolean isUnit = false;
+    public boolean outputUnitToTop = false;
+    public boolean showVanillaOutput = true;
 
     //attribute
     public Attribute attribute = null;
@@ -98,10 +105,8 @@ public class Recipe extends UnlockableContent{
             else if(items[i] instanceof UnlockableContent)
                 payOut.add(new PayloadStack((UnlockableContent) items[i], ((Number) items[i + 1]).intValue()));
             else if(items[i] instanceof String)
-                if(items[i] == "power")
-                    powerOut = ((Number) items[i + 1]).floatValue();
-                else if(items[i] == "heat")
-                    heatOut = ((Number) items[i + 1]).floatValue();
+                if(items[i] == "power") powerOut = ((Number) items[i + 1]).floatValue();
+                else if(items[i] == "heat") heatOut = ((Number) items[i + 1]).floatValue();
         }
         return items;
     }
@@ -131,130 +136,149 @@ public class Recipe extends UnlockableContent{
     public void setStats(){
         stats.add(Stat.output, table -> {
             table.row();
-            table.add(recipeTable(false));
+            table.add(style.recipeTable(false, this));
         });
     }
 
-    public Table recipeTable(boolean list){
-        Table t = new Table();
-        t.row();
 
-        var cell = t.table(Styles.grayPanel, display -> {
-            if(list){
-                display.add(recipeTopTable()).pad(10f).padBottom(0f);
-                display.row();
+    //logic
+    public void update(UniversalBuild build){
+        if(build.crafter().hasPayloads){
+
+            if(acceptPayload(build) && build.moveInPayload() || build.crafter().instantInput){
+
+                build.mmmDelish.add(build.payload.content());
+                build.crafter().payDespawnEffect.at(build.x, build.y, build.drawrot(), new UniversalCrafter.YootData(build.payload, build));
+                build.payload = null;
+            }else{
+                if(build.payload == null){
+                    build.outputPayQueue();
+                }else{
+                    build.moveOutPayload();
+                }
             }
-            display.table(io -> { //encompasses input/output
-                addRecipeInputTable(io);
-                io.add(recipeArrowTable()).padBottom(5f).padTop(5f);
-                addRecipeOutputTable(io);
-            });
-            display.row();
-            addRecipeBottomTable(display);
-
-        }).pad(5f).top();
-
-        if(list) cell.growX();
-
-        return t;
-    }
-
-    public Table recipeTopTable(){
-        Table t = new Table();
-
-        t.table(name -> {
-            t.add(localizedName);
-            t.button("?", Styles.flatBordert, () -> ui.content.show(this)).size(iconMed).pad(5f).right().grow().visible(this::unlockedNow);
-        });
-        t.row();
-        t.image(uiIcon).size(48f).scaling(Scaling.fit);
-
-        return t;
-    }
-    public Table recipeArrowTable(){
-        Table t = new Table();
-
-        if(powerReq > 0){
-            t.table(power -> {
-                power.add("[accent]" + Iconc.power + "[]");
-                power.row();
-                power.add(Strings.autoFixed(powerReq  * 60f, 1));
-            }).pad(5f).bottom();
-            t.row();
         }
 
-        t.image(Icon.play).pad(5f).padTop(10f).padBottom(10f).center();
+        if(build.efficiency > 0 && shouldConsume(build)){
+            build.progress += build.getProgressIncrease(time) * (isUnit ? state.rules.unitBuildSpeed(build.team) : 1f);
+            build.warmup = Mathf.approachDelta(build.warmup, build.warmupTarget(), build.crafter().warmupSpeed);
 
-        if(heatReq > 0){
-            t.row();
-            t.table(heat -> {
-                heat.add("[red]" + Iconc.waves + "[]");
-                heat.row();
-                heat.add(Strings.autoFixed(heatReq, 1));
-            }).pad(5f).top();
-            t.row();
+            if(build.wasVisible && Mathf.chanceDelta(updateEffectChance)){
+                updateEffect.at(build);
+            }
+        }else{
+            build.warmup = Mathf.approachDelta(build.warmup, 0f, build.crafter().warmupSpeed);
+            if(loseProgressOnIdle) build.progress = Mathf.approachDelta(build.progress, 0f, progressLoseSpeed);
         }
 
-        return t;
-    }
+        dumpOutputs(build);
 
-    public void addRecipeInputTable(Table table){
-        table.table(Styles.black5, input -> input.add(contentListTable(payReq, itemReq, liqReq, time, false)).pad(5f).grow() //not adding directly to get an easy outline
-        ).pad(5f).grow();
-    }
-    public void addRecipeOutputTable(Table table){
-        table.table(Styles.black5, output -> output.add(contentListTable(payOut, itemOut, liqOut, time, true)).pad(5f).grow() //not adding directly to get an easy outline
-        ).pad(5f).grow();
-    }
-    public void addRecipeBottomTable(Table table){
-        if(heatReq > 0f){
-            table.add("[red]" + Iconc.waves + "[lightgray] Max %: " + Mathf.round(maxHeatEfficiency * 100f) + "%").pad(5f).padLeft(10f).left();
-            table.row();
+        if(build.progress >= 1f){
+            craft(build);
         }
-        //if(attribute != null) todo attributes
     }
 
-    public Table contentListTable(Seq<PayloadStack> pay, Seq<ItemStack> item, Seq<LiquidStack> liq, float time, boolean flip){
-        return contentListTable(pay, item, liq, -20f, -20f, time, flip, 1f);
-    }
-    public Table contentListTable(Seq<PayloadStack> pay, Seq<ItemStack> item, Seq<LiquidStack> liq, float power, float heat, float time, boolean flip, float timeDiv){
-        Table t = new Table();
+    public void craft(UniversalBuild build){
+        build.consume();
 
-        if(pay != null) pay.each(requirement -> {
-            if(flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).left();
+        if(build.items != null && itemOut().size != 0) itemOut.each(output -> {
+            for(int i = 0; i < output.amount; i++){
+                build.offload(output.item);
+            }
+        });
 
-            t.table(req -> {
-                req.add(Strings.autoFixed(requirement.amount / ((time / timeDiv) / 60f), 2) + "/s").pad(4f).color(Color.lightGray);
+        if(build.liquids != null && liqOut().size != 0) liqOut.each(output -> {
+            for(int i = 0; i < output.amount; i++){
+                build.handleLiquid(build, output.liquid, Math.min(output.amount, build.block.liquidCapacity - build.liquids.get(output.liquid)));
+            }
+        });
+
+        if(payOut().size != 0){
+            payOut.each(output -> {
+                for(int i = 0; i < output.amount; i++){
+                    build.payQueue.add(build.createPayload(output.item));
+                }
             });
 
-            if(!flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).right();
-            t.row();
-        });
-        if(item != null) item.each(requirement -> {
-            if(flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).left();
+            if(build.crafter().instantFirstOutput){
+                build.payVector.setZero();
+                build.payload = build.payQueue.pop();
+            }
+        }
 
-            t.table(req -> {
-                req.add(Strings.autoFixed(requirement.amount / ((time * timeDiv) / 60f), 2) + "/s").pad(4f).color(Color.lightGray);
-            });
-            if(!flip) t.add(new ItemImage(requirement.item.uiIcon, requirement.amount)).right();
-            t.row();
-        });
-        if(liq != null) liq.each(requirement -> {
-            if(flip) t.image(requirement.liquid.fullIcon).size(iconMed).left();
+        if(build.wasVisible) craftEffect.at(build);
 
-            t.table(req -> {
-                req.add(Strings.autoFixed(requirement.amount * 60f, 2) + "/s").color(Color.lightGray).pad(4f);
-            });
-            if(!flip) t.image(requirement.liquid.fullIcon).size(iconMed).right().scaling(Scaling.fit);
-            t.row();
-        });
-        t.row();
-        if(power > 0f) t.add("[accent]" + Iconc.power + "[] " + Strings.autoFixed(power * 60f, 2)).pad(4f);
-        if(heat > 0f) t.add("[red]" + Iconc.waves + "[] " + Strings.autoFixed(heat, 2)).pad(4f);
-
-        return t;
+        build.progress %= 1f;
     }
 
+    public boolean shouldConsume(UniversalBuild build){
+        if(itemOut().size != 0){
+            for(int i = 0; i < itemOut().size; i++){
+                if(build.items != null && build.items.get(itemOut().get(i).item) + itemOut().get(i).amount > build.block.itemCapacity){
+                    return false;
+                }
+            }
+        }
+
+        if(liqOut().size != 0 && !ignoreLiquidFullness){
+            boolean allFull = true;
+            for(int i = 0; i < liqOut().size; i++){
+                if(build.liquids != null && build.liquids.get(liqOut().get(i).liquid) + liqOut().get(i).amount > build.block.liquidCapacity){
+                    if(!dumpExtraLiquid){
+                        return false;
+                    }
+                }else{
+                    //if there's still space left, it's not full for all liquids
+                    allFull = false;
+                }
+            }
+
+            return !allFull;
+        }
+        return true;
+    }
+
+    public void dumpOutputs(UniversalBuild build){
+        if(itemOut().size != 0 && build.timer(build.timerDump(), build.dumpTime() / build.timeScale())){
+            itemOut().each(output -> build.dump(output.item));
+        }
+
+        if(liqOut().size != 0 && build.timer(build.timerDump(), build.dumpTime() / build.timeScale())){
+            for(int i = 0; i < liqOut().size; i++){
+                int dir = liquidOutputDirections.length > i ? liquidOutputDirections[i] : -1;
+                build.dumpLiquid(liqOut().get(i).liquid, 2f, dir);
+            }
+        }
+    }
+
+    public boolean acceptPayload(UniversalBuild build){
+        return build.payload != null && payReq().size != 0 && payReq().contains(b -> b.item == build.payload.content());
+    }
+
+    public boolean acceptPayload(UniversalBuild build, Payload pay){
+        return build.payload == null && pay != null && payReq().size != 0 && payReq().contains(b ->
+                b.item == pay.content() && build.mmmDelish.get(pay.content()) < Mathf.round(b.amount * build.team.rules().unitCostMultiplier));
+    }
+
+    public boolean acceptItem(UniversalBuild build, Building source, Item item){
+        for(int i = 0; i < itemReqArray().length; i++){
+            if(build.items.get(itemReqArray()[i].item) >= build.getMaximumAccepted(item) || !Structs.contains(itemReqArray(), stack -> stack.item == item)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean acceptLiquid(UniversalBuild build, Building source, Liquid liquid) {
+        for(int i = 0; i < liqReqArray().length; i++){
+            if(!Structs.contains(liqReqArray(), stack -> stack.liquid == liquid)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //everything else
     public void init(UniversalCrafter b){
         b.hasLiquids |= (b.hasLiquidIn |= liqReq.size != 0) || (b.outputsLiquid |= liqOut.size != 0);
         b.hasPayloads |= (b.acceptsPayload |= payReq.size != 0) || (b.outputsPayload |= payOut.size != 0);
@@ -288,12 +312,14 @@ public class Recipe extends UnlockableContent{
         }
     }
 
-    public void configTo(UniversalCrafter.UniversalBuild build){
-        build.currentRecipe.liqReq().each(bar -> build.block.addLiquidBar(bar.liquid)); //this is really stupid. I don't want to make dynamic bars.
-        build.currentRecipe.liqOut().each(bar -> build.block.addLiquidBar(bar.liquid));
+    public void load(UniversalCrafter block){
+        if(drawer != null) drawer.load(block);
     }
 
-    public void craft(){}
+    public void configTo(UniversalBuild build){
+        liqReq.each(bar -> build.block.addLiquidBar(bar.liquid)); //this is really stupid. I don't want to make dynamic bars.
+        liqOut.each(bar -> build.block.addLiquidBar(bar.liquid));
+    }
 
     public Seq<ItemStack> itemReq(){return itemReq;}
     public Seq<LiquidStack> liqReq(){return liqReq;}
@@ -305,12 +331,4 @@ public class Recipe extends UnlockableContent{
     //dynamic consumers need these. really wish they didn't.
     public ItemStack[] itemReqArray(){return itemReqArray;}
     public LiquidStack[] liqReqArray(){return liqReqArray;}
-
-    public Seq<ItemStack> itemReqContainer(){return null;}
-    public Seq<LiquidStack> liqReqContainer(){return null;}
-    public Seq<ItemStack> itemOutContainer(){return null;}
-    public Seq<LiquidStack> liqOutContainer(){return null;}
-
-
-
 }

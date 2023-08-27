@@ -46,8 +46,6 @@ import serilia.world.blocks.distribution.HeavyDuct;
 import serilia.world.blocks.liquid.BurstPump;
 import serilia.world.blocks.liquid.ShadedConduit;
 import serilia.world.blocks.misc.DrillTurret;
-import serilia.world.blocks.storage.DrawerCore;
-import serilia.world.draw.drawblock.DrawTeam;
 import serilia.world.draw.drawblock.DrawWeaveColor;
 
 import static mindustry.content.Items.*;
@@ -641,7 +639,7 @@ public class CaliBlocks {
         }};
 
         //effect
-        coreSprout = new DrawerCore("core-sprout"){{
+        coreSprout = new CoreBlock("core-sprout"){{
             requirements(effect, with(Items.graphite, 1000, iridium, 1000, fragisteel, 500));
             alwaysUnlocked = true;
 
@@ -656,11 +654,7 @@ public class CaliBlocks {
 
             unitCapModifier = 5;
 
-            drawer = new DrawMulti(
-                    new DrawDefault(),
-                    new DrawRegion("-top"),
-                    new DrawTeam()
-            );
+            //drawer = new DrawMulti( todo I don't care to fix it you do it
         }};
         coreBurgeon = new CoreBlock("core-burgeon"){{
             requirements(effect, with(iridium, 4000, tarnide, 2000, chirokyn, 1500, paragonite, 1500));
