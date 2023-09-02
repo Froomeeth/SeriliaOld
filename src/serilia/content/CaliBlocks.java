@@ -367,7 +367,7 @@ public class CaliBlocks {
             armored = true;
             speed = 5.5f;
 
-            acceptFrom = Seq.with(ductNode, ductJunction, ductDustributor);
+
         }};
         ductNode = new DuctNode("duct-node"){{
             requirements(Category.distribution, with(iridium, 5));
@@ -389,6 +389,8 @@ public class CaliBlocks {
             size = 2;
             requirements(Category.distribution, with(iridium, 10));
         }};
+
+        ((HeavyDuct)heavyDuct).acceptFrom = Seq.with(ductNode, ductJunction, ductDustributor);
 
         //liquid
         burstPump = new BurstPump("burst-pump"){{

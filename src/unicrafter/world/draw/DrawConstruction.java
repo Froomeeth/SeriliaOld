@@ -1,5 +1,6 @@
 package unicrafter.world.draw;
 
+import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import mindustry.ctype.UnlockableContent;
 import mindustry.gen.Building;
@@ -11,6 +12,7 @@ import unicrafter.world.UniversalCrafter.UniversalBuild;
 
 public class DrawConstruction extends DrawBlock{
     public boolean reconstruct;
+    public Color color = Color.acid.cpy().a(0.4f);
 
     public DrawConstruction(boolean reconstruct){
         this.reconstruct = reconstruct;
@@ -24,12 +26,12 @@ public class DrawConstruction extends DrawBlock{
                 Draw.rect(fromContent(build).fullIcon, build.x, build.y, ((UniversalBuild)build).payload instanceof UnitPayload ? build.rotation() - 90 : 0f);
                 Draw.reset();
             }
-            if(toContent(build) != null) Drawf.construct(build, toContent(build), build.rotdeg() - 90f, build.progress(), build.warmup(), build.totalProgress());
+            if(toContent(build) != null) Drawf.construct(build.x, build.y, toContent(build).fullIcon, color, build.rotdeg() - 90f, build.progress(), build.warmup(), build.totalProgress());
         });
     }
 
     /**Override in the instances if you want something other than these exact payloads.
-     * I have no real way of knowing what you want this to do without having you manually set fields per recipe.*/
+     * I have no real way of knowing what you want this to do without having you manually set fields per recipe. todo fix?*/
     public UnlockableContent fromContent(Building build){
         return ((UniversalBuild)build).lastPayload != null && ((UniversalBuild)build).mmmDelish.get(((UniversalBuild)build).lastPayload) > 0 ? ((UniversalBuild)build).lastPayload : null;
     }

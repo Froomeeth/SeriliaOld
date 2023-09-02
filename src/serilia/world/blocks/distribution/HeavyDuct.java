@@ -18,6 +18,8 @@ import mindustry.type.Item;
 import mindustry.world.Block;
 import mindustry.world.blocks.distribution.Duct;
 import mindustry.world.blocks.distribution.Junction;
+import mindustry.world.blocks.sandbox.ItemSource.ItemSourceBuild;
+import mindustry.world.blocks.sandbox.ItemVoid.ItemVoidBuild;
 import serilia.util.SeUtil;
 
 import static mindustry.Vars.itemSize;
@@ -25,7 +27,7 @@ import static mindustry.Vars.tilesize;
 
 public class HeavyDuct extends Duct{
     public TextureRegion[] regions;
-    public Seq<Block> acceptFrom = new Seq<>(4);
+    public Seq<Block> acceptFrom;
 
     public HeavyDuct(String name){
         super(name);
@@ -72,11 +74,15 @@ public class HeavyDuct extends Duct{
     public class HeavyDuctBuild extends DuctBuild{
         public int state = 0;
         public Building last;
+        public Point2 frontPos, backPos;
+        public boolean frontUnder, backUnder;
 
         @Override
-        public void draw(){ //TODO squaresprite
+        public void draw(){
             Draw.z(Layer.blockUnder);
             Draw.rect(regions[0], x, y, 0f);
+            if(frontUnder) drawGhghg(regions[0], false);
+            if(backUnder) drawGhghg(regions[0], true);
 
             //draw item
             if(current != null){
@@ -89,47 +95,45 @@ public class HeavyDuct extends Duct{
             }
 
             Draw.z(Layer.blockUnder + 0.2f);
-            Draw.rect(regions[state == 4 ? 2 : state + 1], x, y, state == 4 ? -8 : 8, rotation == 1 || rotation == 2 ? -8 : 8, rotdeg());
+            Draw.rect(regions[state == 4 ? 2 : state + 1], x, y, state == 4 ? -8f : 8f, rotation == 1 || rotation == 2 ? -8f : 8f, rotdeg());
             Draw.rect(regions[4], x, y, rotdeg());
+            if(frontUnder){drawGhghg(regions[3], false); drawGhghg(regions[4], false);}
+            if(backUnder){drawGhghg(regions[3], true); drawGhghg(regions[4], true);}
         }
 
-
-        public boolean acceptFrom(Building build){
-            return build != null && (build == last || build == next) && (block == build.block && build.rotation == rotation);
+        public void drawGhghg(TextureRegion region, boolean back){
+            Draw.rect(region, (back ? backPos.x : frontPos.x) * 8f + x, (back ? backPos.y : frontPos.y) * 8f + y, 8f, rotation == 2 ? -8f : 8f, rotdeg());
         }
 
         @Override
         public void onProximityUpdate(){
             noSleep();
-            next = front();
-            last = back();
+            frontPos = Geometry.d4(rotation); backPos = Geometry.d4(rotation + 2);
+            next = nearby(frontPos.x, frontPos.y); last = nearby(backPos.x, backPos.y);
             nextc = next instanceof DuctBuild d ? d : null;
+            frontUnder = backUnder = false;
 
             state = 0;
-            if(acceptFrom(next)){ //check whether to add 1 to get front open state
-                state += 1; //  []#
+            if(next != null && (next.block.hasItems || next instanceof ItemVoidBuild)){
+                state = 1; frontUnder = !next.block.squareSprite;
+                if(acceptFrom(last)){
+                    state = 2; backUnder = !last.block.squareSprite;
+                }
+            } else if(acceptFrom(last)){
+                state = 4; backUnder = !last.block.squareSprite;
+            }
+        }
 
-                if(acceptFrom(last)) //if yes from front, check whether to also add 1 for both open state
-                    state += 1; // #[]#
-
-            } else if(acceptFrom(last)) //if no from front, check whether to set to the special back open state
-                    state = 4; // #[]
+        public boolean acceptFrom(Building build){
+            return build != null && build == last &&
+                    (acceptFrom == null
+                    || build instanceof ItemSourceBuild
+                    || (build.block == block && build.rotation == rotation || acceptFrom.contains(build.block)));
         }
 
         @Override
         public boolean acceptItem(Building source, Item item){
-            boolean m = source.block == Blocks.itemSource;
-
-            if(!(acceptFrom.size == 0 || m)){
-                for(int i = 0; i < acceptFrom.size; i++){
-                    if(source.block == acceptFrom.get(i)){
-                        m = true;
-                        break;
-                    }
-                }
-            }
-
-            return current == null && items.total() == 0 && source == last && (block == source.block && source.rotation == rotation) && m;
+            return current == null && items.total() == 0 && acceptFrom(source);
         }
     }
 }
