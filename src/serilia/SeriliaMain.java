@@ -46,7 +46,7 @@ public class SeriliaMain extends Mod{
             Vars.renderer.addEnvRenderer(1024 * 2, () ->
                     Draw.drawRange(Layer.legUnit, 1f, () -> buffer.begin(Color.clear), () -> {
                         buffer.end();
-                        buffer.blit(new SeGraphics.ChromaticAberrationShader());
+                        buffer.blit(SeGraphics.chromatic);
                     })
             );
 

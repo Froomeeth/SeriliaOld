@@ -13,6 +13,7 @@ import mindustry.graphics.Shaders;
 
 /**Miscellaneous drawing, shader definitions.*/
 public class SeGraphics {
+    public static Shader chromatic = new ChromaticAberrationShader();
 
     //draw
     public static void drawHalfSpin(TextureRegion region, float x, float y, float r){

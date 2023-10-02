@@ -2,15 +2,14 @@ package serilia.content;
 
 import mindustry.content.Items;
 import mindustry.content.Liquids;
-import mindustry.content.Planets;
 import mindustry.content.TechTree;
 
+import static serilia.content.CaliBlocks.coreSprout;
 import static serilia.content.SeResources.*;
-import static serilia.content.CaliBlocks.*;
 
 public class CaliterraTechTree extends TechTree{
     public static void load(){
-        Planets.sun.techTree = nodeRoot("serilia", coreSprout ,false, () -> {
+        SeSystem.caliterra.techTree = nodeRoot("caliterra", coreSprout ,false, () -> {
             //items
             node(iridium, () -> {
                 node(methane, () -> {

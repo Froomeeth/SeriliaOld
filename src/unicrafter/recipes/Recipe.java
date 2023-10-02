@@ -235,7 +235,7 @@ public class Recipe extends UnlockableContent{
 
             return !allFull;
         }
-        return true;
+        return build.consumability();
     }
 
     public void dumpOutputs(UniversalBuild build){
@@ -324,10 +324,12 @@ public class Recipe extends UnlockableContent{
     public Seq<ItemStack> itemReq(){return itemReq;}
     public Seq<LiquidStack> liqReq(){return liqReq;}
     public Seq<PayloadStack> payReq(){return payReq;}
+    public float powerReq(){return powerReq;}
 
     public Seq<ItemStack> itemOut(){return itemOut;}
     public Seq<LiquidStack> liqOut(){return liqOut;}
     public Seq<PayloadStack> payOut(){return payOut;}
+    public float powerOut(){return powerOut;}
     //dynamic consumers need these. really wish they didn't.
     public ItemStack[] itemReqArray(){return itemReqArray;}
     public LiquidStack[] liqReqArray(){return liqReqArray;}

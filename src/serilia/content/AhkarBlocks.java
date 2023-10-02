@@ -11,7 +11,6 @@ import mindustry.world.Block;
 import mindustry.world.blocks.defense.DirectionalForceProjector;
 import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.distribution.Junction;
-import mindustry.world.draw.DrawGlowRegion;
 import mindustry.world.draw.DrawMulti;
 import serilia.util.SeUtil;
 import serilia.world.blocks.distribution.DuctNode;
@@ -144,8 +143,8 @@ public class AhkarBlocks {
             rotateDraw = instantInput = false;
 
             drawerRecipeDefault = new DrawMulti(
-                    new DrawGlowRegion("-coil-heat"){{layer = 40f;}},
-                    new DrawGlowRegion("-inner-heat"){{layer = 36f;}}
+                    //new DrawGlowRegion("-coil-heat"){{layer = 40f;}},
+                    //new DrawGlowRegion("-inner-heat"){{layer = 36f;}}
             );
 
             recipes = Seq.with(
