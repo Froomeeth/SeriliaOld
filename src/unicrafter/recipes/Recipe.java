@@ -141,7 +141,7 @@ public class Recipe extends UnlockableContent{
     }
 
 
-    //logic
+//logic
     public void update(UniversalBuild build){
         if(build.crafter().hasPayloads){
 
@@ -278,7 +278,7 @@ public class Recipe extends UnlockableContent{
         return true;
     }
 
-    //everything else
+//everything else
     public void init(UniversalCrafter b){
         b.hasLiquids |= (b.hasLiquidIn |= liqReq.size != 0) || (b.outputsLiquid |= liqOut.size != 0);
         b.hasPayloads |= (b.acceptsPayload |= payReq.size != 0) || (b.outputsPayload |= payOut.size != 0);

@@ -12,6 +12,8 @@ description: "Serilia is a mod under development that adds 2 new planets with li
 
 version: 1.0
 
+hideBrowser: true
+
 minGameVersion: 140
 
 java: true

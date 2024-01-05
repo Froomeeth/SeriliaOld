@@ -11,6 +11,9 @@
         <module name="JavaSerilia.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="JavaSerilia.main" target="1.8" />
+      <module name="JavaSerilia.test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

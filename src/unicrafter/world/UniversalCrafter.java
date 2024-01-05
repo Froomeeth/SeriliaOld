@@ -320,22 +320,22 @@ public class UniversalCrafter extends PayloadBlock{
             Unit unit = UnitEntity.create();
             UnitType spawnType = UnitTypes.renale;
 
-int spawnAmount = 0;
-int countSelf = 0, countSpawned = 0;
+            int spawnAmount = 0;
+            int countSelf = 0, countSpawned = 0;
 
-for(Unit u : Groups.unit){
-    if(u.type == unit.type){
-        countSelf++;
-    }else if(u.type == spawnType){
-        countSpawned++;
-    }
-}
+            for(Unit u : Groups.unit){
+                if(u.type == unit.type){
+                    countSelf++;
+                }else if(u.type == spawnType){
+                    countSpawned++;
+                }
+            }
 
-for(Unit u : Groups.unit){
-    if(u.type == spawnType && countSpawned > spawnAmount){
-        u.kill();
-    }
-}
+            for(Unit u : Groups.unit){
+                if(u.type == spawnType && countSpawned > spawnAmount){
+                    u.kill();
+                }
+            }
         }
 
         @Override
@@ -400,7 +400,7 @@ for(Unit u : Groups.unit){
 
 
 
-        //visuals
+//visuals
         @Override
         public void draw(){
             drawerBottom.draw(this);
@@ -446,7 +446,7 @@ for(Unit u : Groups.unit){
 
 
 
-        //everything that does nothing except return a value in 1ish line
+//everything that does nothing except return a value in 1ish line
         public boolean consumability(){ //please work
             return  (!hasPayloads || consPayload == null || consPayload.efficiency(this) > 0.01f) &&
                     (!hasItems || consItem == null || consItem.efficiency(this) > 0.01f) &&

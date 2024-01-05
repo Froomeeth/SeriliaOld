@@ -58,7 +58,7 @@ public class RecipeStyles{
 
                 t.table(name -> {
                     t.add(recipe.localizedName);
-                    t.button("?", Styles.flatBordert, () -> ui.content.show(recipe)).size(iconMed).pad(5f).right().grow().visible(recipe::unlockedNow);
+                    t.button("?", Styles.flatBordert, () -> ui.content.show(recipe)).size(iconMed).padLeft(5f).visible(recipe::unlockedNow);
                 });
                 t.row(); t.image(recipe.uiIcon).size(48f).scaling(Scaling.fit);
 
